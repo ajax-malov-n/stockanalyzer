@@ -30,7 +30,7 @@ class StockControllerTest {
         val response = stockController.getFiveBestStocksToBuy()
 
         verify(stockAnalyzerService).getFiveBestStocksToBuy()
-        assertEquals(response.statusCode,HttpStatus.OK)
+        assertEquals(HttpStatus.OK,response.statusCode)
     }
 
     @Test
@@ -40,6 +40,6 @@ class StockControllerTest {
         val response = stockController.getAllManageableStockSymbols()
 
         verify(stockAnalyzerService).getAllManageableStocksSymbols()
-        assertEquals(response.statusCode,HttpStatus.OK)
+        assertEquals(HttpStatus.OK,response.statusCode)
     }
 }

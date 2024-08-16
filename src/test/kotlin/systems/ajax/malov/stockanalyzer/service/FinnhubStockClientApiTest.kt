@@ -37,9 +37,9 @@ class FinnhubStockClientApiTest {
 
         val actual = finnhubStockClientApi.getAllStocksData()
 
-        assertEquals(expected.size, actual.size)
-        assertEquals(expected[0].symbol, actual[0].symbol)
         verify(finnhubStockApi).stockSymbols(eq(EXCHANGE_NAME), eq(""),eq(""),eq(""))
         verify(finnhubStockApi).quote(eq(TEST_STOCK_SYMBOL))
+        assertEquals(expected.size, actual.size)
+        assertEquals(expected[0].symbol, actual[0].symbol)
     }
 }

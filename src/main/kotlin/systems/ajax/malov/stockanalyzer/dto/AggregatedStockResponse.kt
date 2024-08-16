@@ -1,4 +1,4 @@
 package systems.ajax.malov.stockanalyzer.dto
 
-data class AggregatedStockResponse(val stocks: AggregatedStockItemResponse?) {
+data class AggregatedStockResponse(val stocks: List<AggregatedStockItemResponse?>) {
 }

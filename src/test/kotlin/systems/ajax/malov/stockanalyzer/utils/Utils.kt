@@ -32,6 +32,6 @@ val savedStock = Stock(
     dateOfRetrieval = null
 )
 
-val aggregatedStockResponse = listOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock))).map {
-    AggregatedStockResponse(AggregatedStockItemResponse.fromStocks(it.first, it.second))
-}
+val aggregatedStockResponse = AggregatedStockResponse(
+    listOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock))).map {
+    AggregatedStockItemResponse.fromStocks(it.first, it.second)})

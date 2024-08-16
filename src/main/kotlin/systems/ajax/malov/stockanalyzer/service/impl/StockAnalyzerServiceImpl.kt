@@ -11,11 +11,11 @@ class StockAnalyzerServiceImpl(
     private val stockRepository: StockRepository
 ) : StockAnalyzerService {
 
-    override fun getFiveBestStocksToBuy(): List<AggregatedStockResponse> {
-        return stockRepository.findFiveBestStocksToBuy()
+    override fun getFiveBestStocksToBuy(): AggregatedStockResponse {
+        return AggregatedStockResponse(stockRepository.findFiveBestStocksToBuy()
             .map {
-                AggregatedStockResponse(it.first?.let { symbol -> AggregatedStockItemResponse.fromStocks(symbol, it.second) })
-            }
+                it.first?.let { symbol -> AggregatedStockItemResponse.fromStocks(symbol, it.second) }
+            })
     }
 
     override fun getAllManageableStocksSymbols(): List<String?> {

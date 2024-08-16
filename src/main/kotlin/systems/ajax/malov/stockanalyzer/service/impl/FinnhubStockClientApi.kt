@@ -26,7 +26,7 @@ class FinnhubStockClientApi(private val finnhubStockApi: DefaultApi) : StockClie
 
     private fun getAllStocksInfo() = finnhubStockApi.stockSymbols(EXCHANGE_NAME)
 
-    private fun DefaultApi.stockSymbols(exchange:String) : List<StockSymbol> {
+    private fun DefaultApi.stockSymbols(exchange: String): List<StockSymbol> {
         return finnhubStockApi.stockSymbols(exchange, "", "", "")
     }
 }

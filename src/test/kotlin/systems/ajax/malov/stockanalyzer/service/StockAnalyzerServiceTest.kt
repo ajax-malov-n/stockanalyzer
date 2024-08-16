@@ -8,15 +8,11 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockItemResponse
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponse
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import systems.ajax.malov.stockanalyzer.service.impl.StockAnalyzerServiceImpl
 import systems.ajax.malov.stockanalyzer.utils.TEST_STOCK_SYMBOL
 import systems.ajax.malov.stockanalyzer.utils.aggregatedStockResponse
 import systems.ajax.malov.stockanalyzer.utils.savedStock
-import systems.ajax.malov.stockanalyzer.utils.unsavedStock
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class StockAnalyzerServiceTest {
@@ -37,8 +33,8 @@ class StockAnalyzerServiceTest {
 
         val actual = stockAnalyzerService.getFiveBestStocksToBuy()
 
-        assertEquals(expected, actual)
         verify(stockRepository).findFiveBestStocksToBuy()
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -50,7 +46,7 @@ class StockAnalyzerServiceTest {
 
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()
 
-        assertEquals(expected, actual)
         verify(stockRepository).getAllStockSymbols()
+        assertEquals(expected, actual)
     }
 }

@@ -20,10 +20,7 @@ repositories {
 
 dependencies {
     implementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
-    implementation("org.liquibase:liquibase-core:4.29.0")
-    implementation("org.liquibase.ext:liquibase-mongodb:4.19.0")
     implementation("io.finnhub:kotlin-client:2.0.20")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC.2")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

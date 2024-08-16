@@ -9,7 +9,7 @@ import java.util.UUID
 
 
 @Repository
-class StockInMemoryRepositoryImpl() : StockRepository {
+class StockInMemoryRepositoryImpl : StockRepository {
     private val db: HashMap<UUID, Stock> = HashMap()
 
     override fun insertAll(stocks: List<Stock>): MutableCollection<Stock> {
