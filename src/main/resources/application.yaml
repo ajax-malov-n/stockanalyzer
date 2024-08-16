@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: stockanalyzer
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: stocksDb
+api:
+  finnhub:
+    token: ${FINNHUB_API_TOKEN}
