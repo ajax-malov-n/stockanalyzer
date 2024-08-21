@@ -29,17 +29,17 @@ class StockInMemoryRepositoryImpl : StockRepository {
         val maxChange = db.asSequence().mapNotNull { it.value.change }.maxBy { it }
 
         return db.asSequence().filterNot { it.value.symbol == null }.filter { stock ->
-                stock.value.dateOfRetrieval?.isBefore(Instant.now().plus(Duration.ofHours(1))) == true
-            }.map { it.value }.groupBy { it.symbol }.toList().sortedByDescending { (_, stockList) ->
-                val avgChange = stockList.mapNotNull { it.change }
-                    .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
-                val avgPercentChange = stockList.mapNotNull { it.percentChange }
-                    .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
+            stock.value.dateOfRetrieval?.isBefore(Instant.now().plus(Duration.ofHours(1))) == true
+        }.map { it.value }.groupBy { it.symbol }.toList().sortedByDescending { (_, stockList) ->
+            val avgChange = stockList.mapNotNull { it.change }
+                .fold(BigDecimal.ZERO) { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
+            val avgPercentChange = stockList.mapNotNull { it.percentChange }
+                .fold(BigDecimal.ZERO) { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
 
-                ((avgChange / maxChange) * BigDecimal.valueOf(0.5)) + ((avgPercentChange / maxPercentChange) * BigDecimal.valueOf(
-                    0.5
-                ))
-            }.take(5)
+            ((avgChange / maxChange) * BigDecimal.valueOf(0.5)) + ((avgPercentChange / maxPercentChange) * BigDecimal.valueOf(
+                0.5
+            ))
+        }.take(5)
     }
 
     override fun getAllStockSymbols(): List<String?> {
