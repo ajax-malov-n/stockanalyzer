@@ -10,13 +10,13 @@ object QuoteMapper {
         scrSymbol: String, dateOfRetrievalSrc: Instant,
     ) = Stock(
         symbol = scrSymbol,
-        openPrice = o?.let { BigDecimal.valueOf(o!!.toDouble()) },
-        highPrice = h?.let { BigDecimal.valueOf(h!!.toDouble()) },
-        lowPrice = l?.let { BigDecimal.valueOf(l!!.toDouble()) },
-        currentPrice = c?.let { BigDecimal.valueOf(c!!.toDouble()) },
-        previousClosePrice = pc?.let { BigDecimal.valueOf(pc!!.toDouble()) },
-        change = d?.let { BigDecimal.valueOf(d!!.toDouble()) },
-        percentChange = dp?.let { BigDecimal.valueOf(dp!!.toDouble()) },
+        openPrice = o?.let { BigDecimal.valueOf(it.toDouble()) },
+        highPrice = h?.let { BigDecimal.valueOf(it.toDouble()) },
+        lowPrice = l?.let { BigDecimal.valueOf(it.toDouble()) },
+        currentPrice = c?.let { BigDecimal.valueOf(it.toDouble()) },
+        previousClosePrice = pc?.let { BigDecimal.valueOf(it.toDouble()) },
+        change = d?.let { BigDecimal.valueOf(it.toDouble()) },
+        percentChange = dp?.let { BigDecimal.valueOf(it.toDouble()) },
         dateOfRetrieval = dateOfRetrievalSrc
     )
 }
