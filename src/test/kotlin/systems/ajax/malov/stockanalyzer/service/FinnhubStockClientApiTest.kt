@@ -21,8 +21,7 @@ import systems.ajax.malov.stockanalyzer.service.impl.FinnhubStockClientApi
 
 @ExtendWith(MockitoExtension::class)
 class FinnhubStockClientApiTest {
-    private val exchangeName = "US"
-    private val maxNumberOfRequestPerMinute = 50
+    private val symbols = listOf(TEST_STOCK_SYMBOL)
 
     @Mock
     private lateinit var finnhubStockApi: DefaultApi
@@ -32,8 +31,7 @@ class FinnhubStockClientApiTest {
 
     @BeforeEach
     fun setup() {
-        ReflectionTestUtils.setField(finnhubStockClientApi, "exchangeName", exchangeName)
-        ReflectionTestUtils.setField(finnhubStockClientApi, "maxNumberOfRequestsPerMinute", maxNumberOfRequestPerMinute)
+        ReflectionTestUtils.setField(finnhubStockClientApi, "symbols", symbols)
     }
 
     @Test
@@ -41,13 +39,10 @@ class FinnhubStockClientApiTest {
         val expected = listOf(unsavedStock())
         val quote = Quote(1f, 1f, 1f, 1f, 1f, 1f, 1f)
         val stockSymbols = listOf(StockSymbol(displaySymbol = TEST_STOCK_SYMBOL))
-        whenever(finnhubStockApi.stockSymbols(exchangeName, "", "", ""))
-            .thenReturn(stockSymbols)
         whenever(finnhubStockApi.quote(TEST_STOCK_SYMBOL)).thenReturn(quote)
 
         val actual = finnhubStockClientApi.getAllStocksData()
 
-        verify(finnhubStockApi).stockSymbols(eq(exchangeName), eq(""), eq(""), eq(""))
         verify(finnhubStockApi).quote(eq(TEST_STOCK_SYMBOL))
         assertEquals(expected.size, actual.size)
         assertEquals(expected[0].symbol, actual[0].symbol)

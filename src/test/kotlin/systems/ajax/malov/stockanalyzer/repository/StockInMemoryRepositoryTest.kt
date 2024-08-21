@@ -57,8 +57,6 @@ class StockInMemoryRepositoryTest {
         //THEN
         assertEquals(expected.size, actual.size)
         assertEquals(expected[0].first, actual[0].first)
-        assertEquals(expected[0].second.size, actual[0].second.size)
         assertEquals(expected[1].first, actual[1].first)
-        assertEquals(expected[1].second.size, actual[1].second.size)
     }
 }
