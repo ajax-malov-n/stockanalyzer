@@ -1,21 +1,17 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
 import org.springframework.stereotype.Service
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockItemResponse
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponse
+import systems.ajax.malov.stockanalyzer.entity.Stock
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import systems.ajax.malov.stockanalyzer.service.StockAnalyzerService
 
 @Service
 class StockAnalyzerServiceImpl(
-    private val stockRepository: StockRepository
+    private val stockRepository: StockRepository,
 ) : StockAnalyzerService {
 
-    override fun getFiveBestStocksToBuy(): AggregatedStockResponse {
-        return AggregatedStockResponse(stockRepository.findFiveBestStocksToBuy()
-            .map {
-                it.first?.let { symbol -> AggregatedStockItemResponse.fromStocks(symbol, it.second) }
-            })
+    override fun getFiveBestStocksToBuy(): List<Pair<String?, List<Stock>>> {
+        return stockRepository.findFiveBestStocksToBuy()
     }
 
     override fun getAllManageableStocksSymbols(): List<String?> {

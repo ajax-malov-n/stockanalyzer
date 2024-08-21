@@ -3,9 +3,10 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 import org.springframework.stereotype.Repository
 import systems.ajax.malov.stockanalyzer.entity.Stock
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 
 @Repository
@@ -22,32 +23,26 @@ class StockInMemoryRepositoryImpl : StockRepository {
     }
 
     override fun findFiveBestStocksToBuy(): List<Pair<String?, List<Stock>>> {
-        val maxPercentChange = db.asSequence().mapNotNull { it.value.percentChange }
-            .maxBy { it }
-        val maxChange = db.asSequence().mapNotNull { it.value.change }
-            .maxBy { it }
+        if (db.isEmpty()) return emptyList()
 
-        return db.asSequence()
-            .filterNot { it.value.symbol == null }
-            .filter { stock ->
-            stock.value
-                .dateOfRetrieval?.isBefore(Instant.now().plus(Duration.ofHours(1))) == true
-        }.map { it.value }
-            .groupBy { it.symbol }
-            .toList()
-            .sortedByDescending { (_, stockList) ->
-                val avgChange = stockList.mapNotNull { it.change }.sum() / stockList.size
-                val avgPercentChange = stockList.mapNotNull { it.percentChange }.sum() / stockList.size
+        val maxPercentChange = db.asSequence().mapNotNull { it.value.percentChange }.maxBy { it }
+        val maxChange = db.asSequence().mapNotNull { it.value.change }.maxBy { it }
 
-                ((avgChange/maxChange) * 0.5) + ((avgPercentChange/maxPercentChange) * 0.5)
-            }
-            .take(5)
+        return db.asSequence().filterNot { it.value.symbol == null }.filter { stock ->
+                stock.value.dateOfRetrieval?.isBefore(Instant.now().plus(Duration.ofHours(1))) == true
+            }.map { it.value }.groupBy { it.symbol }.toList().sortedByDescending { (_, stockList) ->
+                val avgChange = stockList.mapNotNull { it.change }
+                    .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
+                val avgPercentChange = stockList.mapNotNull { it.percentChange }
+                    .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal.valueOf(stockList.size.toLong())
+
+                ((avgChange / maxChange) * BigDecimal.valueOf(0.5)) + ((avgPercentChange / maxPercentChange) * BigDecimal.valueOf(
+                    0.5
+                ))
+            }.take(5)
     }
 
     override fun getAllStockSymbols(): List<String?> {
-        return db.asSequence()
-            .map{it.value.symbol}
-            .distinct()
-            .toList()
+        return db.asSequence().map { it.value.symbol }.distinct().toList()
     }
 }

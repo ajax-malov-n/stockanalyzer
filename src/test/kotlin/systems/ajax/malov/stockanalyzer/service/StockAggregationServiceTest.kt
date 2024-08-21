@@ -1,5 +1,7 @@
 package systems.ajax.malov.stockanalyzer.service
 
+import StockFixture.savedStock
+import StockFixture.unsavedStock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -10,27 +12,24 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import systems.ajax.malov.stockanalyzer.service.impl.StockAggregationServiceImpl
-import systems.ajax.malov.stockanalyzer.utils.savedStock
-import systems.ajax.malov.stockanalyzer.utils.unsavedStock
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class StockAggregationServiceTest {
 
     @Mock
-    private lateinit var stockClientApi : StockClientApi
+    private lateinit var stockClientApi: StockClientApi
 
     @Mock
     private lateinit var stockRepository: StockRepository
 
     @InjectMocks
-    private lateinit var stockAggregationServiceImpl : StockAggregationServiceImpl
+    private lateinit var stockAggregationServiceImpl: StockAggregationServiceImpl
 
     @Test
-    fun `aggregateStockData fun calls external API to retrieve data and then calls repository to save stocks`(){
-        val retrievedStocks = listOf(unsavedStock)
+    fun `aggregateStockData fun calls external API to retrieve data and then calls repository to save stocks`() {
+        val retrievedStocks = listOf(unsavedStock())
         whenever(stockClientApi.getAllStocksData()).thenReturn(retrievedStocks)
-        whenever(stockRepository.insertAll(retrievedStocks)).thenReturn(listOf(savedStock).toMutableList())
+        whenever(stockRepository.insertAll(retrievedStocks)).thenReturn(listOf(savedStock()).toMutableList())
 
         stockAggregationServiceImpl.aggregateStockData()
 
