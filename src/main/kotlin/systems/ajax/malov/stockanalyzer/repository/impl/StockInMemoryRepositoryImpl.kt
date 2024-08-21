@@ -40,6 +40,10 @@ class StockInMemoryRepositoryImpl : StockRepository {
                 0.5
             ))
         }.take(5)
+            .map { (symbol, stocks) ->
+                symbol to stocks.distinctBy { it.currentPrice }
+                    .sortedByDescending { stock -> stock.dateOfRetrieval }.take(5)
+            }
     }
 
     override fun getAllStockSymbols(): List<String?> {

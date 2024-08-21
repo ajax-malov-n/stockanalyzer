@@ -12,6 +12,7 @@ services:
       - "8080:8080"
     environment:
       - FINNHUB_API_TOKEN=${FINNHUB_API_TOKEN}
+      - SYMBOLS=${SYMBOLS}
 
   mongo:
     image: mongo

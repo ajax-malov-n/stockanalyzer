@@ -9,5 +9,4 @@ spring:
 api:
   finnhub:
     token: ${FINNHUB_API_TOKEN}
-    max_number_of_request_per_minute: ${MAX_NUMBER_OF_REQUESTS_PER_MINUTE}
-    exchange_name: ${EXCHANGE_NAME}
+    symbols: ${SYMBOLS}
