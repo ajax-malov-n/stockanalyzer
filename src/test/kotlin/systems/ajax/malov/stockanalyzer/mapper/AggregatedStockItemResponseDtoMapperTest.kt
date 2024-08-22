@@ -10,7 +10,7 @@ import systems.ajax.malov.stockanalyzer.mapper.ShortStockResponseDtoMapper.toSho
 
 class AggregatedStockItemResponseDtoMapperTest {
     @Test
-    fun test() {
+    fun `should map stocks list with a common stock symbol to aggregatedStockItemResponseDto`() {
         val stocks = listOf(savedStock())
         val expected = AggregatedStockItemResponseDto(TEST_STOCK_SYMBOL, stocks.map { it.toShortStockResponseDto() })
 
