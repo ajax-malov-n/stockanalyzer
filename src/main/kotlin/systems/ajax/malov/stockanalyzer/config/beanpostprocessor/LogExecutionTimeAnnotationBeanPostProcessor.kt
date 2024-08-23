@@ -21,9 +21,8 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
     }
 
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any? {
-        val beanClass = beanMap[beanName]
-        if (beanClass != null) {
-            return Proxy.newProxyInstance(
+        return beanMap[beanName]?.let { beanClass ->
+            Proxy.newProxyInstance(
                 beanClass.javaClass.getClassLoader(),
                 getAllInterfaces(beanClass.javaClass).toTypedArray()
             )
@@ -37,8 +36,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
                     method.invoke(bean, *(args ?: emptyArray()))
                 }
             }
-        }
-        return bean
+        } ?: bean
     }
 
     private fun getAllInterfaces(clazz: Class<*>): Set<Class<*>> {
