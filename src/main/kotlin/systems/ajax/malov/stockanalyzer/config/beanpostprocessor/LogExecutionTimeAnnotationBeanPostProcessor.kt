@@ -55,12 +55,10 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         val clazz: Class<*> = bean.javaClass
         try {
             val superMethod = clazz.getDeclaredMethod(method.name, *(method.parameterTypes ?: emptyArray()))
-            if (superMethod.isAnnotationPresent(LogExecutionTime::class.java)) {
-                return true
-            }
+            return superMethod.isAnnotationPresent(LogExecutionTime::class.java)
         } catch (_: NoSuchMethodException) {
+            return false
         }
-        return false
     }
 
     companion object {
