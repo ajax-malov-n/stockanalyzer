@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.stockanalyzer.service.StockAnalyzerService
 
@@ -12,7 +13,7 @@ import systems.ajax.malov.stockanalyzer.service.StockAnalyzerService
 class StockController(private val stockAnalyzerService: StockAnalyzerService) {
 
     @GetMapping("/bestFive")
-    fun getFiveBestStocksToBuy() = ResponseEntity
+    fun getFiveBestStocksToBuy(): ResponseEntity<AggregatedStockResponseDto> = ResponseEntity
         .ok(
             toAggregatedStockItemResponseDto(
                 stockAnalyzerService
@@ -21,5 +22,6 @@ class StockController(private val stockAnalyzerService: StockAnalyzerService) {
         )
 
     @GetMapping
-    fun getAllManageableStockSymbols() = ResponseEntity.ok(stockAnalyzerService.getAllManageableStocksSymbols())
+    fun getAllManageableStockSymbols(): ResponseEntity<List<String?>> =
+        ResponseEntity.ok(stockAnalyzerService.getAllManageableStocksSymbols())
 }

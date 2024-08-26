@@ -16,13 +16,14 @@ class FinnhubStockClientApi(private val finnhubStockApi: DefaultApi) : StockClie
     private lateinit var symbols: List<String>
 
     override fun getAllStocksData(): List<Stock> {
-        val retrievalDate: Instant = Instant.now()
+        val retrievalDate = Instant.now()
 
         return symbols.mapNotNull {
             retrieveStock(it, retrievalDate)
         }.toList()
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun retrieveStock(symbol: String, retrievalDate: Instant): Stock? {
         try {
             return finnhubStockApi.quote(symbol).toStock(symbol, retrievalDate)

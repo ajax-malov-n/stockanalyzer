@@ -10,11 +10,12 @@ class StockAnalyzerServiceImpl(
     private val stockRepository: StockRepository,
 ) : StockAnalyzerService {
 
+    @Suppress("MagicNumber")
     override fun getFiveBestStocksToBuy(): List<Pair<String?, List<Stock>>> {
-        return stockRepository.findFiveBestStocksToBuy()
+        return stockRepository.findTopNStocks(5)
     }
 
     override fun getAllManageableStocksSymbols(): List<String?> {
-        return stockRepository.getAllStockSymbols()
+        return stockRepository.findAllStockSymbols()
     }
 }

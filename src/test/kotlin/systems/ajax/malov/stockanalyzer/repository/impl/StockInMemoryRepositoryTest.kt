@@ -32,7 +32,7 @@ class StockInMemoryRepositoryTest {
         val listOfUnsavedStocks = listOf(unsavedStock())
         stockRepository.insertAll(listOf(unsavedStock()))
 
-        val actual = stockRepository.getAllStockSymbols()
+        val actual = stockRepository.findAllStockSymbols()
 
         assertEquals(listOfUnsavedStocks.map { it.symbol }, actual)
     }
@@ -51,7 +51,7 @@ class StockInMemoryRepositoryTest {
         )
 
         //WHEN
-        val actual = stockRepository.findFiveBestStocksToBuy()
+        val actual = stockRepository.findTopNStocks(5)
 
         //THEN
         assertEquals(expected.size, actual.size)

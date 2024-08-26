@@ -31,7 +31,7 @@ class StockAggregationServiceTest {
         whenever(stockClientApi.getAllStocksData()).thenReturn(retrievedStocks)
         whenever(stockRepository.insertAll(retrievedStocks)).thenReturn(listOf(savedStock()).toMutableList())
 
-        stockAggregationServiceImpl.aggregateStockData()
+        stockAggregationServiceImpl.aggregateStocksData()
 
         verify(stockClientApi).getAllStocksData()
         verify(stockRepository).insertAll(eq(retrievedStocks))

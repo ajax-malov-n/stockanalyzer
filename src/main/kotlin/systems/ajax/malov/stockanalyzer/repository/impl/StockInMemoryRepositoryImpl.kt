@@ -23,7 +23,8 @@ class StockInMemoryRepositoryImpl : StockRepository {
         return stocks
     }
 
-    override fun findFiveBestStocksToBuy(): List<Pair<String?, List<Stock>>> {
+    @Suppress("MagicNumber")
+    override fun findTopNStocks(n: Int): List<Pair<String?, List<Stock>>> {
         if (db.isEmpty()) return emptyList()
 
         val maxPercentChange = getMaxBigDecimal { stock: Stock -> stock.percentChange }
@@ -31,10 +32,15 @@ class StockInMemoryRepositoryImpl : StockRepository {
 
         val timeOfRequest = Instant.now()
 
-        return db.asSequence().filterNot { (_, stock) -> stock.symbol == null }
+        return db.asSequence()
+            .filterNot { (_, stock) -> stock.symbol == null }
             .filter { (_, stock) ->
-                stock.dateOfRetrieval?.isBefore(timeOfRequest.plus(Duration.ofHours(1))) == true
-            }.map { it.value }.groupBy { it.symbol }.toList().sortedByDescending { (_, stockList) ->
+                isStockInValidDateRange(stock, timeOfRequest)
+            }
+            .map { it.value }
+            .groupBy { it.symbol }
+            .toList()
+            .sortedByDescending { (_, stockList) ->
                 val avgChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.change }
                 val avgPercentChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.percentChange }
 
@@ -42,13 +48,20 @@ class StockInMemoryRepositoryImpl : StockRepository {
                 val secondCoefficient = (avgPercentChange / maxPercentChange) * BigDecimal.valueOf(0.5)
                 firstCoefficient + secondCoefficient
             }
-            .take(5)
+            .take(n)
             .map { (symbol, stocks) ->
                 symbol to stocks.distinctBy { it.currentPrice }
                     .sortedByDescending { stock -> stock.dateOfRetrieval }
                     .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK)
             }
             .toList()
+    }
+
+    private fun isStockInValidDateRange(stock: Stock, timeOfRequest: Instant): Boolean {
+        return stock.dateOfRetrieval
+            ?.isBefore(
+                timeOfRequest.plus(Duration.ofHours(1))
+            ) == true
     }
 
     private fun getMaxBigDecimal(mapperToBigDecimal: (stock: Stock) -> BigDecimal?): BigDecimal {
@@ -61,12 +74,16 @@ class StockInMemoryRepositoryImpl : StockRepository {
         stockList: List<Stock>,
         mapperToBigDecimal: (stock: Stock) -> BigDecimal?,
     ): BigDecimal {
-        return stockList.mapNotNull { mapperToBigDecimal(it) }
+        return stockList
+            .mapNotNull { mapperToBigDecimal(it) }
             .fold(BigDecimal.ZERO) { acc, bigDecimal -> acc + bigDecimal } /
                 BigDecimal.valueOf(stockList.size.toLong())
     }
 
-    override fun getAllStockSymbols(): List<String?> {
-        return db.map { it.value.symbol }.distinct().toList()
+    override fun findAllStockSymbols(): List<String?> {
+        return db
+            .map { it.value.symbol }
+            .distinct()
+            .toList()
     }
 }

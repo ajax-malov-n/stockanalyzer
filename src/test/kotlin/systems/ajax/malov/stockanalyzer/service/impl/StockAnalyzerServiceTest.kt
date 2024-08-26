@@ -28,12 +28,12 @@ class StockAnalyzerServiceTest {
         val savedStock = savedStock()
         val retrievedStocks = listOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForFiveBestStocks()
-        whenever(stockRepository.findFiveBestStocksToBuy())
+        whenever(stockRepository.findTopNStocks(5))
             .thenReturn(retrievedStocks)
 
         val actual = stockAnalyzerService.getFiveBestStocksToBuy()
 
-        verify(stockRepository).findFiveBestStocksToBuy()
+        verify(stockRepository).findTopNStocks(5)
         assertEquals(expected, actual)
     }
 
@@ -41,12 +41,12 @@ class StockAnalyzerServiceTest {
     fun `getAllManageableStocksSymbols fun calls repository and returns all stocks symbols`() {
         val expected = listOf(TEST_STOCK_SYMBOL)
 
-        whenever(stockRepository.getAllStockSymbols())
+        whenever(stockRepository.findAllStockSymbols())
             .thenReturn(expected)
 
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()
 
-        verify(stockRepository).getAllStockSymbols()
+        verify(stockRepository).findAllStockSymbols()
         assertEquals(expected, actual)
     }
 }

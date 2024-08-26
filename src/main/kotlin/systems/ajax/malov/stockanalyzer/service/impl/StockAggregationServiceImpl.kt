@@ -15,7 +15,7 @@ class StockAggregationServiceImpl(
     StockAggregationService {
 
     @Scheduled(cron = "0 0/1 * * * ?")
-    override fun aggregateStockData() {
+    override fun aggregateStocksData() {
         stockClientApi.run {
             log.info("Performing aggregation task")
             getAllStocksData()
