@@ -12,14 +12,16 @@ import java.lang.reflect.Proxy
 @Component
 class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
 
-    private val beanMap = HashMap<String, Pair<Class<*>, List<Method>>>()
+    private val beanMap = HashMap<String, ClassWithAnnotatedMethods>()
+
+    data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
 
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any? {
         val methods: List<Method> = bean.javaClass.methods.filter {
             it.isAnnotationPresent(LogExecutionTime::class.java)
         }
         if (methods.isNotEmpty()) {
-            beanMap[beanName] = bean.javaClass to methods
+            beanMap[beanName] = ClassWithAnnotatedMethods(bean.javaClass, methods)
         }
         return bean
     }
@@ -42,11 +44,13 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
     private fun isRequiredProxy(
         methods: List<Method>,
         proxiedMethod: Method,
-    ) = methods.any { originalMethod ->
-        areMethodsEqual(
-            originalMethod,
-            proxiedMethod
-        )
+    ): Boolean {
+        return methods.any { originalMethod ->
+            areMethodsEqual(
+                originalMethod,
+                proxiedMethod
+            )
+        }
     }
 
     private fun logMethodExecution(
