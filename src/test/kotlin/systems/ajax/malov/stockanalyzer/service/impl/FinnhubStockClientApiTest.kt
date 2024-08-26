@@ -2,7 +2,6 @@ package systems.ajax.malov.stockanalyzer.service.impl
 
 import io.finnhub.api.apis.DefaultApi
 import io.finnhub.api.models.Quote
-import io.finnhub.api.models.StockSymbol
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,7 +36,6 @@ class FinnhubStockClientApiTest {
     fun `getAllStocksData fun calls Finnhub API and retrieves stocks`() {
         val expected = listOf(unsavedStock())
         val quote = Quote(1f, 1f, 1f, 1f, 1f, 1f, 1f)
-        val stockSymbols = listOf(StockSymbol(displaySymbol = TEST_STOCK_SYMBOL))
         whenever(finnhubStockApi.quote(TEST_STOCK_SYMBOL)).thenReturn(quote)
 
         val actual = finnhubStockClientApi.getAllStocksData()
