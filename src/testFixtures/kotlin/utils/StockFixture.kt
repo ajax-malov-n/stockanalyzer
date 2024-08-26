@@ -1,3 +1,5 @@
+package utils
+
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockItemResponseDto
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponseDto
 import systems.ajax.malov.stockanalyzer.entity.Stock

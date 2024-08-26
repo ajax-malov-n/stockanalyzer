@@ -1,7 +1,5 @@
-package systems.ajax.malov.stockanalyzer.service
+package systems.ajax.malov.stockanalyzer.service.impl
 
-import StockFixture.savedStock
-import StockFixture.unsavedStock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -11,7 +9,9 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
-import systems.ajax.malov.stockanalyzer.service.impl.StockAggregationServiceImpl
+import systems.ajax.malov.stockanalyzer.service.StockClientApi
+import utils.StockFixture.savedStock
+import utils.StockFixture.unsavedStock
 
 @ExtendWith(MockitoExtension::class)
 class StockAggregationServiceTest {

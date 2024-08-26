@@ -1,8 +1,6 @@
-package systems.ajax.malov.stockanalyzer.service
+package systems.ajax.malov.stockanalyzer.service.impl
 
-import StockFixture.TEST_STOCK_SYMBOL
-import StockFixture.notAggregatedResponseForFiveBestStocks
-import StockFixture.savedStock
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -12,7 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
-import systems.ajax.malov.stockanalyzer.service.impl.StockAnalyzerServiceImpl
+import utils.StockFixture.TEST_STOCK_SYMBOL
+import utils.StockFixture.notAggregatedResponseForFiveBestStocks
+import utils.StockFixture.savedStock
 
 @ExtendWith(MockitoExtension::class)
 class StockAnalyzerServiceTest {

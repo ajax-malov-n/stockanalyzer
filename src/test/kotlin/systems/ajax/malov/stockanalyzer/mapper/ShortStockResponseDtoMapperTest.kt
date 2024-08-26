@@ -1,10 +1,10 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
-import StockFixture.savedStock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import systems.ajax.malov.stockanalyzer.dto.ShortStockResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockResponseDtoMapper.toShortStockResponseDto
+import utils.StockFixture.savedStock
 import java.math.BigDecimal
 
 class ShortStockResponseDtoMapperTest {

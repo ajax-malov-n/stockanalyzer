@@ -1,15 +1,14 @@
-package systems.ajax.malov.stockanalyzer.repository
+package systems.ajax.malov.stockanalyzer.repository.impl
 
-import StockFixture.alsoFirstPlaceStock
-import StockFixture.firstPlaceStock
-import StockFixture.secondPlaceStock
-import StockFixture.unsavedStock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.junit.jupiter.MockitoExtension
-import systems.ajax.malov.stockanalyzer.repository.impl.StockInMemoryRepositoryImpl
+import utils.StockFixture.alsoFirstPlaceStock
+import utils.StockFixture.firstPlaceStock
+import utils.StockFixture.secondPlaceStock
+import utils.StockFixture.unsavedStock
 
 @ExtendWith(MockitoExtension::class)
 class StockInMemoryRepositoryTest {

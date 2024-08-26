@@ -1,8 +1,5 @@
 package systems.ajax.malov.stockanalyzer.controller
 
-import StockFixture.TEST_STOCK_SYMBOL
-import StockFixture.aggregatedStockResponseDto
-import StockFixture.notAggregatedResponseForFiveBestStocks
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -12,6 +9,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
 import systems.ajax.malov.stockanalyzer.service.StockAnalyzerService
+import utils.StockFixture.TEST_STOCK_SYMBOL
+import utils.StockFixture.aggregatedStockResponseDto
+import utils.StockFixture.notAggregatedResponseForFiveBestStocks
 import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)

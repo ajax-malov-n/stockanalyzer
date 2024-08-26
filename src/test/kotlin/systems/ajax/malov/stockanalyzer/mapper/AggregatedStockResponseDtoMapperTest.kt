@@ -1,9 +1,9 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
-import StockFixture.aggregatedStockResponseDto
-import StockFixture.notAggregatedResponseForFiveBestStocks
 import org.junit.jupiter.api.Test
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockResponseDtoMapper.toAggregatedStockItemResponseDto
+import utils.StockFixture.aggregatedStockResponseDto
+import utils.StockFixture.notAggregatedResponseForFiveBestStocks
 import kotlin.test.assertEquals
 
 class AggregatedStockResponseDtoMapperTest {

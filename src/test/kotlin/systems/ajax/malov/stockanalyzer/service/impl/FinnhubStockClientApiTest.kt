@@ -1,7 +1,5 @@
-package systems.ajax.malov.stockanalyzer.service
+package systems.ajax.malov.stockanalyzer.service.impl
 
-import StockFixture.TEST_STOCK_SYMBOL
-import StockFixture.unsavedStock
 import io.finnhub.api.apis.DefaultApi
 import io.finnhub.api.models.Quote
 import io.finnhub.api.models.StockSymbol
@@ -16,7 +14,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.test.util.ReflectionTestUtils
-import systems.ajax.malov.stockanalyzer.service.impl.FinnhubStockClientApi
+import utils.StockFixture.TEST_STOCK_SYMBOL
+import utils.StockFixture.unsavedStock
 
 
 @ExtendWith(MockitoExtension::class)

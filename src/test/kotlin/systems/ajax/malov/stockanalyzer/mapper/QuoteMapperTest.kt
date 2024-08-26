@@ -1,11 +1,11 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
-import QuoteFixture.quote
-import StockFixture.TEST_STOCK_SYMBOL
-import StockFixture.testDate
-import StockFixture.unsavedStock
 import org.junit.jupiter.api.Test
 import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStock
+import utils.QuoteFixture.quote
+import utils.StockFixture.TEST_STOCK_SYMBOL
+import utils.StockFixture.testDate
+import utils.StockFixture.unsavedStock
 import kotlin.test.assertEquals
 
 class QuoteMapperTest {
