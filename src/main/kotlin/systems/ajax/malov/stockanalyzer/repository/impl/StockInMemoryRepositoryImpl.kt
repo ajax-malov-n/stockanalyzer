@@ -40,14 +40,7 @@ class StockInMemoryRepositoryImpl : StockRepository {
             .map { it.value }
             .groupBy { it.symbol }
             .toList()
-            .sortedByDescending { (_, stockList) ->
-                val avgChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.change }
-                val avgPercentChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.percentChange }
-
-                val firstCoefficient = (avgChange / maxChange) * BigDecimal.valueOf(0.5)
-                val secondCoefficient = (avgPercentChange / maxPercentChange) * BigDecimal.valueOf(0.5)
-                firstCoefficient + secondCoefficient
-            }
+            .sortedByDescending(compareByPrice(maxChange, maxPercentChange))
             .take(n)
             .map { (symbol, stocks) ->
                 symbol to stocks.distinctBy { it.currentPrice }
@@ -55,6 +48,21 @@ class StockInMemoryRepositoryImpl : StockRepository {
                     .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK)
             }
             .toList()
+    }
+
+    private fun compareByPrice(
+        maxChange: BigDecimal,
+        maxPercentChange: BigDecimal,
+    ): (Pair<String?, List<Stock>>) -> BigDecimal {
+        return { pair: Pair<String?, List<Stock>> ->
+            val stockList = pair.second
+            val avgChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.change }
+            val avgPercentChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.percentChange }
+
+            val priceChangeCoefficient = (avgChange / maxChange) * BigDecimal.valueOf(0.5)
+            val pricePercentChangeCoefficient = (avgPercentChange / maxPercentChange) * BigDecimal.valueOf(0.5)
+            priceChangeCoefficient + pricePercentChangeCoefficient
+        }
     }
 
     private fun isStockInValidDateRange(stock: Stock, timeOfRequest: Instant): Boolean {
