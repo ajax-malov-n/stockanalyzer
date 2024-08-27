@@ -14,8 +14,6 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
 
     private val beanMap = HashMap<String, ClassWithAnnotatedMethods>()
 
-    data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
-
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any? {
         val methods: List<Method> = bean.javaClass.methods.filter {
             it.isAnnotationPresent(LogExecutionTime::class.java)
@@ -32,8 +30,8 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
                 beanClass.getClassLoader(),
                 getAllInterfaces(beanClass)
             ) { _, proxiedMethod, args ->
-                if (isRequiredProxy(methods, proxiedMethod)) {
-                    logMethodExecution(proxiedMethod, bean, args)
+                if (methods.any { originalMethod -> originalMethod isEqualTo proxiedMethod }) {
+                    invokeProxiedMethodWithLogging(proxiedMethod, bean, args)
                 } else {
                     proxiedMethod.invoke(bean, *(args ?: emptyArray()))
                 }
@@ -41,19 +39,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         } ?: bean
     }
 
-    private fun isRequiredProxy(
-        methods: List<Method>,
-        proxiedMethod: Method,
-    ): Boolean {
-        return methods.any { originalMethod ->
-            areMethodsEqual(
-                originalMethod,
-                proxiedMethod
-            )
-        }
-    }
-
-    private fun logMethodExecution(
+    private fun invokeProxiedMethodWithLogging(
         proxiedMethod: Method,
         bean: Any,
         args: Array<out Any>?,
@@ -62,8 +48,8 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         return try {
             proxiedMethod.invoke(bean, *(args ?: emptyArray<Any?>()))
         } finally {
-            val executionTimeInMs = (System.nanoTime() - before) / 1_000_000
-            log.info("Execution time of {} is {} ms", proxiedMethod.name, executionTimeInMs)
+            val executionTimeInNs = (System.nanoTime() - before)
+            logExecutionTime(proxiedMethod.name, executionTimeInNs)
         }
     }
 
@@ -74,13 +60,44 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
             .toTypedArray()
     }
 
-    private fun areMethodsEqual(originalMethod: Method, proxiedMethod: Method): Boolean {
-        return originalMethod.name == proxiedMethod.name &&
-                originalMethod.returnType == proxiedMethod.returnType &&
-                originalMethod.parameterTypes.contentEquals(proxiedMethod.parameterTypes)
+    private infix fun Method.isEqualTo(proxiedMethod: Method): Boolean {
+        return this.name == proxiedMethod.name &&
+                this.returnType == proxiedMethod.returnType &&
+                this.parameterTypes.contentEquals(proxiedMethod.parameterTypes)
+    }
+
+    private fun logExecutionTime(proxiedMethodName: String, executionTimeInNs: Long) {
+        val seconds = executionTimeInNs / SECONDS
+        val remainingNsAfterSeconds = executionTimeInNs % SECONDS
+        val milliseconds = remainingNsAfterSeconds / MILLISECONDS
+        val nanoseconds = remainingNsAfterSeconds % MILLISECONDS
+
+        val timeStringBuilder = StringBuilder()
+
+        if (seconds > 0) {
+            timeStringBuilder.append(seconds).append(" s ")
+        }
+        if (milliseconds > 0) {
+            timeStringBuilder.append(milliseconds).append(" ms ")
+        }
+        if (nanoseconds > 0) {
+            timeStringBuilder.append(nanoseconds).append(" ns ")
+        }
+
+        val timeString = if (timeStringBuilder.isEmpty()) {
+            "0 ns"
+        } else {
+            timeStringBuilder.toString().trim()
+        }
+
+        log.info("Execution time of {} is {}", proxiedMethodName, timeString)
     }
 
     companion object {
+        const val MILLISECONDS = 1_000_000
+        const val SECONDS = 1_000_000_000
         private val log = LoggerFactory.getLogger(LogExecutionTimeAnnotationBeanPostProcessor::class.java)
     }
 }
+
+internal data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
