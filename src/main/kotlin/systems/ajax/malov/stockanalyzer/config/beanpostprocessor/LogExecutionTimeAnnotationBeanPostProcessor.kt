@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.time.Duration
 
 
 @ConditionalOnProperty(name = ["logExecutionTime.enabled"], havingValue = "true")
@@ -67,37 +68,22 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
     }
 
     private fun logExecutionTime(proxiedMethodName: String, executionTimeInNs: Long) {
-        val seconds = executionTimeInNs / SECONDS
-        val remainingNsAfterSeconds = executionTimeInNs % SECONDS
-        val milliseconds = remainingNsAfterSeconds / MILLISECONDS
-        val nanoseconds = remainingNsAfterSeconds % MILLISECONDS
-
-        val timeStringBuilder = StringBuilder()
-
-        if (seconds > 0) {
-            timeStringBuilder.append(seconds).append(" s ")
-        }
-        if (milliseconds > 0) {
-            timeStringBuilder.append(milliseconds).append(" ms ")
-        }
-        if (nanoseconds > 0) {
-            timeStringBuilder.append(nanoseconds).append(" ns ")
+        val duration = Duration.ofNanos(executionTimeInNs)
+        val executionTime = StringBuilder().apply {
+            append(duration.seconds)
+            append(".")
+            append(duration.nano)
+            append(" ")
+            append("s")
         }
 
-        val timeString = if (timeStringBuilder.isEmpty()) {
-            "0 ns"
-        } else {
-            timeStringBuilder.toString().trim()
-        }
-
-        log.info("Execution time of {} is {}", proxiedMethodName, timeString)
+        log.info("Execution time of {} is {}", proxiedMethodName, executionTime)
     }
 
+    private data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
+
     companion object {
-        const val MILLISECONDS = 1_000_000
-        const val SECONDS = 1_000_000_000
         private val log = LoggerFactory.getLogger(LogExecutionTimeAnnotationBeanPostProcessor::class.java)
     }
 }
 
-internal data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
