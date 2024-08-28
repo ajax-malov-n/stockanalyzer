@@ -45,7 +45,7 @@ class StockInMemoryRepositoryImpl : StockRepository {
             .take(n)
             .map { (symbol, stocks) ->
                 symbol to stocks.distinctBy { it.currentPrice }
-                    .sortedByDescending { stock -> stock.dateOfRetrieval }
+                    .sortedByDescending { it.dateOfRetrieval }
                     .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK)
             }
             .toList()
