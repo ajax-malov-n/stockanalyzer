@@ -23,7 +23,6 @@ class StockInMemoryRepositoryImpl : StockRepository {
         return stocks
     }
 
-    @Suppress("MagicNumber")
     override fun findTopNStocks(n: Int): List<Pair<String?, List<Stock>>> {
         if (db.isEmpty()) return emptyList()
 
@@ -50,6 +49,7 @@ class StockInMemoryRepositoryImpl : StockRepository {
             .toList()
     }
 
+    @Suppress("MagicNumber")
     private fun compareByPrice(
         maxChange: BigDecimal,
         maxPercentChange: BigDecimal,
