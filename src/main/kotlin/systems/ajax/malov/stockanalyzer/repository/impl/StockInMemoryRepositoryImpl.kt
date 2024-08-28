@@ -2,12 +2,14 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import org.springframework.stereotype.Repository
 import systems.ajax.malov.stockanalyzer.constant.NUMBER_OF_HISTORY_RECORDS_PER_STOCK
+import systems.ajax.malov.stockanalyzer.constant.WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS
 import systems.ajax.malov.stockanalyzer.entity.Stock
 import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
 import java.util.*
+import kotlin.reflect.KProperty1
 
 
 @Repository
@@ -23,11 +25,11 @@ class StockInMemoryRepositoryImpl : StockRepository {
         return stocks
     }
 
-    override fun findTopNStocks(n: Int): List<Pair<String?, List<Stock>>> {
+    override fun findTopNStockSymbolsWithStockData(n: Int): List<Pair<String, List<Stock>>> {
         if (db.isEmpty()) return emptyList()
 
-        val maxPercentChange = getMaxBigDecimal { stock: Stock -> stock.percentChange }
-        val maxChange = getMaxBigDecimal { stock: Stock -> stock.change }
+        val maxPercentChange = getMaxBigDecimal(Stock::percentChange)
+        val maxChange = getMaxBigDecimal(Stock::change)
 
         val timeOfRequest = Instant.now()
 
@@ -37,9 +39,9 @@ class StockInMemoryRepositoryImpl : StockRepository {
                 isStockInValidDateRange(stock, timeOfRequest)
             }
             .map { it.value }
-            .groupBy { it.symbol }
+            .groupBy { it.symbol!! }
             .toList()
-            .sortedByDescending(compareByPrice(maxChange, maxPercentChange))
+            .sortedByDescending(selectorFunctionToCompareStocksByPrice(maxChange, maxPercentChange))
             .take(n)
             .map { (symbol, stocks) ->
                 symbol to stocks.distinctBy { it.currentPrice }
@@ -49,18 +51,19 @@ class StockInMemoryRepositoryImpl : StockRepository {
             .toList()
     }
 
-    @Suppress("MagicNumber")
-    private fun compareByPrice(
+    private fun selectorFunctionToCompareStocksByPrice(
         maxChange: BigDecimal,
         maxPercentChange: BigDecimal,
-    ): (Pair<String?, List<Stock>>) -> BigDecimal {
-        return { pair: Pair<String?, List<Stock>> ->
+    ): (Pair<String, List<Stock>>) -> BigDecimal {
+        return { pair: Pair<String, List<Stock>> ->
             val stockList = pair.second
             val avgChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.change }
             val avgPercentChange = getAvgOfBigDecimals(stockList) { stock: Stock -> stock.percentChange }
 
-            val priceChangeCoefficient = (avgChange / maxChange) * BigDecimal.valueOf(0.5)
-            val pricePercentChangeCoefficient = (avgPercentChange / maxPercentChange) * BigDecimal.valueOf(0.5)
+            val priceChangeCoefficient =
+                (avgChange / maxChange) * BigDecimal.valueOf(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS)
+            val pricePercentChangeCoefficient =
+                (avgPercentChange / maxPercentChange) * BigDecimal.valueOf(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS)
             priceChangeCoefficient + pricePercentChangeCoefficient
         }
     }
@@ -72,9 +75,9 @@ class StockInMemoryRepositoryImpl : StockRepository {
             ) == true
     }
 
-    private fun getMaxBigDecimal(mapperToBigDecimal: (stock: Stock) -> BigDecimal?): BigDecimal {
+    private fun getMaxBigDecimal(property: KProperty1<Stock, BigDecimal?>): BigDecimal {
         return db
-            .mapNotNull { (_, stock) -> mapperToBigDecimal(stock) }
+            .mapNotNull { (_, stock) -> property.get(stock) }
             .maxBy { it }
     }
 
@@ -88,9 +91,9 @@ class StockInMemoryRepositoryImpl : StockRepository {
                 BigDecimal.valueOf(stockList.size.toLong())
     }
 
-    override fun findAllStockSymbols(): List<String?> {
+    override fun findAllStockSymbols(): List<String> {
         return db
-            .map { it.value.symbol }
+            .mapNotNull { it.value.symbol }
             .distinct()
             .toList()
     }

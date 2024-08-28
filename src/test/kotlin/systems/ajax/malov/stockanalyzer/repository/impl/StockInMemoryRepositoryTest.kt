@@ -51,7 +51,7 @@ class StockInMemoryRepositoryTest {
         )
 
         //WHEN
-        val actual = stockRepository.findTopNStocks(5)
+        val actual = stockRepository.findTopNStockSymbolsWithStockData(5)
 
         //THEN
         assertEquals(expected.size, actual.size)

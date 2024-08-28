@@ -28,12 +28,12 @@ class StockAnalyzerServiceTest {
         val savedStock = savedStock()
         val retrievedStocks = listOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForFiveBestStocks()
-        whenever(stockRepository.findTopNStocks(5))
+        whenever(stockRepository.findTopNStockSymbolsWithStockData(5))
             .thenReturn(retrievedStocks)
 
         val actual = stockAnalyzerService.getFiveBestStocksToBuy()
 
-        verify(stockRepository).findTopNStocks(5)
+        verify(stockRepository).findTopNStockSymbolsWithStockData(5)
         assertEquals(expected, actual)
     }
 
