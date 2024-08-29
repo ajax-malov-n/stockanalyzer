@@ -46,7 +46,10 @@ tasks.withType<Test> {
 }
 
 configure<DeltaCoverageConfiguration> {
-    diffSource.git.compareWith("refs/remotes/origin/master")
+    val targetBranch = project.properties["diffBase"]?.toString() ?: "refs/remotes/origin/master"
+    diffSource.byGit {
+        compareWith(targetBranch)
+    }
 
     violationRules.failIfCoverageLessThan(0.6)
     reports {
