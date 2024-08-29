@@ -1,12 +1,13 @@
 package systems.ajax.malov.stockanalyzer.config.beanpostprocessor
 
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
+import java.time.Duration
+import java.util.Objects
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-import java.lang.reflect.Method
-import java.lang.reflect.Proxy
-import java.time.Duration
 
 
 @ConditionalOnProperty(name = ["logExecutionTime.enabled"], havingValue = "true")
@@ -16,9 +17,12 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
     private val beanMap = HashMap<String, ClassWithAnnotatedMethods>()
 
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any? {
-        val methods: List<Method> = bean.javaClass.methods.filter {
-            it.isAnnotationPresent(LogExecutionTime::class.java)
-        }
+        val methods: Set<ComparableMethod> = bean.javaClass.methods
+            .filter {
+                it.isAnnotationPresent(LogExecutionTime::class.java)
+            }
+            .map { ComparableMethod(it) }
+            .toSet()
         if (methods.isNotEmpty()) {
             beanMap[beanName] = ClassWithAnnotatedMethods(bean.javaClass, methods)
         }
@@ -31,7 +35,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
                 beanClass.getClassLoader(),
                 getAllInterfaces(beanClass)
             ) { _, proxiedMethod, args ->
-                if (methods.any { originalMethod -> originalMethod isEqualTo proxiedMethod }) {
+                if (methods.contains(ComparableMethod(proxiedMethod))) {
                     invokeProxiedMethodWithLogging(proxiedMethod, bean, args)
                 } else {
                     proxiedMethod.invoke(bean, *(args ?: emptyArray()))
@@ -61,12 +65,6 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
             .toTypedArray()
     }
 
-    private infix fun Method.isEqualTo(proxiedMethod: Method): Boolean {
-        return this.name == proxiedMethod.name &&
-                this.returnType == proxiedMethod.returnType &&
-                this.parameterTypes.contentEquals(proxiedMethod.parameterTypes)
-    }
-
     private fun logExecutionTime(proxiedMethodName: String, executionTimeInNs: Long) {
         val duration = Duration.ofNanos(executionTimeInNs)
         val executionTime = StringBuilder().apply {
@@ -80,7 +78,22 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         log.info("Execution time of {} is {}", proxiedMethodName, executionTime)
     }
 
-    private data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: List<Method>)
+    private data class ComparableMethod(val method: Method) {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is ComparableMethod) return false
+            return method.name == other.method.name &&
+                    method.returnType == other.method.returnType &&
+                    method.parameterTypes.contentEquals(other.method.parameterTypes)
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(method.returnType, method.parameterTypes, method.parameterTypes)
+        }
+    }
+
+    private data class ClassWithAnnotatedMethods(val clazz: Class<*>, val methods: Set<ComparableMethod>)
 
     companion object {
         private val log = LoggerFactory.getLogger(LogExecutionTimeAnnotationBeanPostProcessor::class.java)
