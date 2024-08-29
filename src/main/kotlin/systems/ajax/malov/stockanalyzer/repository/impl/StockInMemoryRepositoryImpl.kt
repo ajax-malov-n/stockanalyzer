@@ -1,14 +1,12 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import org.springframework.stereotype.Repository
-import systems.ajax.malov.stockanalyzer.constant.NUMBER_OF_HISTORY_RECORDS_PER_STOCK
-import systems.ajax.malov.stockanalyzer.constant.WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS
-import systems.ajax.malov.stockanalyzer.entity.Stock
-import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
-import java.util.*
+import java.util.UUID
+import org.springframework.stereotype.Repository
+import systems.ajax.malov.stockanalyzer.entity.Stock
+import systems.ajax.malov.stockanalyzer.repository.StockRepository
 import kotlin.reflect.KProperty1
 
 
@@ -33,12 +31,13 @@ class StockInMemoryRepositoryImpl : StockRepository {
 
         val timeOfRequest = Instant.now()
 
-        return db.asSequence()
-            .filterNot { (_, stock) -> stock.symbol == null }
-            .filter { (_, stock) ->
+        return db.values
+            .asSequence()
+            .filterNot { it.symbol == null }
+            .filter { stock ->
                 isStockInValidDateRange(stock, timeOfRequest)
             }
-            .map { it.value }
+            .map { it }
             .groupBy { it.symbol!! }
             .toList()
             .sortedByDescending(selectorFunctionToCompareStocksByPrice(maxChange, maxPercentChange))
@@ -96,5 +95,10 @@ class StockInMemoryRepositoryImpl : StockRepository {
             .mapNotNull { it.value.symbol }
             .distinct()
             .toList()
+    }
+
+    private companion object {
+        const val NUMBER_OF_HISTORY_RECORDS_PER_STOCK = 5
+        const val WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS = 0.5
     }
 }

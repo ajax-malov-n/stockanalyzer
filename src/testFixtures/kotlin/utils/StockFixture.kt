@@ -1,12 +1,12 @@
 package utils
 
+import java.math.BigDecimal
+import java.time.Instant
+import java.util.UUID
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockItemResponseDto
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponseDto
 import systems.ajax.malov.stockanalyzer.entity.Stock
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockResponseDtoMapper.toShortStockResponseDto
-import java.math.BigDecimal
-import java.time.Instant
-import java.util.*
 
 
 object StockFixture {
