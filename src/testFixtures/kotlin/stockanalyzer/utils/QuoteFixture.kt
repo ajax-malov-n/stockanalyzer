@@ -1,4 +1,4 @@
-package utils
+package stockanalyzer.utils
 
 import io.finnhub.api.models.Quote
 
