@@ -32,31 +32,31 @@ Entities:
 
     // The price at which the stock opened for trading on a particular day.
     // This value is determined by the first trade executed after the market opens.
-    val openPrice: Float?,
+    val openPrice: BigDecimal?,
 
     // The highest price at which the stock traded during the trading day.
     // It gives an indication of the maximum price traders were willing to pay.
-    val highPrice: Float?,
+    val highPrice: BigDecimal?,
 
     // The lowest price at which the stock traded during the trading day.
     // It reflects the minimum price at which the stock was sold.
-    val lowPrice: Float?,
+    val lowPrice: BigDecimal?,
 
     // The last recorded price of the stock at the time of data retrieval.
     // This value is frequently updated throughout the trading day.
-    val currentPrice: Float?,
+    val currentPrice: BigDecimal?,
 
     // The price at which the stock closed on the previous trading day.
     // It is used as a reference point to gauge price changes.
-    val previousClosePrice: Float?,
+    val previousClosePrice: BigDecimal?,
 
     // The absolute difference between the current price and the previous close price.
     // It indicates whether the stock has gone up or down in value.
-    val change: Float?,
+    val change: BigDecimal?,
 
     // The percentage change from the previous close price to the current price.
     // This gives a relative measure of how much the stock has gained or lost in value.
-    val percentChange: Float?,
+    val percentChange: BigDecimal?,
 
     // The timestamp when the stock data was retrieved.
     // It helps track the exact time when the stock information was obtained.

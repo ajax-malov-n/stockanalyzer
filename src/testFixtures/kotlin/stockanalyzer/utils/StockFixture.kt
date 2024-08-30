@@ -1,10 +1,12 @@
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockItemResponseDto
-import systems.ajax.malov.stockanalyzer.dto.AggregatedStockResponseDto
-import systems.ajax.malov.stockanalyzer.entity.Stock
-import systems.ajax.malov.stockanalyzer.mapper.ShortStockResponseDtoMapper.toShortStockResponseDto
+package stockanalyzer.utils
+
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.*
+import java.util.UUID
+import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordItemResponseDto
+import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
+import systems.ajax.malov.stockanalyzer.entity.StockRecord
+import systems.ajax.malov.stockanalyzer.mapper.ShortStockRecordResponseDtoMapper.toShortStockRecordResponseDto
 
 
 object StockFixture {
@@ -12,7 +14,7 @@ object StockFixture {
 
     fun testDate(): Instant = Instant.ofEpochMilli(111111111)
 
-    fun unsavedStock() = Stock(
+    fun unsavedStockRecord() = StockRecord(
         symbol = TEST_STOCK_SYMBOL,
         openPrice = BigDecimal("1.0"),
         highPrice = BigDecimal("1.0"),
@@ -24,7 +26,7 @@ object StockFixture {
         dateOfRetrieval = testDate()
     )
 
-    fun savedStock() = Stock(
+    fun savedStockRecord() = StockRecord(
         id = UUID.fromString("dc0aaf1b-7917-4ae8-b3e0-9539466e54a4"),
         symbol = TEST_STOCK_SYMBOL,
         openPrice = BigDecimal("1.0"),
@@ -37,32 +39,35 @@ object StockFixture {
         dateOfRetrieval = testDate()
     )
 
-    fun firstPlaceStock() = savedStock().copy(
+    fun firstPlaceStockRecord() = savedStockRecord().copy(
         symbol = "AAPL",
         change = BigDecimal("2.0"),
         percentChange = BigDecimal("0.3"),
         dateOfRetrieval = Instant.now()
     )
 
-    fun alsoFirstPlaceStock() = savedStock().copy(
+    fun alsoFirstPlaceStockRecord() = savedStockRecord().copy(
         symbol = "AAPL",
         change = BigDecimal("2.5"),
         percentChange = BigDecimal("0.3"),
         dateOfRetrieval = Instant.now()
     )
 
-    fun secondPlaceStock() = savedStock().copy(
+    fun secondPlaceStockRecord() = savedStockRecord().copy(
         symbol = "SSSK",
         change = BigDecimal("1.0"),
         percentChange = BigDecimal("0.2"),
         dateOfRetrieval = Instant.now()
     )
 
-    fun notAggregatedResponseForFiveBestStocks() = listOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock())))
+    fun notAggregatedResponseForFiveBestStockSymbolsWithStockRecords() =
+        mapOf(TEST_STOCK_SYMBOL to listOf(savedStockRecord()))
 
-    fun aggregatedStockResponseDto() = AggregatedStockResponseDto(
-        notAggregatedResponseForFiveBestStocks().map {
-            AggregatedStockItemResponseDto(it.first, it.second.map { stock -> stock.toShortStockResponseDto() })
+    fun aggregatedStockRecordResponseDto() = AggregatedStockRecordResponseDto(
+        notAggregatedResponseForFiveBestStockSymbolsWithStockRecords().map {
+            AggregatedStockRecordItemResponseDto(
+                it.key,
+                it.value.map { stock -> stock.toShortStockRecordResponseDto() })
         }
     )
 }
