@@ -29,6 +29,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         return bean
     }
 
+    @Suppress("SpreadOperator")
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any? {
         return beanMap[beanName]?.let { (beanClass, methods) ->
             Proxy.newProxyInstance(
@@ -44,6 +45,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         } ?: bean
     }
 
+    @Suppress("SpreadOperator")
     private fun invokeProxiedMethodWithLogging(
         proxiedMethod: Method,
         bean: Any,

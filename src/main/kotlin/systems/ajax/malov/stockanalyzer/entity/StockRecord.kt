@@ -2,10 +2,10 @@ package systems.ajax.malov.stockanalyzer.entity
 
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 //@Document(collection = "stocks")
-data class Stock(
+data class StockRecord(
 //    @Id
     var id: UUID? = null,
     val symbol: String?,

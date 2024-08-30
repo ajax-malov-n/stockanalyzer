@@ -1,14 +1,14 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
 import io.finnhub.api.models.Quote
-import systems.ajax.malov.stockanalyzer.entity.Stock
 import java.math.BigDecimal
 import java.time.Instant
+import systems.ajax.malov.stockanalyzer.entity.StockRecord
 
 object QuoteMapper {
-    fun Quote.toStock(
+    fun Quote.toStockRecord(
         scrSymbol: String, dateOfRetrievalSrc: Instant,
-    ) = Stock(
+    ) = StockRecord(
         symbol = scrSymbol,
         openPrice = o?.let { BigDecimal.valueOf(it.toDouble()) },
         highPrice = h?.let { BigDecimal.valueOf(it.toDouble()) },
