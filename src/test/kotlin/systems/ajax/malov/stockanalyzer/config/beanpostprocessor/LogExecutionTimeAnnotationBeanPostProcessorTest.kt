@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.mockito.Mockito.spy
 import org.slf4j.LoggerFactory
 import kotlin.test.Test
 
@@ -41,7 +40,7 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // THEN
         assertNotNull(proxy)
-        assertTrue(Proxy.isProxyClass(proxy?.javaClass))
+        assertTrue(Proxy.isProxyClass(proxy?.javaClass), "Expected true because bean must be proxied")
     }
 
     @Test
@@ -56,13 +55,13 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // THEN
         assertNotNull(proxy)
-        assertFalse(Proxy.isProxyClass(proxy?.javaClass))
+        assertFalse(Proxy.isProxyClass(proxy?.javaClass), "Expected false because bean must not be proxied")
     }
 
     @Test
     fun `should log execution time when invoking annotated method`() {
         // GIVEN
-        val bean = spy(AnnotatedBean())
+        val bean = AnnotatedBean()
         val beanName = "annotatedBean"
         beanPostProcessor.postProcessBeforeInitialization(bean, beanName)
         val proxy = beanPostProcessor.postProcessAfterInitialization(bean, beanName) as IBean
@@ -76,6 +75,22 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
         assertThat(logEvent).isNotNull
         assertThat(logEvent?.level.toString()).isEqualTo(System.Logger.Level.INFO.toString())
         assertThat(logEvent.toString()).contains("Execution time of annotatedMethod is")
+    }
+
+    @Test
+    fun `should not log execution time when invoking not annotated method`() {
+        // GIVEN
+        val bean = AnnotatedBean()
+        val beanName = "annotatedBean"
+        beanPostProcessor.postProcessBeforeInitialization(bean, beanName)
+        val proxy = beanPostProcessor.postProcessAfterInitialization(bean, beanName) as IBean
+
+        // WHEN
+        proxy.method()
+
+        // THEN
+        val logEvent = logAppender.events.firstOrNull()
+        assertThat(logEvent).isNull()
     }
 
     private class TestLogAppender : AppenderBase<ILoggingEvent>() {
