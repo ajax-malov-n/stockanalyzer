@@ -1,9 +1,14 @@
+import io.github.surpsg.deltacoverage.gradle.DeltaCoverageConfiguration
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.dependency.management)
     alias(libs.plugins.detekt)
+    id("io.github.surpsg.delta-coverage") version "2.4.0"
+    id("jacoco")
     `java-test-fixtures`
 }
 
