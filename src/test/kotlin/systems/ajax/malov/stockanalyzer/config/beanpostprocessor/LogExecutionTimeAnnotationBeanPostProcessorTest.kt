@@ -68,7 +68,6 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // WHEN
         proxy.annotatedMethod("1")
-        proxy.method()
 
         // THEN
         val logEvent = logAppender.events.firstOrNull()
