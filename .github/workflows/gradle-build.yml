@@ -27,3 +27,17 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
 
+      - name: Append Delta Coverage Summary
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        continue-on-error: true
+        uses: gw-kit/delta-coverage-plugin/actions/delta-coverage-report@2.4.0
+        with:
+          delta-coverage-report: build/reports/coverage-reports/delta-coverage/report.md
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2.15.1
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        continue-on-error: true
+        with:
+          check_name: 'Unit Tests Report'
+          files: '**/build/test-results/*/TEST-*.xml'

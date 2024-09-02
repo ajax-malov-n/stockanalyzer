@@ -68,7 +68,8 @@ configure<DeltaCoverageConfiguration> {
 
     violationRules.failIfCoverageLessThan(0.6)
     reports {
-        html.set(true)
+        html = true
+        markdown = true
     }
 }
 
