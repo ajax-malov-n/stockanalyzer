@@ -10,3 +10,6 @@ api:
   finnhub:
     token: ${FINNHUB_API_TOKEN}
     symbols: ${SYMBOLS}
+
+logExecutionTime:
+  enabled: true
