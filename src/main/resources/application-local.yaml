@@ -3,7 +3,7 @@ spring:
     name: stockanalyzer
   data:
     mongodb:
-      uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB_NAME}
+      uri: mongodb://root:root@localhost:27017/stocks
 api:
   finnhub:
     token: ${FINNHUB_API_TOKEN}
