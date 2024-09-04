@@ -1,4 +1,4 @@
-name: Build App
+name: Build and Run Docker Compose
 
 on:
   push:
@@ -50,3 +50,10 @@ jobs:
         with:
           check_name: 'Unit Tests Report'
           files: '**/build/test-results/*/TEST-*.xml'
+
+      - name: Run Docker Compose
+        run: docker compose up --build --force-recreate -d
+
+      - name: Shutdown
+        if: always()
+        run: docker compose down
