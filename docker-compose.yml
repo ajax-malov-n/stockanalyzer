@@ -17,11 +17,9 @@ services:
       - SYMBOLS=${SYMBOLS}
     env_file:
       - .env
-    volumes:
-      - mongo-data:/data/db
 
   mongo:
-    image: mongo
+    image: mongo:8.0.0-rc19-noble
     container_name: mongo
     environment:
       - MONGO_INITDB_DATABASE=${MONGO_DB}
@@ -36,5 +34,8 @@ services:
       retries: 5
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
 volumes:
   mongo-data:
