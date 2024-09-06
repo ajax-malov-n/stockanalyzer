@@ -3,7 +3,7 @@ spring:
     name: stockanalyzer
   data:
     mongodb:
-      uri: mongodb://root:secret@localhost:27017/stocks
+      uri: mongodb://root:secret@localhost:27017/stocks?authSource=admin
 api:
   finnhub:
     token: ${FINNHUB_API_TOKEN}
@@ -11,3 +11,12 @@ api:
 
 logExecutionTime:
   enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

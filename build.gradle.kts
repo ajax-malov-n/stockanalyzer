@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation(libs.mockito.kotlin)
     implementation(libs.finnhub.kotlin.client)
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
