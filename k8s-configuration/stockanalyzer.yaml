@@ -43,8 +43,8 @@ spec:
                   key: finnhubApiToken
             - name: SYMBOLS
               valueFrom:
-                secretKeyRef:
-                  name: stockanalyzer-secret
+                configMapKeyRef:
+                  name: stockanalyzer-configmap
                   key: symbols
 ---
 apiVersion: v1
