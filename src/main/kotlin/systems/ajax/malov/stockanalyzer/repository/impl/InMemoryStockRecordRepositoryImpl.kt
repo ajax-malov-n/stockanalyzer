@@ -23,6 +23,7 @@ class InMemoryStockRecordRepositoryImpl : StockRecordRepository {
         return stockRecords
     }
 
+    @Suppress("UnsafeCallOnNullableType")
     override fun findTopNStockSymbolsWithStockRecords(n: Int): Map<String, List<StockRecord>> {
         if (db.isEmpty()) return emptyMap()
 
@@ -34,10 +35,7 @@ class InMemoryStockRecordRepositoryImpl : StockRecordRepository {
         return db.values
             .asSequence()
             .filterNot { it.symbol == null }
-            .filter { stockRecord ->
-                isStockInValidDateRange(stockRecord, timeOfRequest)
-            }
-            .map { it }
+            .filter { stockRecord -> isStockInValidDateRange(stockRecord, timeOfRequest) }
             .groupBy { it.symbol!! }
             .toList()
             .asSequence()

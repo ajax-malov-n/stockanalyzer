@@ -46,6 +46,7 @@ kotlin {
 
 detekt {
     buildUponDefaultConfig = true
+    config.from(file("detekt.yml"))
 }
 
 tasks.withType<Detekt>().configureEach {
@@ -77,4 +78,6 @@ configure<DeltaCoverageConfiguration> {
 
 tasks.named("check") {
     dependsOn("deltaCoverage")
+    dependsOn("detektMain")
+    dependsOn("detektTest")
 }

@@ -39,7 +39,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
                 if (methods.contains(ComparableMethod(proxiedMethod))) {
                     invokeProxiedMethodWithLogging(proxiedMethod, bean, args)
                 } else {
-                    proxiedMethod.invoke(bean, *(args ?: emptyArray()))
+                    proxiedMethod.invoke(bean, *(args.orEmpty()))
                 }
             }
         } ?: bean
