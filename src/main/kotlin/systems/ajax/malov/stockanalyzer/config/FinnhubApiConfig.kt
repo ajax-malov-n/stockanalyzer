@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class FinnhubApiConfig {
-    @Value("\${api.finnhub.token}")
-    private lateinit var apiToken: String
+class FinnhubApiConfig(
+    @Value("\${api.finnhub.token}") private val apiToken: String,
+) {
 
     @Bean
     fun finnhubApiConfiguration(): DefaultApi {
