@@ -20,7 +20,6 @@ kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx
 kubectl apply -f mongo-configmap.yaml
 kubectl apply -f mongo-secret.yaml
 kubectl apply -f stockanalyzer-secret.yaml
-kubectl apply -f stockanalyzer-configmap.yaml
 
 # Wait for the services to be ready before applying the Ingress
 echo "Waiting for MongoDB and StockAnalyzer services to be ready..."
