@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockanalyzer
+  labels:
+    app: stockanalyzer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stockanalyzer
+  template:
+    metadata:
+      labels:
+        app: stockanalyzer
+    spec:
+      containers:
+        - name: stockanalyzer
+          image: stockanalyzer-app
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: mongo-init-db
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: FINNHUB_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: stockanalyzer-secret
+                  key: finnhubApiToken
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stockanalyzer-service
+spec:
+  selector:
+    app: stockanalyzer
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30003
