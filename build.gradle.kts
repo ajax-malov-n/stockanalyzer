@@ -28,6 +28,12 @@ repositories {
 dependencies {
     implementation(libs.mockito.kotlin)
     implementation(libs.finnhub.kotlin.client)
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("io.mongock:mongock-springboot-v3:5.2.4")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.16.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-mongo:5.16.0")
+    implementation("io.mongock:mongodb-springdata-v4-driver:5.2.4")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -44,6 +50,7 @@ kotlin {
 
 detekt {
     buildUponDefaultConfig = true
+    config.from(file("detekt.yml"))
 }
 
 tasks.withType<Detekt>().configureEach {
@@ -75,4 +82,6 @@ configure<DeltaCoverageConfiguration> {
 
 tasks.named("check") {
     dependsOn("deltaCoverage")
+    dependsOn("detektMain")
+    dependsOn("detektTest")
 }
