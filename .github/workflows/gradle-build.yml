@@ -36,8 +36,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x deltaCoverage --parallel
 
-      - name: Run Delta Coverage
-        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+      - name: Run Delta Coverage check
+        if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
+        continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'suppress-delta-coverage') }}
         run: ./gradlew deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
 
       - name: Append Delta Coverage Summary
