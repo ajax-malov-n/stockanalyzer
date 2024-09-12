@@ -10,10 +10,10 @@ import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStockRecord
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
 @Service
-class FinnhubStockRecordClientApi(private val finnhubStockApi: DefaultApi) : StockRecordClientApi {
-
-    @Value("\${api.finnhub.symbols}")
-    private lateinit var symbols: List<String>
+class FinnhubStockRecordClientApi(
+    private val finnhubStockApi: DefaultApi,
+    @Value("\${api.finnhub.symbols}") private val symbols: List<String>,
+) : StockRecordClientApi {
 
     override fun getAllStockRecords(): List<MongoStockRecord> {
         val retrievalDate = Instant.now()

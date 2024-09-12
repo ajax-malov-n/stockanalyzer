@@ -6,13 +6,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.test.util.ReflectionTestUtils
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 
@@ -22,13 +20,11 @@ class FinnhubMongoStockRecordClientApiTest {
 
     @Mock
     private lateinit var finnhubStockApi: DefaultApi
-
-    @InjectMocks
     private lateinit var finnhubStockRecordClientApi: FinnhubStockRecordClientApi
 
     @BeforeEach
     fun setup() {
-        ReflectionTestUtils.setField(finnhubStockRecordClientApi, "symbols", listOf(TEST_STOCK_SYMBOL))
+        finnhubStockRecordClientApi = FinnhubStockRecordClientApi(finnhubStockApi, listOf(TEST_STOCK_SYMBOL))
     }
 
     @Test
