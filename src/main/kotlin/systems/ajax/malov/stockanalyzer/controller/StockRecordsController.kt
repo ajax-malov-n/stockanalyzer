@@ -22,6 +22,6 @@ class StockRecordsController(private val stockRecordAnalyzerService: StockRecord
         )
 
     @GetMapping("/symbols")
-    fun getAllManageableStockSymbols(): ResponseEntity<Set<String>> =
+    fun getAllManageableStockSymbols(): ResponseEntity<List<String>> =
         ResponseEntity.ok(stockRecordAnalyzerService.getAllManageableStocksSymbols())
 }

@@ -7,7 +7,7 @@ import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.dto.ShortStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockRecordResponseDtoMapper.toShortStockRecordResponseDto
 
-class ShortStockRecordResponseDtoMapperTest {
+class ShortMongoStockRecordResponseDtoMapperTest {
 
     @Test
     fun `should map stock to shortStockResponseDto`() {

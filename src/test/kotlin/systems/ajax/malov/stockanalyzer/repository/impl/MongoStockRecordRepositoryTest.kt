@@ -2,25 +2,24 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.beans.factory.annotation.Autowired
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
+import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 
-@ExtendWith(MockitoExtension::class)
-class StockRecordInMemoryRepositoryTest {
 
-    @InjectMocks
-    private lateinit var stockRecordRepository: InMemoryStockRecordRepositoryImpl
+class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
+
+    @Autowired
+    private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
 
     @Test
     fun `insertAll fun inserts all stocks records and retrieves inserted stock records with ids`() {
         val listOfUnsavedStockRecords = listOf(unsavedStockRecord())
 
-        val actual = stockRecordRepository.insertAll(listOfUnsavedStockRecords)
+        val actual = mongoStockRecordRepository.insertAll(listOfUnsavedStockRecords)
 
         assertEquals(listOfUnsavedStockRecords.size, actual.size)
         assertEquals(listOfUnsavedStockRecords.size, actual.count { it.id != null })
@@ -30,11 +29,12 @@ class StockRecordInMemoryRepositoryTest {
     @Test
     fun `getAllStockSymbols retrieves all stock symbols from db`() {
         val listOfUnsavedStocks = listOf(unsavedStockRecord())
-        stockRecordRepository.insertAll(listOf(unsavedStockRecord()))
+        mongoStockRecordRepository.insertAll(listOf(unsavedStockRecord()))
+        println(mongoStockRecordRepository.findAllStockSymbols())
 
-        val actual = stockRecordRepository.findAllStockSymbols()
+        val actual = mongoStockRecordRepository.findAllStockSymbols()
 
-        assertEquals(listOfUnsavedStocks.map { it.symbol }.toSet(), actual)
+        assertEquals(listOfUnsavedStocks.map { it.symbol }.toList(), actual)
     }
 
     @Test
@@ -44,14 +44,14 @@ class StockRecordInMemoryRepositoryTest {
         val bestStock2 = alsoFirstPlaceStockRecord()
         val secondBestStock = secondPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
-        stockRecordRepository.insertAll(listOfUnsavedStocks)
+        mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
         )
 
         //WHEN
-        val actual = stockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
+        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
 
         //THEN
         assertEquals(expected.size, actual.size)

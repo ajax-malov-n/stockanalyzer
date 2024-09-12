@@ -5,7 +5,7 @@ import java.time.Instant
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import systems.ajax.malov.stockanalyzer.entity.StockRecord
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStockRecord
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
@@ -15,7 +15,7 @@ class FinnhubStockRecordClientApi(private val finnhubStockApi: DefaultApi) : Sto
     @Value("\${api.finnhub.symbols}")
     private lateinit var symbols: List<String>
 
-    override fun getAllStockRecords(): List<StockRecord> {
+    override fun getAllStockRecords(): List<MongoStockRecord> {
         val retrievalDate = Instant.now()
 
         return symbols.mapNotNull {
@@ -24,7 +24,7 @@ class FinnhubStockRecordClientApi(private val finnhubStockApi: DefaultApi) : Sto
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun retrieveStockRecord(symbol: String, retrievalDate: Instant): StockRecord? {
+    private fun retrieveStockRecord(symbol: String, retrievalDate: Instant): MongoStockRecord? {
         try {
             return finnhubStockApi.quote(symbol).toStockRecord(symbol, retrievalDate)
         } catch (e: Exception) {

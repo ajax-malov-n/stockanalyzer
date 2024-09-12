@@ -22,7 +22,6 @@ class TimeSeriesStockCollectionMigration {
                 .granularity(Granularity.MINUTES)
             val options: CollectionOptions = CollectionOptions.empty().timeSeries(timeSeriesOptions);
 
-            // Create the time series collection
             mongoTemplate.createCollection("stockRecords", options)
         }
     }

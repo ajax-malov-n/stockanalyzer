@@ -15,7 +15,7 @@ import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
 @ExtendWith(MockitoExtension::class)
-class StockRecordAnalyzerServiceTest {
+class MongoStockRecordAnalyzerServiceTest {
 
     @Mock
     private lateinit var stockRecordRepository: StockRecordRepository
@@ -40,7 +40,7 @@ class StockRecordAnalyzerServiceTest {
 
     @Test
     fun `getAllManageableStocksSymbols calls repository and returns all stocks symbols`() {
-        val expected = setOf(TEST_STOCK_SYMBOL)
+        val expected = listOf(TEST_STOCK_SYMBOL)
 
         whenever(stockRecordRepository.findAllStockSymbols())
             .thenReturn(expected)

@@ -15,7 +15,7 @@ class StockRecordRecordAggregationServiceImpl(
 ) :
     StockRecordAggregationService {
 
-    @SchedulerLock(name = "aggregateStockRecords", lockAtLeastFor = "PT3M")
+    @SchedulerLock(name = "aggregateStockRecords", lockAtLeastFor = "PT3M", lockAtMostFor = "PT5M")
     @Scheduled(cron = "0 0/1 * * * ?")
     override fun aggregateStockRecords() {
         stockRecordClientApi.run {

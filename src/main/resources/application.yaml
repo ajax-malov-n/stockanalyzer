@@ -11,5 +11,8 @@ api:
     token: ${FINNHUB_API_TOKEN}
     symbols: ${SYMBOLS}
 
+mongock:
+  migration-scan-package: systems.ajax.malov.stockanalyzer.mongock.changelogs
+
 logExecutionTime:
   enabled: true

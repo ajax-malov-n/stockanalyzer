@@ -18,7 +18,7 @@ import stockanalyzer.utils.StockFixture.unsavedStockRecord
 
 
 @ExtendWith(MockitoExtension::class)
-class FinnhubStockRecordClientApiTest {
+class FinnhubMongoStockRecordClientApiTest {
 
     @Mock
     private lateinit var finnhubStockApi: DefaultApi
