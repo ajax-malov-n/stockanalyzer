@@ -1,7 +1,6 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
 import com.mongodb.client.model.Filters
-import java.math.BigDecimal
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -41,8 +40,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     @Test
     fun `getAllStockSymbols retrieves all stock symbols`() {
         val listOfUnsavedStocks = listOf(unsavedStockRecord())
-        mongoStockRecordRepository.insertAll(listOf(unsavedStockRecord()))
-        println(mongoStockRecordRepository.findAllStockSymbols())
+        mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
@@ -89,32 +87,6 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
-        )
-
-        //WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
-
-        //THEN
-        assertEquals(expected.size, actual.size)
-        assertEquals(expected.keys, actual.keys)
-    }
-
-    @Test
-    fun `findTopNStockSymbolsWithStockRecords retrieves stockRecords if stockData wasn't changed`() {
-        //GIVEN
-        val nullStock = secondPlaceStockRecord().copy(
-            openPrice = null,
-            highPrice = null,
-            lowPrice = null,
-            currentPrice = null,
-            previousClosePrice = null,
-            change = BigDecimal.ZERO,
-            percentChange = BigDecimal.ZERO
-        )
-        val listOfUnsavedStocks = listOf(nullStock)
-        mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-        val expected = mapOf(
-            nullStock.symbol to listOf(nullStock)
         )
 
         //WHEN

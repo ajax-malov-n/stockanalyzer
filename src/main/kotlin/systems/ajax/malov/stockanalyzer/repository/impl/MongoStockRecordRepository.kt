@@ -49,31 +49,19 @@ class MongoStockRecordRepository(
                 .minus(1, ChronoUnit.HOURS)
         )
         val maxChange = getMaxBigDecimal(MongoStockRecord::change.name, dateOfRequestMinusOneHour)
-        val pipeline: List<Bson>
+        val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name, dateOfRequestMinusOneHour)
 
-        if (maxChange == BigDecimal.ZERO) {
-            pipeline = listOf(
-                match(gte(MongoStockRecord::dateOfRetrieval.name, dateOfRequestMinusOneHour)),
-                group(
-                    current().getString(MongoStockRecord::symbol.name),
-                    push("records", "\$\$ROOT")
-                ),
-                Aggregates.limit(n)
-            )
-        } else {
-            val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name, dateOfRequestMinusOneHour)
-            pipeline = listOf(
-                match(gte(MongoStockRecord::dateOfRetrieval.name, dateOfRequestMinusOneHour)),
-                group(
-                    current().getString(MongoStockRecord::symbol.name),
-                    push("records", "\$\$ROOT")
-                ),
-                getProjectWithAvgMaxValues(maxChange, maxPercentChange),
-                getWeightedPipeLine(),
-                Aggregates.sort(descending("weight")),
-                Aggregates.limit(n)
-            )
-        }
+        val pipeline: List<Bson> = listOf(
+            match(gte(MongoStockRecord::dateOfRetrieval.name, dateOfRequestMinusOneHour)),
+            group(
+                current().getString(MongoStockRecord::symbol.name),
+                push("records", "\$\$ROOT")
+            ),
+            getProjectWithAvgMaxValues(maxChange, maxPercentChange),
+            getWeightedPipeLine(),
+            Aggregates.sort(descending("weight")),
+            Aggregates.limit(n)
+        )
 
         val results: AggregateIterable<Document> = collection.aggregate(pipeline)
 
@@ -168,9 +156,9 @@ class MongoStockRecordRepository(
     }
 
     private fun gradeAverage(students: MqlArray<MqlDocument>, fieldName: String): MqlNumber {
-        val sum = students
+        return students
             .sum { student -> student.getInteger(fieldName) }
-        return sum.divide(students.size())
+            .divide(students.size())
     }
 
     private fun getOnlyMostRecentNDataRecords(map: Map<String, MutableList<MongoStockRecord>>)
