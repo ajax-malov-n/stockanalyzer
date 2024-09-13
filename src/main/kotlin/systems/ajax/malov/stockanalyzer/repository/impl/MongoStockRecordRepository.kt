@@ -33,32 +33,47 @@ import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
 
 @Repository
-class MongoStockRecordRepository(private val mongoTemplate: MongoTemplate) : StockRecordRepository {
+class MongoStockRecordRepository(
+    private val mongoTemplate: MongoTemplate,
+) : StockRecordRepository {
     override fun insertAll(mongoStockRecords: List<MongoStockRecord>): List<MongoStockRecord> {
-        return mongoTemplate.insertAll(mongoStockRecords)
-            .toList()
+        return mongoTemplate.insertAll(mongoStockRecords).toList()
     }
 
     override fun findTopNStockSymbolsWithStockRecords(n: Int): Map<String, List<MongoStockRecord>> {
         val collection: MongoCollection<Document> = mongoTemplate
             .getCollection(MongoStockRecord.COLLECTION_NAME)
 
-        val pipeline: List<Bson> = listOf(
-            Date.from(
-                Instant.now()
-                    .minus(1, ChronoUnit.HOURS)
-            ).let {
-                match(gte(MongoStockRecord::dateOfRetrieval.name, it))
-            },
-            group(
-                current().getString(MongoStockRecord::symbol.name),
-                push("records", "\$\$ROOT")
-            ),
-            getProjectWithAvgMaxValues(),
-            getWeightedPipeLine(),
-            Aggregates.sort(descending("weight")),
-            Aggregates.limit(n)
+        val dateOfRequestMinusOneHour = Date.from(
+            Instant.now()
+                .minus(1, ChronoUnit.HOURS)
         )
+        val maxChange = getMaxBigDecimal(MongoStockRecord::change.name, dateOfRequestMinusOneHour)
+        val pipeline: List<Bson>
+
+        if (maxChange == BigDecimal.ZERO) {
+            pipeline = listOf(
+                match(gte(MongoStockRecord::dateOfRetrieval.name, dateOfRequestMinusOneHour)),
+                group(
+                    current().getString(MongoStockRecord::symbol.name),
+                    push("records", "\$\$ROOT")
+                ),
+                Aggregates.limit(n)
+            )
+        } else {
+            val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name, dateOfRequestMinusOneHour)
+            pipeline = listOf(
+                match(gte(MongoStockRecord::dateOfRetrieval.name, dateOfRequestMinusOneHour)),
+                group(
+                    current().getString(MongoStockRecord::symbol.name),
+                    push("records", "\$\$ROOT")
+                ),
+                getProjectWithAvgMaxValues(maxChange, maxPercentChange),
+                getWeightedPipeLine(),
+                Aggregates.sort(descending("weight")),
+                Aggregates.limit(n)
+            )
+        }
 
         val results: AggregateIterable<Document> = collection.aggregate(pipeline)
 
@@ -73,12 +88,13 @@ class MongoStockRecordRepository(private val mongoTemplate: MongoTemplate) : Sto
             .toList()
     }
 
-    private fun getMaxBigDecimal(field: String): BigDecimal {
+    private fun getMaxBigDecimal(field: String, date: Date): BigDecimal? {
         val collection: MongoCollection<Document> = mongoTemplate
             .getCollection(MongoStockRecord.COLLECTION_NAME)
 
         return collection
             .find()
+            .filter(gte(MongoStockRecord::dateOfRetrieval.name, date))
             .projection(
                 fields(
                     include(field),
@@ -89,12 +105,10 @@ class MongoStockRecordRepository(private val mongoTemplate: MongoTemplate) : Sto
             .limit(1)
             .firstOrNull()?.let {
                 (it[field] as? Decimal128)?.bigDecimalValue()
-            } ?: BigDecimal.ONE
+            }
     }
 
-    private fun getProjectWithAvgMaxValues(): Bson {
-        val maxChange = getMaxBigDecimal(MongoStockRecord::change.name)
-        val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name)
+    private fun getProjectWithAvgMaxValues(maxChange: BigDecimal?, maxPercentChange: BigDecimal?): Bson {
         val records = current().getArray<MqlDocument>("records")
         return project(
             fields(
@@ -108,14 +122,18 @@ class MongoStockRecordRepository(private val mongoTemplate: MongoTemplate) : Sto
                     "avgPercentChange",
                     gradeAverage(records, MongoStockRecord::percentChange.name)
                 ),
-                computed(
-                    "maxChange",
-                    Document("\$toDecimal", maxChange.toString())
-                ),
-                computed(
-                    "maxPercentChange",
-                    Document("\$toDecimal", maxPercentChange.toString())
-                ),
+                maxChange?.let {
+                    computed(
+                        "maxChange",
+                        Document("\$toDecimal", it.toString())
+                    )
+                } ?: Document("maxChange", null),
+                maxPercentChange?.let {
+                    computed(
+                        "maxPercentChange",
+                        Document("\$toDecimal", it.toString())
+                    )
+                } ?: Document("maxPercentChange", null),
                 computed(
                     "changeCoef",
                     Document("\$toDecimal", WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toString())
