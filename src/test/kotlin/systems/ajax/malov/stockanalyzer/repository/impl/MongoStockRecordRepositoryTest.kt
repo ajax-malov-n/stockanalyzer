@@ -13,7 +13,6 @@ import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 
-
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate
@@ -49,7 +48,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
     @Test
     fun `findTopNStockSymbolsWithStockRecords retrieves five best stocks symbols with stock records`() {
-        //GIVEN
+        // GIVEN
         val bestStock1 = firstPlaceStockRecord()
         val bestStock2 = alsoFirstPlaceStockRecord()
         val secondBestStock = secondPlaceStockRecord()
@@ -60,17 +59,17 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             secondBestStock.symbol to listOf(secondBestStock)
         )
 
-        //WHEN
+        // WHEN
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
 
-        //THEN
+        // THEN
         assertEquals(expected.size, actual.size)
         assertEquals(expected.keys, actual.keys)
     }
 
     @Test
     fun `findTopNStockSymbolsWithStockRecords retrieves fiveBestStocksSymbols with stockRecords with nulls`() {
-        //GIVEN
+        // GIVEN
         val bestStock1 = firstPlaceStockRecord()
         val bestStock2 = alsoFirstPlaceStockRecord()
         val secondBestStock = secondPlaceStockRecord().copy(
@@ -89,17 +88,17 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             secondBestStock.symbol to listOf(secondBestStock)
         )
 
-        //WHEN
+        // WHEN
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
 
-        //THEN
+        // THEN
         assertEquals(expected.size, actual.size)
         assertEquals(expected.keys, actual.keys)
     }
 
     @Test
     fun `findTopNStockSymbolsWithStockRecords retrieves stockRecords even if we have stock with all nulls`() {
-        //GIVEN
+        // GIVEN
         val nullStock = secondPlaceStockRecord().copy(
             openPrice = null,
             highPrice = null,
@@ -115,10 +114,10 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             nullStock.symbol to listOf(nullStock)
         )
 
-        //WHEN
+        // WHEN
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
 
-        //THEN
+        // THEN
         assertEquals(expected.size, actual.size)
         assertEquals(expected.keys, actual.keys)
     }

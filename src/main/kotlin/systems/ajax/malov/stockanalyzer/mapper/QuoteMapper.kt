@@ -1,13 +1,14 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
 import io.finnhub.api.models.Quote
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import java.math.BigDecimal
 import java.time.Instant
-import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 
 object QuoteMapper {
     fun Quote.toStockRecord(
-        scrSymbol: String, dateOfRetrievalSrc: Instant,
+        scrSymbol: String,
+        dateOfRetrievalSrc: Instant,
     ) = MongoStockRecord(
         id = null,
         symbol = scrSymbol,

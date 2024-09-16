@@ -1,12 +1,12 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
-import java.math.BigDecimal
 import org.junit.jupiter.api.Test
 import stockanalyzer.utils.QuoteFixture.quote
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStockRecord
+import java.math.BigDecimal
 import kotlin.test.assertEquals
 
 class QuoteMapperTest {
@@ -17,7 +17,7 @@ class QuoteMapperTest {
 
         val actual = quote().toStockRecord(TEST_STOCK_SYMBOL, testDate())
 
-        assertEquals(expected, actual);
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -26,6 +26,6 @@ class QuoteMapperTest {
 
         val actual = quote().copy(d = null, dp = null).toStockRecord(TEST_STOCK_SYMBOL, testDate())
 
-        assertEquals(expected, actual);
+        assertEquals(expected, actual)
     }
 }

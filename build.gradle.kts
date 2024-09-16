@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    detektPlugins(libs.detekt.formatting)
     implementation(libs.mockito.kotlin)
     implementation(libs.finnhub.kotlin.client)
     implementation(libs.mongock.springboot.v3)

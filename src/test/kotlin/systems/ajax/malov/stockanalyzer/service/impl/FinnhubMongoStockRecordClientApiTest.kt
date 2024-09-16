@@ -14,7 +14,6 @@ import org.mockito.kotlin.whenever
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 
-
 @ExtendWith(MockitoExtension::class)
 class FinnhubMongoStockRecordClientApiTest {
 

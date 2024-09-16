@@ -1,7 +1,5 @@
 package systems.ajax.malov.stockanalyzer.entity
 
-import java.math.BigDecimal
-import java.time.Instant
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
@@ -9,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.data.mongodb.core.mapping.FieldType.DECIMAL128
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord.Companion.COLLECTION_NAME
+import java.math.BigDecimal
+import java.time.Instant
 
 @TypeAlias("StockRecord")
 @Document(collection = COLLECTION_NAME)

@@ -1,11 +1,11 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
-import java.math.BigDecimal
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.dto.ShortStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockRecordResponseDtoMapper.toShortStockRecordResponseDto
+import java.math.BigDecimal
 
 class ShortMongoStockRecordResponseDtoMapperTest {
 

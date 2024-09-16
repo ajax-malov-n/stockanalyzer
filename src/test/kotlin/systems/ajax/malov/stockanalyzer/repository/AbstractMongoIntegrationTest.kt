@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.containers.MongoDBContainer
 
-
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = [AbstractMongoIntegrationTest.Initializer::class])

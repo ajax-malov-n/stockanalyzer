@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.CollectionOptions
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.timeseries.Granularity
 
-
 @ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "1", author = "malov.n@ajax.com")
 class TimeSeriesStockCollectionMigration {
 
@@ -20,7 +19,7 @@ class TimeSeriesStockCollectionMigration {
                 .timeSeries("dateOfRetrieval")
                 .metaField("symbol")
                 .granularity(Granularity.MINUTES)
-            val options: CollectionOptions = CollectionOptions.empty().timeSeries(timeSeriesOptions);
+            val options: CollectionOptions = CollectionOptions.empty().timeSeries(timeSeriesOptions)
 
             mongoTemplate.createCollection("stockRecords", options)
         }
@@ -35,4 +34,3 @@ class TimeSeriesStockCollectionMigration {
         private val log = LoggerFactory.getLogger(TimeSeriesStockCollectionMigration::class.java)
     }
 }
-

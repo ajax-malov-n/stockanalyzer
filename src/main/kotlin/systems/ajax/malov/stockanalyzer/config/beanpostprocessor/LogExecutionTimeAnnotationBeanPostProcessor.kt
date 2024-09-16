@@ -1,14 +1,13 @@
 package systems.ajax.malov.stockanalyzer.config.beanpostprocessor
 
-import java.lang.reflect.Method
-import java.lang.reflect.Proxy
-import java.time.Duration
-import java.util.Objects
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
+import java.time.Duration
+import java.util.Objects
 
 @ConditionalOnProperty(name = ["logExecutionTime.enabled"], havingValue = "true")
 @Component
@@ -85,8 +84,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is ComparableMethod) return false
-            return method.name == other.method.name &&
-                    method.returnType == other.method.returnType &&
+            return method.name == other.method.name && method.returnType == other.method.returnType &&
                     method.parameterTypes.contentEquals(other.method.parameterTypes)
         }
 
@@ -101,4 +99,3 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
         private val log = LoggerFactory.getLogger(LogExecutionTimeAnnotationBeanPostProcessor::class.java)
     }
 }
-

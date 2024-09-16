@@ -1,13 +1,13 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
 import io.finnhub.api.apis.DefaultApi
-import java.time.Instant
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStockRecord
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
+import java.time.Instant
 
 @Service
 class FinnhubStockRecordClientApi(
