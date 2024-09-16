@@ -80,68 +80,42 @@ class MongoStockRecordRepository(
     }
 
     private fun getProjectWithAvgMaxValues(maxChange: BigDecimal?, maxPercentChange: BigDecimal?): ProjectionOperation {
-        val mapRecordsChange = AggregationExpression { _ ->
-            Document(
-                "\$map",
-                Document("input", "\$records")
-                    .append("as", "record")
-                    .append("in", "$\$record.change")
-            )
-        }
-        val avgOfRecordsChange = Avg.avgOf(mapRecordsChange)
+        return Aggregation.project()
+            .andInclude("records")
+            .andExclude("_id")
+            .and(getAvgOfRecordsArrayField(MongoStockRecord::change.name))
+            .`as`("avgChange")
+            .and(getAvgOfRecordsArrayField(MongoStockRecord::percentChange.name))
+            .`as`("avgPercentChange")
+            .and(aggregationExpression(maxChange))
+            .`as`("maxChange")
+            .and(aggregationExpression(maxPercentChange))
+            .`as`("maxPercentChange")
+            .and(aggregationExpression(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
+            .`as`("changeCoef")
+            .and(aggregationExpression(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
+            .`as`("percentChangeCoef")
+    }
+
+    private fun getAvgOfRecordsArrayField(field: String): Avg {
         val mapRecordsPercentChange = AggregationExpression { _ ->
             Document(
                 "\$map",
                 Document("input", "\$records")
                     .append("as", "record")
-                    .append("in", "$\$record.percentChange")
+                    .append("in", "$\$record.$field")
             )
         }
-        val avgOfRecordsPercentChange = Avg.avgOf(mapRecordsPercentChange)
-
-        val projectionOperation: ProjectionOperation =
-            Aggregation.project()
-                .andInclude("records")
-                .andExclude("_id")
-                .and(avgOfRecordsChange)
-                .`as`("avgChange")
-                .and(avgOfRecordsPercentChange)
-                .`as`("avgPercentChange")
-                .and(aggregationExpression(maxChange))
-                .`as`("maxChange")
-                .and(aggregationExpression(maxPercentChange))
-                .`as`("maxPercentChange")
-                .and(
-                    { _ ->
-                        Document(
-                            "\$toDecimal",
-                            WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS
-                        )
-                    }
-                )
-                .`as`("changeCoef")
-                .and(
-                    { _ ->
-                        Document(
-                            "\$toDecimal",
-                            WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS
-                        )
-                    }
-                )
-                .`as`("percentChangeCoef")
-
-        return projectionOperation
+        return Avg.avgOf(mapRecordsPercentChange)
     }
 
     private fun aggregationExpression(decimal: BigDecimal?): AggregationExpression {
-        val toDecimalExpression =
-            AggregationExpression { _ ->
-                Document(
-                    "\$toDecimal",
-                    decimal?.toString()
-                )
-            }
-        return toDecimalExpression
+        return AggregationExpression { _ ->
+            Document(
+                "\$toDecimal",
+                decimal?.toString()
+            )
+        }
     }
 
     private fun getWeightedPipeLine(): ProjectionOperation {

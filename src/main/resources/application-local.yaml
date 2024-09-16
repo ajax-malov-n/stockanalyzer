@@ -11,3 +11,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+#logging:
+#  level:
+#    org.springframework.data.mongodb: DEBUG
+#    org.mongodb.driver: DEBUG
