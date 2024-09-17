@@ -8,7 +8,7 @@ import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordItemResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockRecordItemResponseDtoMapper.toAggregatedStockRecordItemResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockRecordResponseDtoMapper.toShortStockRecordResponseDto
 
-class AggregatedStockRecordItemResponseDtoMapperTest {
+class AggregatedMongoStockRecordItemResponseDtoMapperTest {
     @Test
     fun `should map stock records list with a common stock symbol to aggregatedStockRecordItemResponseDto`() {
         val stocks = listOf(savedStockRecord())

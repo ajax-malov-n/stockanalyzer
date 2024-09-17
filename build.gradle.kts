@@ -26,13 +26,21 @@ repositories {
 }
 
 dependencies {
+    detektPlugins(libs.detekt.formatting)
     implementation(libs.mockito.kotlin)
     implementation(libs.finnhub.kotlin.client)
+    implementation(libs.mongock.springboot.v3)
+    implementation(libs.mongock.mongodb.springdata.v4.driver)
+    implementation(libs.shedlock.spring)
+    implementation(libs.shedlock.provider.mongo)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:mongodb")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

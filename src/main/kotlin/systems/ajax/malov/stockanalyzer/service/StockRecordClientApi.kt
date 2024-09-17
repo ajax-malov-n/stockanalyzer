@@ -1,7 +1,7 @@
 package systems.ajax.malov.stockanalyzer.service
 
-import systems.ajax.malov.stockanalyzer.entity.StockRecord
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 
 interface StockRecordClientApi {
-    fun getAllStockRecords(): List<StockRecord>
+    fun getAllStockRecords(): List<MongoStockRecord>
 }

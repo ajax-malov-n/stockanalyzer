@@ -6,7 +6,7 @@ import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSym
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import kotlin.test.assertEquals
 
-class AggregatedStockRecordResponseDtoMapperTest {
+class AggregatedMongoStockRecordResponseDtoMapperTest {
 
     @Test
     fun `should map list of pair of string and list stocks to aggregatedStockResponseDtoMapper`() {

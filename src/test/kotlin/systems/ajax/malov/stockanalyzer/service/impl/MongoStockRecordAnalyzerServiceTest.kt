@@ -1,12 +1,13 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
@@ -15,7 +16,7 @@ import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
 @ExtendWith(MockitoExtension::class)
-class StockRecordAnalyzerServiceTest {
+class MongoStockRecordAnalyzerServiceTest {
 
     @Mock
     private lateinit var stockRecordRepository: StockRecordRepository
@@ -28,19 +29,25 @@ class StockRecordAnalyzerServiceTest {
         val savedStock = savedStockRecord()
         val retrievedStocks = mapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForFiveBestStockSymbolsWithStockRecords()
-        whenever(stockRecordRepository.findTopNStockSymbolsWithStockRecords(5))
+        whenever(
+            stockRecordRepository.findTopNStockSymbolsWithStockRecords(
+                eq(5),
+                any(),
+                any()
+            )
+        )
             .thenReturn(retrievedStocks)
 
         val actual = stockAnalyzerService.getFiveBestStockSymbolsWithStockRecords()
 
         verify(stockRecordRepository)
-            .findTopNStockSymbolsWithStockRecords(5)
+            .findTopNStockSymbolsWithStockRecords(eq(5), any(), any())
         assertEquals(expected, actual)
     }
 
     @Test
     fun `getAllManageableStocksSymbols calls repository and returns all stocks symbols`() {
-        val expected = setOf(TEST_STOCK_SYMBOL)
+        val expected = listOf(TEST_STOCK_SYMBOL)
 
         whenever(stockRecordRepository.findAllStockSymbols())
             .thenReturn(expected)

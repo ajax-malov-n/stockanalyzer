@@ -1,10 +1,10 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
 import systems.ajax.malov.stockanalyzer.dto.ShortStockRecordResponseDto
-import systems.ajax.malov.stockanalyzer.entity.StockRecord
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 
 object ShortStockRecordResponseDtoMapper {
-    fun StockRecord.toShortStockRecordResponseDto() = ShortStockRecordResponseDto(
+    fun MongoStockRecord.toShortStockRecordResponseDto() = ShortStockRecordResponseDto(
         openPrice,
         highPrice,
         lowPrice,

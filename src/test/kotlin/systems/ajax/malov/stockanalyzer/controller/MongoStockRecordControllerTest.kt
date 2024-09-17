@@ -15,7 +15,7 @@ import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)
-class StockRecordControllerTest {
+class MongoStockRecordControllerTest {
 
     @Mock
     private lateinit var stockRecordAnalyzerService: StockRecordAnalyzerService
@@ -41,7 +41,7 @@ class StockRecordControllerTest {
     @Test
     fun `getAllManageableStockSymbols calls service and retrieves all manageable stocks`() {
         whenever(stockRecordAnalyzerService.getAllManageableStocksSymbols())
-            .thenReturn(setOf(TEST_STOCK_SYMBOL))
+            .thenReturn(listOf(TEST_STOCK_SYMBOL))
 
         val response = stockRecordsController.getAllManageableStockSymbols()
 

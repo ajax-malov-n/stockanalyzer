@@ -14,7 +14,7 @@ import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
 @ExtendWith(MockitoExtension::class)
-class StockRecordAggregationServiceTest {
+class MongoStockRecordAggregationServiceTest {
 
     @Mock
     private lateinit var stockRecordClientApi: StockRecordClientApi

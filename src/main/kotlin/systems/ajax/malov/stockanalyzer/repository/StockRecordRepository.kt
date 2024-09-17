@@ -1,9 +1,10 @@
 package systems.ajax.malov.stockanalyzer.repository
 
-import systems.ajax.malov.stockanalyzer.entity.StockRecord
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
+import java.util.Date
 
 interface StockRecordRepository {
-    fun insertAll(stockRecords: List<StockRecord>): List<StockRecord>
-    fun findTopNStockSymbolsWithStockRecords(n: Int): Map<String, List<StockRecord>>
-    fun findAllStockSymbols(): Set<String>
+    fun insertAll(mongoStockRecords: List<MongoStockRecord>): List<MongoStockRecord>
+    fun findTopNStockSymbolsWithStockRecords(n: Int, from: Date, to: Date): Map<String, List<MongoStockRecord>>
+    fun findAllStockSymbols(): List<String>
 }
