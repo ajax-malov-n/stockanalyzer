@@ -1,30 +1,21 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import com.mongodb.client.model.Filters
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.core.MongoTemplate
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
+import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
+import java.time.temporal.ChronoUnit
+import java.util.Date
 
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     @Autowired
-    private lateinit var mongoTemplate: MongoTemplate
-
-    @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
-
-    @AfterEach
-    fun tearDown() {
-        mongoTemplate.getCollection(MongoStockRecord.COLLECTION_NAME)
-            .deleteMany(Filters.empty())
-    }
 
     @Test
     fun `insertAll fun inserts all stocks records and retrieves inserted stock records ids`() {
@@ -43,7 +34,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
-        assertEquals(listOfUnsavedStocks.map { it.symbol }.toList(), actual)
+        assertTrue(actual.toSet().containsAll(listOfUnsavedStocks.map { it.symbol }))
     }
 
     @Test
@@ -58,9 +49,11 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
         )
+        val from = Date.from(testDate().minus(1, ChronoUnit.DAYS))
+        val to = Date.from(testDate().plus(1, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
+        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
         assertEquals(expected.size, actual.size)
@@ -87,9 +80,11 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
         )
+        val from = Date.from(testDate().minus(1, ChronoUnit.DAYS))
+        val to = Date.from(testDate().plus(1, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
+        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
         assertEquals(expected.size, actual.size)
@@ -106,16 +101,19 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             currentPrice = null,
             previousClosePrice = null,
             change = null,
-            percentChange = null
+            percentChange = null,
+            dateOfRetrieval = testDate().plus(3, ChronoUnit.DAYS)
         )
         val listOfUnsavedStocks = listOf(nullStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
         val expected = mapOf(
             nullStock.symbol to listOf(nullStock)
         )
+        val from = Date.from(testDate().plus(1, ChronoUnit.DAYS))
+        val to = Date.from(testDate().plus(4, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
+        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
         assertEquals(expected.size, actual.size)

@@ -5,6 +5,9 @@ import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTim
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.Date
 
 @Service
 class StockRecordAnalyzerServiceImpl(
@@ -14,7 +17,13 @@ class StockRecordAnalyzerServiceImpl(
     @Suppress("MagicNumber")
     @LogExecutionTime
     override fun getFiveBestStockSymbolsWithStockRecords(): Map<String, List<MongoStockRecord>> {
-        return stockRecordRepository.findTopNStockSymbolsWithStockRecords(5)
+        val dateOfRequest = Instant.now()
+        return stockRecordRepository
+            .findTopNStockSymbolsWithStockRecords(
+                5,
+                Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS)),
+                Date.from(dateOfRequest)
+            )
     }
 
     override fun getAllManageableStocksSymbols(): List<String> {

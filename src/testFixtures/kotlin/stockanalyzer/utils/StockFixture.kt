@@ -1,19 +1,22 @@
 package stockanalyzer.utils
 
-import java.math.BigDecimal
-import java.time.Instant
 import org.bson.types.ObjectId
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordItemResponseDto
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.ShortStockRecordResponseDtoMapper.toShortStockRecordResponseDto
+import java.math.BigDecimal
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 
 object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
     val ID = ObjectId.get()
+    val testDate = Clock.fixed(Instant.now(), ZoneId.of("UTC")).instant()
 
-    fun testDate(): Instant = Instant.ofEpochMilli(111111111)
+    fun testDate(): Instant = Clock.fixed(Instant.now(), ZoneId.of("UTC")).instant()
 
     fun unsavedStockRecord() = MongoStockRecord(
         id = null,
@@ -25,7 +28,7 @@ object StockFixture {
         previousClosePrice = BigDecimal("1.0"),
         change = BigDecimal("1.0"),
         percentChange = BigDecimal("1.0"),
-        dateOfRetrieval = testDate()
+        dateOfRetrieval = testDate
     )
 
     fun savedStockRecord(): MongoStockRecord {
@@ -39,7 +42,7 @@ object StockFixture {
             previousClosePrice = BigDecimal("1.0"),
             change = BigDecimal("1.0"),
             percentChange = BigDecimal("1.0"),
-            dateOfRetrieval = testDate()
+            dateOfRetrieval = testDate
         )
     }
 

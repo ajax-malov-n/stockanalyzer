@@ -2,6 +2,7 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters.gte
+import com.mongodb.client.model.Filters.lt
 import com.mongodb.client.model.Projections.excludeId
 import com.mongodb.client.model.Projections.fields
 import com.mongodb.client.model.Projections.include
@@ -21,8 +22,6 @@ import org.springframework.stereotype.Repository
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import java.math.BigDecimal
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.Date
 import org.springframework.data.mongodb.core.mapping.Document as SDocument
 
@@ -40,16 +39,20 @@ class MongoStockRecordRepository(
             .toList()
     }
 
-    override fun findTopNStockSymbolsWithStockRecords(n: Int): Map<String, List<MongoStockRecord>> {
-        val dateOfRequestMinusOneHour = Date.from(
-            Instant.now()
-                .minus(1, ChronoUnit.HOURS)
-        )
-        val maxChange = getMaxBigDecimal(MongoStockRecord::change.name, dateOfRequestMinusOneHour)
-        val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name, dateOfRequestMinusOneHour)
+    override fun findTopNStockSymbolsWithStockRecords(
+        n: Int,
+        from: Date,
+        to: Date,
+    ): Map<String, List<MongoStockRecord>> {
+        val maxChange = getMaxBigDecimal(MongoStockRecord::change.name, from, to)
+        val maxPercentChange = getMaxBigDecimal(MongoStockRecord::percentChange.name, from, to)
 
         val matchOperation: MatchOperation =
-            Aggregation.match(Criteria.where(MongoStockRecord::dateOfRetrieval.name).gte(dateOfRequestMinusOneHour))
+            Aggregation.match(
+                Criteria.where(MongoStockRecord::dateOfRetrieval.name)
+                    .gte(from)
+                    .lt(to)
+            )
         val groupOperation: GroupOperation = Aggregation.group(MongoStockRecord::symbol.name)
             .push("$\$ROOT").`as`("records")
         val projectOperation = getProjectWithAvgMaxValues(maxChange, maxPercentChange)
@@ -63,9 +66,6 @@ class MongoStockRecordRepository(
             Aggregation.sort(Sort.by("weight").descending()),
             Aggregation.limit(n.toLong())
         )
-
-        @SDocument
-        data class ResultingClass(val records: List<MongoStockRecord>)
 
         val results: List<ResultingClass> = mongoTemplate.aggregate(
             aggregation,
@@ -127,13 +127,18 @@ class MongoStockRecordRepository(
             .`as`("weight")
     }
 
-    private fun getMaxBigDecimal(field: String, date: Date): BigDecimal? {
+    private fun getMaxBigDecimal(
+        field: String,
+        from: Date,
+        to: Date,
+    ): BigDecimal? {
         val collection: MongoCollection<Document> = mongoTemplate
             .getCollection(MongoStockRecord.COLLECTION_NAME)
 
         return collection
             .find()
-            .filter(gte(MongoStockRecord::dateOfRetrieval.name, date))
+            .filter(gte(MongoStockRecord::dateOfRetrieval.name, from))
+            .filter(lt(MongoStockRecord::dateOfRetrieval.name, to))
             .projection(
                 fields(
                     include(field),
@@ -155,6 +160,9 @@ class MongoStockRecordRepository(
                 .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK_SYMBOL)
         }
     }
+
+    @SDocument
+    internal data class ResultingClass(val records: List<MongoStockRecord>)
 
     companion object {
         private const val NUMBER_OF_HISTORY_RECORDS_PER_STOCK_SYMBOL = 5

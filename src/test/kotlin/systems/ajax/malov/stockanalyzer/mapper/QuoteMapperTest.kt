@@ -13,18 +13,21 @@ class QuoteMapperTest {
 
     @Test
     fun `should map quote to stock`() {
-        val expected = unsavedStockRecord()
+        val testDate = testDate()
+        val expected = unsavedStockRecord().copy(dateOfRetrieval = testDate)
 
-        val actual = quote().toStockRecord(TEST_STOCK_SYMBOL, testDate())
+        val actual = quote().toStockRecord(TEST_STOCK_SYMBOL, testDate)
 
         assertEquals(expected, actual)
     }
 
     @Test
     fun `should map quote with change and percentChange as null values to stock`() {
+        val testDate = testDate()
         val expected = unsavedStockRecord().copy(change = BigDecimal.ZERO, percentChange = BigDecimal.ZERO)
+            .copy(dateOfRetrieval = testDate)
 
-        val actual = quote().copy(d = null, dp = null).toStockRecord(TEST_STOCK_SYMBOL, testDate())
+        val actual = quote().copy(d = null, dp = null).toStockRecord(TEST_STOCK_SYMBOL, testDate)
 
         assertEquals(expected, actual)
     }
