@@ -4,4 +4,4 @@ style:
     includes: [ "**/test/**" ]
 formatting:
   Indentation:
-    active: false
+    active: true

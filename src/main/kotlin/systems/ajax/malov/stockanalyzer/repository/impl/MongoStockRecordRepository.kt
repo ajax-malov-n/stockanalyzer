@@ -122,7 +122,7 @@ class MongoStockRecordRepository(
         return Aggregation.project("records")
             .andExpression(
                 "(avgChange / maxChange) * changeCoef + " +
-                        "(avgPercentChange / maxPercentChange) * percentChangeCoef"
+                    "(avgPercentChange / maxPercentChange) * percentChangeCoef"
             )
             .`as`("weight")
     }

@@ -5,8 +5,10 @@ import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockRecordItemResponseDtoMapper.toAggregatedStockRecordItemResponseDto
 
 object AggregatedStockRecordResponseDtoMapper {
-    fun toAggregatedStockItemResponseDto(aggregatedData: Map<String, List<MongoStockRecord>>):
-            AggregatedStockRecordResponseDto =
+    fun toAggregatedStockItemResponseDto(
+        aggregatedData: Map<String, List<MongoStockRecord>>,
+    ):
+        AggregatedStockRecordResponseDto =
         AggregatedStockRecordResponseDto(
             aggregatedData.map { (symbol, stocks) ->
                 symbol.let { stocks.toAggregatedStockRecordItemResponseDto(it) }

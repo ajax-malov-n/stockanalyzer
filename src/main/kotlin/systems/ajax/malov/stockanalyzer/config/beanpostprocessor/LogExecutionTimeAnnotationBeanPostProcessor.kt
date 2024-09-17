@@ -85,7 +85,7 @@ class LogExecutionTimeAnnotationBeanPostProcessor : BeanPostProcessor {
             if (this === other) return true
             if (other !is ComparableMethod) return false
             return method.name == other.method.name && method.returnType == other.method.returnType &&
-                    method.parameterTypes.contentEquals(other.method.parameterTypes)
+                method.parameterTypes.contentEquals(other.method.parameterTypes)
         }
 
         override fun hashCode(): Int {
