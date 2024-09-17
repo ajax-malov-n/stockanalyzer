@@ -23,7 +23,7 @@ import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import java.math.BigDecimal
 import java.util.Date
-import org.springframework.data.mongodb.core.mapping.Document as SDocument
+import org.springframework.data.mongodb.core.mapping.Document as SpringDocument
 
 @Repository
 class MongoStockRecordRepository(
@@ -161,7 +161,7 @@ class MongoStockRecordRepository(
         }
     }
 
-    @SDocument
+    @SpringDocument
     internal data class ResultingClass(val records: List<MongoStockRecord>)
 
     companion object {

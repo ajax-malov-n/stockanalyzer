@@ -2,6 +2,3 @@ style:
   VarCouldBeVal:
     ignoreLateinitVar: true
     includes: [ "**/test/**" ]
-formatting:
-  Indentation:
-    active: true
