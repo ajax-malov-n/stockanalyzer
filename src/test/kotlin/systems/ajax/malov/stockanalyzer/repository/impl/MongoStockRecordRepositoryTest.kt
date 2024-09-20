@@ -29,7 +29,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
     @Test
     fun `getAllStockSymbols retrieves all stock symbols`() {
-        val listOfUnsavedStocks = listOf(unsavedStockRecord())
+        val listOfUnsavedStocks = listOf(unsavedStockRecord().copy(symbol = "AJAX"))
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
@@ -38,7 +38,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     }
 
     @Test
-    fun `findTopNStockSymbolsWithStockRecords retrieves five best stocks symbols with stock records`() {
+    fun `findTopNStockSymbolsWithStockRecords retrieves N best stocks symbols with stock records`() {
         // GIVEN
         val bestStock1 = firstPlaceStockRecord()
         val bestStock2 = alsoFirstPlaceStockRecord()
@@ -53,7 +53,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val to = Date.from(testDate().plus(1, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
+        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(2, from, to)
 
         // THEN
         assertEquals(expected.size, actual.size)
