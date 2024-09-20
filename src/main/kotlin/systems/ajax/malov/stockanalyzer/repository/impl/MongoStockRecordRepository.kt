@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.AccumulatorOperators.Avg
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression
+import org.springframework.data.mongodb.core.aggregation.ConvertOperators.ToDecimal.toDecimal
 import org.springframework.data.mongodb.core.aggregation.GroupOperation
 import org.springframework.data.mongodb.core.aggregation.MatchOperation
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
@@ -87,13 +88,13 @@ class MongoStockRecordRepository(
             .`as`("avgChange")
             .and(getAvgOfRecordsArrayField(MongoStockRecord::percentChange.name))
             .`as`("avgPercentChange")
-            .and(aggregationExpression(maxChange))
+            .and(toDecimal(maxChange?.toString().orEmpty()))
             .`as`("maxChange")
-            .and(aggregationExpression(maxPercentChange))
+            .and(toDecimal(maxPercentChange?.toString().orEmpty()))
             .`as`("maxPercentChange")
-            .and(aggregationExpression(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
+            .and(toDecimal(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
             .`as`("changeCoef")
-            .and(aggregationExpression(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
+            .and(toDecimal(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
             .`as`("percentChangeCoef")
     }
 
@@ -107,15 +108,6 @@ class MongoStockRecordRepository(
             )
         }
         return Avg.avgOf(mapRecordsPercentChange)
-    }
-
-    private fun aggregationExpression(decimal: BigDecimal?): AggregationExpression {
-        return AggregationExpression { _ ->
-            Document(
-                "\$toDecimal",
-                decimal?.toString()
-            )
-        }
     }
 
     private fun getWeightedPipeLine(): ProjectionOperation {

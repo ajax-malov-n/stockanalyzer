@@ -36,6 +36,13 @@ spec:
                 secretKeyRef:
                   name: mongodb-secret
                   key: mongo-root-password
+          volumeMounts:
+            - name: mongo-local-volume
+              mountPath: /data/db
+      volumes:
+        - name: mongo-local-volume
+          persistentVolumeClaim:
+            claimName: mongo-local-pvc
 ---
 apiVersion: v1
 kind: Service
