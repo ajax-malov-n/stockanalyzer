@@ -7,6 +7,9 @@ on:
     branches:
       - '**'
 
+env:
+  gradle_cmd: './gradlew --parallel --build-cache --no-watch-fs --console=rich '
+
 jobs:
   build:
 
@@ -34,12 +37,12 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Build with Gradle
-        run: ./gradlew build -x deltaCoverage --parallel
+        run: ${gradle_cmd} build -x deltaCoverage
 
       - name: Run Delta Coverage check
         if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
         continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'suppress-delta-coverage') }}
-        run: ./gradlew deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
+        run: ${gradle_cmd} deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
 
       - name: Append Delta Coverage Summary
         if: ${{ github.event_name == 'pull_request' && !cancelled() }}
