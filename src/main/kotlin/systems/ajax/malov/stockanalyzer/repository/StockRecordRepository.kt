@@ -8,5 +8,5 @@ import java.util.Date
 interface StockRecordRepository {
     fun insertAll(mongoStockRecords: List<MongoStockRecord>): Flux<MongoStockRecord>
     fun findTopNStockSymbolsWithStockRecords(n: Int, from: Date, to: Date): Mono<Map<String, List<MongoStockRecord>>>
-    fun findAllStockSymbols(): Flux<String>
+    fun findAllStockSymbols(): Mono<List<String>>
 }

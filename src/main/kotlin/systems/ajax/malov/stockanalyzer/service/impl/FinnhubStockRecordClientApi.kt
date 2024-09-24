@@ -22,7 +22,6 @@ class FinnhubStockRecordClientApi(
         val retrievalDate = Instant.now()
 
         return Flux.fromIterable(symbols)
-            .publishOn(Schedulers.boundedElastic())
             .flatMap { symbol ->
                 retrieveStockRecord(symbol, retrievalDate)
             }
@@ -38,6 +37,7 @@ class FinnhubStockRecordClientApi(
                 log.error("Failed to retrieve data for symbol: $symbol at $retrievalDate. Error: ${e.message}")
                 Mono.empty()
             }
+            .subscribeOn(Schedulers.boundedElastic())
     }
 
     companion object {

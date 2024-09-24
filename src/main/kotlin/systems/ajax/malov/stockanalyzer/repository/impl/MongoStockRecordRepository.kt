@@ -24,6 +24,8 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import java.math.BigDecimal
@@ -38,11 +40,12 @@ class MongoStockRecordRepository(
         return reactiveMongoTemplate.insertAll(mongoStockRecords)
     }
 
-    override fun findAllStockSymbols(): Flux<String> {
+    override fun findAllStockSymbols(): Mono<List<String>> {
         return reactiveMongoTemplate.query(MongoStockRecord::class.java)
             .distinct(MongoStockRecord::symbol.name)
             .asType<String>()
             .all()
+            .collectList()
     }
 
     override fun findTopNStockSymbolsWithStockRecords(
@@ -55,34 +58,8 @@ class MongoStockRecordRepository(
 
         return Mono.zip(maxChangeMono, maxPercentChangeMono)
             .flatMap { maxValues ->
-                val maxChange = maxValues.t1
-                val maxPercentChange = maxValues.t2
-
-                val matchOperation: MatchOperation =
-                    Aggregation.match(
-                        Criteria.where(MongoStockRecord::dateOfRetrieval.name)
-                            .gte(from)
-                            .lt(to)
-                    )
-                val groupOperation: GroupOperation = Aggregation.group(MongoStockRecord::symbol.name)
-                    .push("$\$ROOT").`as`("records")
-                val projectOperation = getProjectWithAvgMaxValues(maxChange, maxPercentChange)
-                val weightedPipeline = getWeightedPipeLine()
-
-                val aggregation = Aggregation.newAggregation(
-                    matchOperation,
-                    groupOperation,
-                    projectOperation,
-                    weightedPipeline,
-                    Aggregation.sort(Sort.by("weight").descending()),
-                    Aggregation.limit(n.toLong())
-                )
-
-                reactiveMongoTemplate.aggregate(
-                    aggregation,
-                    MongoStockRecord.COLLECTION_NAME,
-                    ResultingClass::class.java
-                ).collectList()
+                val (maxChange, maxPercentChange) = maxValues
+                fetchNBestStockSymbolsWithStockRecords(from, to, maxChange, maxPercentChange, n)
             }
             .map { results ->
                 getOnlyMostRecentNDataRecords(
@@ -90,6 +67,40 @@ class MongoStockRecordRepository(
                         .groupBy { it.symbol ?: "Not provided" }
                 )
             }
+    }
+
+    private fun fetchNBestStockSymbolsWithStockRecords(
+        from: Date,
+        to: Date,
+        maxChange: BigDecimal?,
+        maxPercentChange: BigDecimal?,
+        n: Int,
+    ): Mono<MutableList<ResultingClass>> {
+        val matchOperation: MatchOperation =
+            Aggregation.match(
+                Criteria.where(MongoStockRecord::dateOfRetrieval.name)
+                    .gte(from)
+                    .lt(to)
+            )
+        val groupOperation: GroupOperation = Aggregation.group(MongoStockRecord::symbol.name)
+            .push("$\$ROOT").`as`("records")
+        val projectOperation = getProjectWithAvgMaxValues(maxChange, maxPercentChange)
+        val weightedPipeline = getWeightedPipeLine()
+
+        val aggregation = Aggregation.newAggregation(
+            matchOperation,
+            groupOperation,
+            projectOperation,
+            weightedPipeline,
+            Aggregation.sort(Sort.by("weight").descending()),
+            Aggregation.limit(n.toLong())
+        )
+
+        return reactiveMongoTemplate.aggregate(
+            aggregation,
+            MongoStockRecord.COLLECTION_NAME,
+            ResultingClass::class.java
+        ).collectList()
     }
 
     private fun getProjectWithAvgMaxValues(
@@ -138,7 +149,7 @@ class MongoStockRecordRepository(
         field: String,
         from: Date,
         to: Date,
-    ): Mono<BigDecimal?> {
+    ): Mono<BigDecimal> {
         return reactiveMongoTemplate
             .getCollection(MongoStockRecord.COLLECTION_NAME)
             .flatMap { collection ->

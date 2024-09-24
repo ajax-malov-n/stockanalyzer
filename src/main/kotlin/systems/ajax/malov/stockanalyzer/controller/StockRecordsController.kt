@@ -1,10 +1,8 @@
 package systems.ajax.malov.stockanalyzer.controller
 
-import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
@@ -22,7 +20,7 @@ class StockRecordsController(private val stockRecordAnalyzerService: StockRecord
                 toAggregatedStockItemResponseDto(it)
             }
 
-    @GetMapping("/symbols", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun getAllManageableStockSymbols(): Flux<String> =
+    @GetMapping("/symbols")
+    fun getAllManageableStockSymbols(): Mono<List<String>> =
         stockRecordAnalyzerService.getAllManageableStocksSymbols()
 }

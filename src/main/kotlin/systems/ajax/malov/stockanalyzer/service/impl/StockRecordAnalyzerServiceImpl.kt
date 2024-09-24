@@ -1,7 +1,6 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTime
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -28,7 +27,7 @@ class StockRecordAnalyzerServiceImpl(
             )
     }
 
-    override fun getAllManageableStocksSymbols(): Flux<String> {
-        return stockRecordRepository.findAllStockSymbols();
+    override fun getAllManageableStocksSymbols(): Mono<List<String>> {
+        return stockRecordRepository.findAllStockSymbols()
     }
 }
