@@ -43,4 +43,19 @@ class FinnhubMongoStockRecordClientApiTest {
             .expectNextMatches { it.symbol == expected[0].symbol }
             .verifyComplete()
     }
+
+    @Test
+    fun `getAllStockRecords returns empty flux when client throws exception`() {
+        // GIVEN
+        every {
+            finnhubStockApi.quote(TEST_STOCK_SYMBOL)
+        } throws RuntimeException("Client error")
+
+        // WHEN
+        val actual: Flux<MongoStockRecord> = finnhubStockRecordClientApi.getAllStockRecords()
+
+        // THEN
+        StepVerifier.create(actual)
+            .verifyComplete()
+    }
 }

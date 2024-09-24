@@ -1,14 +1,6 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import com.mongodb.client.model.Filters.and
-import com.mongodb.client.model.Filters.gte
-import com.mongodb.client.model.Filters.lt
-import com.mongodb.client.model.Projections.excludeId
-import com.mongodb.client.model.Projections.fields
-import com.mongodb.client.model.Projections.include
-import com.mongodb.client.model.Sorts
 import org.bson.Document
-import org.bson.types.Decimal128
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.AccumulatorOperators.Avg
@@ -23,7 +15,6 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -72,8 +63,8 @@ class MongoStockRecordRepository(
     private fun fetchNBestStockSymbolsWithStockRecords(
         from: Date,
         to: Date,
-        maxChange: BigDecimal?,
-        maxPercentChange: BigDecimal?,
+        maxChange: BigDecimal,
+        maxPercentChange: BigDecimal,
         n: Int,
     ): Mono<MutableList<ResultingClass>> {
         val matchOperation: MatchOperation =
@@ -104,8 +95,8 @@ class MongoStockRecordRepository(
     }
 
     private fun getProjectWithAvgMaxValues(
-        maxChange: BigDecimal?,
-        maxPercentChange: BigDecimal?,
+        maxChange: BigDecimal,
+        maxPercentChange: BigDecimal,
     ): ProjectionOperation {
         return Aggregation.project()
             .andInclude("records")
@@ -114,9 +105,9 @@ class MongoStockRecordRepository(
             .`as`("avgChange")
             .and(getAvgOfRecordsArrayField(MongoStockRecord::percentChange.name))
             .`as`("avgPercentChange")
-            .and(toDecimal(maxChange?.toString().orEmpty()))
+            .and(toDecimal(maxChange))
             .`as`("maxChange")
-            .and(toDecimal(maxPercentChange?.toString().orEmpty()))
+            .and(toDecimal(maxPercentChange))
             .`as`("maxPercentChange")
             .and(toDecimal(WEIGHTED_COEFFICIENT_FOR_PRICE_COEFFICIENTS.toBigDecimal()))
             .`as`("changeCoef")
@@ -150,30 +141,31 @@ class MongoStockRecordRepository(
         from: Date,
         to: Date,
     ): Mono<BigDecimal> {
+        val matchDateRange = Aggregation.match(
+            Criteria.where(MongoStockRecord::dateOfRetrieval.name)
+                .gte(from)
+                .lt(to)
+        )
+
+        val matchNonNullField = Aggregation.match(
+            Criteria.where(field).ne(null)
+        )
+
+        val project = Aggregation.project(field)
+            .andExclude("_id")
+            .and(field).`as`("max")
+
+        val sort = Aggregation.sort(Sort.Direction.DESC, field)
+
+        val limit = Aggregation.limit(1)
+
+        val aggregation = Aggregation.newAggregation(matchDateRange, matchNonNullField, project, sort, limit)
+
         return reactiveMongoTemplate
-            .getCollection(MongoStockRecord.COLLECTION_NAME)
-            .flatMap { collection ->
-                collection.find(
-                    and(
-                        gte(MongoStockRecord::dateOfRetrieval.name, from),
-                        lt(MongoStockRecord::dateOfRetrieval.name, to)
-                    )
-                )
-                    .projection(
-                        fields(
-                            include(field),
-                            excludeId()
-                        )
-                    )
-                    .sort(Sorts.descending(field))
-                    .limit(1)
-                    .toMono()
-            }
-            .flatMap { document ->
-                Mono.justOrEmpty(
-                    (document?.get(field) as? Decimal128)?.bigDecimalValue()
-                )
-            }
+            .aggregate(aggregation, MongoStockRecord.COLLECTION_NAME, AggregatedBigDecimalResult::class.java)
+            .next()
+            .map { it.max }
+            .switchIfEmpty(Mono.empty())
     }
 
     private fun getOnlyMostRecentNDataRecords(
@@ -184,6 +176,10 @@ class MongoStockRecordRepository(
                 .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK_SYMBOL)
         }
     }
+
+    internal data class AggregatedBigDecimalResult(
+        val max: BigDecimal,
+    )
 
     @SpringDocument
     internal data class ResultingClass(val records: List<MongoStockRecord>)

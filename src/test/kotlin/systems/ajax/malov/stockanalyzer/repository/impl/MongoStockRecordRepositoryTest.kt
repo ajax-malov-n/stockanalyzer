@@ -71,6 +71,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val bestStock1 = firstPlaceStockRecord()
         val bestStock2 = alsoFirstPlaceStockRecord()
         val secondBestStock = secondPlaceStockRecord().copy(
+            symbol = null,
             openPrice = null,
             highPrice = null,
             lowPrice = null,
@@ -84,7 +85,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             .subscribe()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
-            secondBestStock.symbol to listOf(secondBestStock)
+            "Not provided" to listOf(secondBestStock)
         )
         val from = Date.from(testDate().minus(1, ChronoUnit.DAYS))
         val to = Date.from(testDate().plus(1, ChronoUnit.DAYS))
