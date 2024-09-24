@@ -165,7 +165,6 @@ class MongoStockRecordRepository(
             .aggregate(aggregation, MongoStockRecord.COLLECTION_NAME, AggregatedBigDecimalResult::class.java)
             .next()
             .map { it.max }
-            .switchIfEmpty(Mono.empty())
     }
 
     private fun getOnlyMostRecentNDataRecords(
