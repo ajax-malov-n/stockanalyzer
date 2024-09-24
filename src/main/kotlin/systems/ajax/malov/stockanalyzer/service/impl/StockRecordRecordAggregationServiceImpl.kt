@@ -32,7 +32,6 @@ class StockRecordRecordAggregationServiceImpl(
             .subscribe()
     }
 
-
     companion object {
         private val log = LoggerFactory.getLogger(StockRecordRecordAggregationServiceImpl::class.java)
     }

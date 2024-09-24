@@ -1,9 +1,8 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import reactor.test.StepVerifier
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
@@ -19,22 +18,26 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
     @Test
     fun `insertAll fun inserts all stocks records and retrieves inserted stock records ids`() {
-        val listOfUnsavedStockRecords = listOf(unsavedStockRecord())
+        val expected = listOf(unsavedStockRecord())
 
-        val actual = mongoStockRecordRepository.insertAll(listOfUnsavedStockRecords)
+        val actual = mongoStockRecordRepository.insertAll(expected)
 
-        assertEquals(listOfUnsavedStockRecords.size, actual.size)
-        assertEquals(listOfUnsavedStockRecords.size, actual.count { it.id != null })
+        StepVerifier.create(actual)
+            .expectNextMatches { expected[0].id != null }
+            .verifyComplete()
     }
 
     @Test
     fun `getAllStockSymbols retrieves all stock symbols`() {
         val listOfUnsavedStocks = listOf(unsavedStockRecord().copy(symbol = "AJAX"))
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
+            .subscribe()
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
-        assertTrue(actual.toSet().containsAll(listOfUnsavedStocks.map { it.symbol }))
+        StepVerifier.create(actual)
+            .expectNextMatches { result -> result.toSet().containsAll(listOfUnsavedStocks.map { it.symbol }) }
+            .verifyComplete()
     }
 
     @Test
@@ -45,6 +48,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val secondBestStock = secondPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
+            .subscribe()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
@@ -56,8 +60,9 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(2, from, to)
 
         // THEN
-        assertEquals(expected.size, actual.size)
-        assertEquals(expected.keys, actual.keys)
+        StepVerifier.create(actual)
+            .expectNextMatches { it.size == expected.size && it.keys == expected.keys }
+            .verifyComplete()
     }
 
     @Test
@@ -76,6 +81,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
+            .subscribe()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
@@ -87,8 +93,9 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
-        assertEquals(expected.size, actual.size)
-        assertEquals(expected.keys, actual.keys)
+        StepVerifier.create(actual)
+            .expectNextMatches { it.size == expected.size && it.keys == expected.keys }
+            .verifyComplete()
     }
 
     @Test
@@ -106,9 +113,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(nullStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-        val expected = mapOf(
-            nullStock.symbol to listOf(nullStock)
-        )
+            .subscribe()
         val from = Date.from(testDate().plus(1, ChronoUnit.DAYS))
         val to = Date.from(testDate().plus(4, ChronoUnit.DAYS))
 
@@ -116,7 +121,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
-        assertEquals(expected.size, actual.size)
-        assertEquals(expected.keys, actual.keys)
+        StepVerifier.create(actual)
+            .verifyComplete()
     }
 }

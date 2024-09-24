@@ -1,61 +1,67 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class MongoStockRecordAnalyzerServiceTest {
 
-    @Mock
+    @MockK
     private lateinit var stockRecordRepository: StockRecordRepository
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl
 
     @Test
     fun `getFiveBestStockSymbolsWithStockRecords calls repository and returns five bests stock symbols with records`() {
+        // GIVEN
         val savedStock = savedStockRecord()
         val retrievedStocks = mapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForFiveBestStockSymbolsWithStockRecords()
-        whenever(
+        every {
             stockRecordRepository.findTopNStockSymbolsWithStockRecords(
                 eq(5),
                 any(),
                 any()
             )
-        )
-            .thenReturn(retrievedStocks)
+        } returns Mono.just(retrievedStocks)
 
+        // WHEN
         val actual = stockAnalyzerService.getFiveBestStockSymbolsWithStockRecords()
 
-        verify(stockRecordRepository)
-            .findTopNStockSymbolsWithStockRecords(eq(5), any(), any())
-        assertEquals(expected, actual)
+        // THEN
+        StepVerifier.create(actual)
+            .expectNext(expected)
+            .verifyComplete()
+        verify {
+            stockRecordRepository.findTopNStockSymbolsWithStockRecords(eq(5), any(), any())
+        }
     }
 
     @Test
     fun `getAllManageableStocksSymbols calls repository and returns all stocks symbols`() {
+        // GIVEN
         val expected = listOf(TEST_STOCK_SYMBOL)
+        every { stockRecordRepository.findAllStockSymbols() } returns Mono.just(expected)
 
-        whenever(stockRecordRepository.findAllStockSymbols())
-            .thenReturn(expected)
-
+        // WHEN
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()
 
-        verify(stockRecordRepository)
-            .findAllStockSymbols()
-        assertEquals(expected, actual)
+        // THEN
+        verify { stockRecordRepository.findAllStockSymbols() }
+        StepVerifier.create(actual)
+            .expectNext(expected)
+            .verifyComplete()
     }
 }

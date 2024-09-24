@@ -1,43 +1,49 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import reactor.core.publisher.Flux
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class MongoStockRecordAggregationServiceTest {
 
-    @Mock
+    @MockK
     private lateinit var stockRecordClientApi: StockRecordClientApi
 
-    @Mock
+    @MockK
     private lateinit var stockRecordRepository: StockRecordRepository
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var stockRecordAggregationServiceImpl: StockRecordRecordAggregationServiceImpl
 
     @Test
     fun `aggregateStockData calls external API to retrieve data and then calls repository to save stocks`() {
+        // GIVEN
         val retrievedStockRecords = listOf(unsavedStockRecord())
-        whenever(stockRecordClientApi.getAllStockRecords())
-            .thenReturn(retrievedStockRecords)
-        whenever(stockRecordRepository.insertAll(retrievedStockRecords))
-            .thenReturn(listOf(savedStockRecord()).toMutableList())
+        every {
+            stockRecordClientApi.getAllStockRecords()
+        } returns Flux.fromIterable(retrievedStockRecords)
+        every {
+            stockRecordRepository.insertAll(retrievedStockRecords)
+        } returns Flux.fromIterable(listOf(savedStockRecord()).toMutableList())
 
+        // WHEN
         stockRecordAggregationServiceImpl.aggregateStockRecords()
 
-        verify(stockRecordClientApi)
-            .getAllStockRecords()
-        verify(stockRecordRepository)
-            .insertAll(eq(retrievedStockRecords))
+        // THEN
+        every {
+            stockRecordClientApi.getAllStockRecords()
+        }
+        every {
+            stockRecordRepository.insertAll(retrievedStockRecords)
+        }
     }
 }
