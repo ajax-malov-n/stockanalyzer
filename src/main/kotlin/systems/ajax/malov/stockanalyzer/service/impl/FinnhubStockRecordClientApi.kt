@@ -25,11 +25,10 @@ class FinnhubStockRecordClientApi(
             .flatMap { symbol ->
                 retrieveStockRecord(symbol, retrievalDate)
             }
-            .mapNotNull { it }
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun retrieveStockRecord(symbol: String, retrievalDate: Instant): Mono<MongoStockRecord?> {
+    private fun retrieveStockRecord(symbol: String, retrievalDate: Instant): Mono<MongoStockRecord> {
         return Mono.fromCallable {
             finnhubStockApi.quote(symbol).toStockRecord(symbol, retrievalDate)
         }

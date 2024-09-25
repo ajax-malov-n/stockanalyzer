@@ -1,8 +1,9 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import reactor.test.StepVerifier
+import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
@@ -22,7 +23,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         val actual = mongoStockRecordRepository.insertAll(expected)
 
-        StepVerifier.create(actual)
+        actual.test()
             .expectNextMatches { expected[0].id != null }
             .verifyComplete()
     }
@@ -35,7 +36,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
-        StepVerifier.create(actual)
+        actual.test()
             .expectNextMatches { result -> result.toSet().containsAll(listOfUnsavedStocks.map { it.symbol }) }
             .verifyComplete()
     }
@@ -60,8 +61,12 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(2, from, to)
 
         // THEN
-        StepVerifier.create(actual)
-            .expectNextMatches { it.size == expected.size && it.keys == expected.keys }
+        actual.test()
+            .expectNextMatches { result ->
+                assertEquals(expected.size, result.size)
+                assertEquals(expected.keys, result.keys)
+                true
+            }
             .verifyComplete()
     }
 
@@ -94,8 +99,12 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
-        StepVerifier.create(actual)
-            .expectNextMatches { it.size == expected.size && it.keys == expected.keys }
+        actual.test()
+            .expectNextMatches { result ->
+                assertEquals(expected.size, result.size)
+                assertEquals(expected.keys, result.keys)
+                true
+            }
             .verifyComplete()
     }
 
@@ -122,7 +131,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
-        StepVerifier.create(actual)
+        actual.test()
             .verifyComplete()
     }
 }

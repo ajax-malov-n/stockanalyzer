@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Flux
-import reactor.test.StepVerifier
+import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -39,7 +39,7 @@ class FinnhubMongoStockRecordClientApiTest {
         val actual: Flux<MongoStockRecord> = finnhubStockRecordClientApi.getAllStockRecords()
 
         // THEN
-        StepVerifier.create(actual)
+        actual.test()
             .expectNextMatches { it.symbol == expected[0].symbol }
             .verifyComplete()
     }
@@ -55,7 +55,7 @@ class FinnhubMongoStockRecordClientApiTest {
         val actual: Flux<MongoStockRecord> = finnhubStockRecordClientApi.getAllStockRecords()
 
         // THEN
-        StepVerifier.create(actual)
+        actual.test()
             .verifyComplete()
     }
 }

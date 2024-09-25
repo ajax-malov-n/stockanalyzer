@@ -47,7 +47,7 @@ dependencies {
 
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    implementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.kotlin)
     testImplementation("io.projectreactor:reactor-test:3.5.11")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")

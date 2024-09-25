@@ -8,7 +8,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
+import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.aggregatedStockRecordResponseDto
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
@@ -37,7 +37,7 @@ class MongoStockRecordControllerTest {
             stockRecordsController.getFiveBestStockSymbolsWithStockRecords()
 
         // THEN
-        StepVerifier.create(response)
+        response.test()
             .expectNext(expected)
             .verifyComplete()
         verify { stockRecordAnalyzerService.getFiveBestStockSymbolsWithStockRecords() }
@@ -56,7 +56,7 @@ class MongoStockRecordControllerTest {
 
         // THEN
         verify { stockRecordAnalyzerService.getAllManageableStocksSymbols() }
-        StepVerifier.create(response)
+        response.test()
             .expectNext(expected)
             .verifyComplete()
     }

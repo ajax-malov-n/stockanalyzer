@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.AccumulatorOperators.Avg
 import org.springframework.data.mongodb.core.aggregation.Aggregation
+import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.AggregationExpression
 import org.springframework.data.mongodb.core.aggregation.ConvertOperators.ToDecimal.toDecimal
 import org.springframework.data.mongodb.core.aggregation.GroupOperation
@@ -48,15 +49,15 @@ class MongoStockRecordRepository(
         val maxPercentChangeMono = getMaxBigDecimal(MongoStockRecord::percentChange.name, from, to)
 
         return Mono.zip(maxChangeMono, maxPercentChangeMono)
-            .flatMap { maxValues ->
-                val (maxChange, maxPercentChange) = maxValues
+            .flatMap { (maxChange, maxPercentChange) ->
                 fetchNBestStockSymbolsWithStockRecords(from, to, maxChange, maxPercentChange, n)
+                    .collectList()
             }
             .map { results ->
-                getOnlyMostRecentNDataRecords(
-                    results.flatMap { it.records }
-                        .groupBy { it.symbol ?: "Not provided" }
-                )
+                results.flatMap { it.records }.groupBy { it.symbol ?: "Not provided" }
+            }
+            .map { mapWithAllDataRecords ->
+                getOnlyMostRecentNDataRecords(mapWithAllDataRecords)
             }
     }
 
@@ -66,14 +67,14 @@ class MongoStockRecordRepository(
         maxChange: BigDecimal,
         maxPercentChange: BigDecimal,
         n: Int,
-    ): Mono<MutableList<ResultingClass>> {
+    ): Flux<ResultingClass> {
         val matchOperation: MatchOperation =
             Aggregation.match(
                 Criteria.where(MongoStockRecord::dateOfRetrieval.name)
                     .gte(from)
                     .lt(to)
             )
-        val groupOperation: GroupOperation = Aggregation.group(MongoStockRecord::symbol.name)
+        val groupOperation: GroupOperation = group(MongoStockRecord::symbol.name)
             .push("$\$ROOT").`as`("records")
         val projectOperation = getProjectWithAvgMaxValues(maxChange, maxPercentChange)
         val weightedPipeline = getWeightedPipeLine()
@@ -91,7 +92,7 @@ class MongoStockRecordRepository(
             aggregation,
             MongoStockRecord.COLLECTION_NAME,
             ResultingClass::class.java
-        ).collectList()
+        )
     }
 
     private fun getProjectWithAvgMaxValues(
@@ -147,19 +148,11 @@ class MongoStockRecordRepository(
                 .lt(to)
         )
 
-        val matchNonNullField = Aggregation.match(
-            Criteria.where(field).ne(null)
+        val aggregation = Aggregation.newAggregation(
+            matchDateRange,
+            group()
+                .max(field).`as`("max")
         )
-
-        val project = Aggregation.project(field)
-            .andExclude("_id")
-            .and(field).`as`("max")
-
-        val sort = Aggregation.sort(Sort.Direction.DESC, field)
-
-        val limit = Aggregation.limit(1)
-
-        val aggregation = Aggregation.newAggregation(matchDateRange, matchNonNullField, project, sort, limit)
 
         return reactiveMongoTemplate
             .aggregate(aggregation, MongoStockRecord.COLLECTION_NAME, AggregatedBigDecimalResult::class.java)

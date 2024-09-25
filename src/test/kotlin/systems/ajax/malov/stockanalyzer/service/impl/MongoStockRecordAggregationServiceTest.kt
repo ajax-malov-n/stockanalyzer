@@ -6,7 +6,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import reactor.core.publisher.Flux
+import reactor.kotlin.core.publisher.toFlux
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
@@ -30,10 +30,10 @@ class MongoStockRecordAggregationServiceTest {
         val retrievedStockRecords = listOf(unsavedStockRecord())
         every {
             stockRecordClientApi.getAllStockRecords()
-        } returns Flux.fromIterable(retrievedStockRecords)
+        } returns retrievedStockRecords.toFlux()
         every {
             stockRecordRepository.insertAll(retrievedStockRecords)
-        } returns Flux.fromIterable(listOf(savedStockRecord()).toMutableList())
+        } returns listOf(savedStockRecord()).toFlux()
 
         // WHEN
         stockRecordAggregationServiceImpl.aggregateStockRecords()
