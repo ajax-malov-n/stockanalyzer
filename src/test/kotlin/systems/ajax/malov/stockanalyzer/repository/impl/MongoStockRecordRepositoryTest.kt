@@ -126,13 +126,13 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             previousClosePrice = null,
             change = null,
             percentChange = null,
-            dateOfRetrieval = testDate().plus(3, ChronoUnit.DAYS)
+            dateOfRetrieval = testDate().plus(4, ChronoUnit.DAYS)
         )
         val listOfUnsavedStocks = listOf(nullStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
             .subscribe()
-        val from = Date.from(testDate().plus(1, ChronoUnit.DAYS))
-        val to = Date.from(testDate().plus(4, ChronoUnit.DAYS))
+        val from = Date.from(testDate().plus(3, ChronoUnit.DAYS))
+        val to = Date.from(testDate().plus(5, ChronoUnit.DAYS))
 
         // WHEN
         val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
