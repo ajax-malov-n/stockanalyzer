@@ -32,12 +32,11 @@ class MongoStockRecordRepository(
         return reactiveMongoTemplate.insertAll(mongoStockRecords)
     }
 
-    override fun findAllStockSymbols(): Mono<List<String>> {
+    override fun findAllStockSymbols(): Flux<String> {
         return reactiveMongoTemplate.query(MongoStockRecord::class.java)
             .distinct(MongoStockRecord::symbol.name)
             .asType<String>()
             .all()
-            .collectList()
     }
 
     override fun findTopNStockSymbolsWithStockRecords(

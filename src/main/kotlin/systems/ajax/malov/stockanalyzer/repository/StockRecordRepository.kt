@@ -14,5 +14,5 @@ interface StockRecordRepository {
         to: Date,
     ): Mono<Map<String, List<MongoStockRecord>>>
 
-    fun findAllStockSymbols(): Mono<List<String>>
+    fun findAllStockSymbols(): Flux<String>
 }

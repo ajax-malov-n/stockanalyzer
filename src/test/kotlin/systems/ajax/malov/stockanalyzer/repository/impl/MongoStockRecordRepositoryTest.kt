@@ -1,6 +1,7 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
@@ -36,8 +37,16 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
-        actual.test()
-            .expectNextMatches { result -> result.toSet().containsAll(listOfUnsavedStocks.map { it.symbol }) }
+        actual
+            .collectList()
+            .test()
+            .assertNext { result ->
+                assertTrue(
+                    result
+                        .containsAll(listOfUnsavedStocks
+                            .map { it.symbol }), "New inserted stock symbol must be in the response list"
+                )
+            }
             .verifyComplete()
     }
 
@@ -62,10 +71,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         // THEN
         actual.test()
-            .expectNextMatches { result ->
-                assertEquals(expected.size, result.size)
+            .assertNext { result ->
                 assertEquals(expected.keys, result.keys)
-                true
             }
             .verifyComplete()
     }
@@ -100,10 +107,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         // THEN
         actual.test()
-            .expectNextMatches { result ->
-                assertEquals(expected.size, result.size)
+            .assertNext { result ->
                 assertEquals(expected.keys, result.keys)
-                true
             }
             .verifyComplete()
     }

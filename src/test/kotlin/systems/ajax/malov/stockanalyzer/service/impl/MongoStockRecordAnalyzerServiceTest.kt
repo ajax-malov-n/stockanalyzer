@@ -8,6 +8,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
@@ -53,7 +54,7 @@ class MongoStockRecordAnalyzerServiceTest {
     fun `getAllManageableStocksSymbols calls repository and returns all stocks symbols`() {
         // GIVEN
         val expected = listOf(TEST_STOCK_SYMBOL)
-        every { stockRecordRepository.findAllStockSymbols() } returns Mono.just(expected)
+        every { stockRecordRepository.findAllStockSymbols() } returns expected.toFlux()
 
         // WHEN
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()

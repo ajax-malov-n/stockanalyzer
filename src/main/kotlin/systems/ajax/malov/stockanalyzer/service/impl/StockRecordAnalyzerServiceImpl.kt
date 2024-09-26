@@ -28,6 +28,6 @@ class StockRecordAnalyzerServiceImpl(
     }
 
     override fun getAllManageableStocksSymbols(): Mono<List<String>> {
-        return stockRecordRepository.findAllStockSymbols()
+        return stockRecordRepository.findAllStockSymbols().collectList()
     }
 }

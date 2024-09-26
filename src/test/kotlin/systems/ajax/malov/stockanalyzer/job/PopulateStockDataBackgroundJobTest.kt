@@ -1,4 +1,4 @@
-package systems.ajax.malov.stockanalyzer.service.impl
+package systems.ajax.malov.stockanalyzer.job
 
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -13,7 +13,7 @@ import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
 @ExtendWith(MockKExtension::class)
-class MongoStockRecordAggregationServiceTest {
+class PopulateStockDataBackgroundJobTest {
 
     @MockK
     private lateinit var stockRecordClientApi: StockRecordClientApi
@@ -22,7 +22,7 @@ class MongoStockRecordAggregationServiceTest {
     private lateinit var stockRecordRepository: StockRecordRepository
 
     @InjectMockKs
-    private lateinit var stockRecordAggregationServiceImpl: StockRecordRecordAggregationServiceImpl
+    private lateinit var populateStockDataBackgroundJob: PopulateStockDataBackgroundJob
 
     @Test
     fun `aggregateStockData calls external API to retrieve data and then calls repository to save stocks`() {
@@ -36,7 +36,7 @@ class MongoStockRecordAggregationServiceTest {
         } returns listOf(savedStockRecord()).toFlux()
 
         // WHEN
-        stockRecordAggregationServiceImpl.aggregateStockRecords()
+        populateStockDataBackgroundJob.aggregateStockRecords()
 
         // THEN
         every {

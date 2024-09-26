@@ -40,6 +40,6 @@ class FinnhubStockRecordClientApi(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(StockRecordRecordAggregationServiceImpl::class.java)
+        private val log = LoggerFactory.getLogger(FinnhubStockRecordClientApi::class.java)
     }
 }
