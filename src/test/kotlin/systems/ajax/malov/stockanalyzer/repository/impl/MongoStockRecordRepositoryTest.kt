@@ -43,8 +43,10 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
             .assertNext { result ->
                 assertTrue(
                     result
-                        .containsAll(listOfUnsavedStocks
-                            .map { it.symbol }), "New inserted stock symbol must be in the response list"
+                        .containsAll(
+                            listOfUnsavedStocks.map { it.symbol }
+                        ),
+                    "New inserted stock symbol must be in the response list"
                 )
             }
             .verifyComplete()
