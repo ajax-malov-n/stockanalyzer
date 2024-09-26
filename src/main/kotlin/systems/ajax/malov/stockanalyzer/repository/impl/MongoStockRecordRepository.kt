@@ -156,7 +156,7 @@ class MongoStockRecordRepository(
         return reactiveMongoTemplate
             .aggregate(aggregation, MongoStockRecord.COLLECTION_NAME, AggregatedBigDecimalResult::class.java)
             .next()
-            .map { it.max }
+            .mapNotNull { it.max }
     }
 
     private fun getOnlyMostRecentNDataRecords(
@@ -169,7 +169,7 @@ class MongoStockRecordRepository(
     }
 
     internal data class AggregatedBigDecimalResult(
-        val max: BigDecimal,
+        val max: BigDecimal?,
     )
 
     @SpringDocument
