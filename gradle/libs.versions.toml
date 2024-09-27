@@ -3,6 +3,7 @@ kotlin = "1.9.23"
 spring-boot = "3.3.2"
 dependency-management = "1.1.6"
 detekt = "1.23.6"
+springmockk = "4.0.2"
 mockito-kotlin = "3.2.0"
 finnhub-kotlin-client = "2.0.20"
 mongock = "5.2.4"
@@ -24,3 +25,4 @@ mongock-mongodb-springdata-v4-driver = { group = "io.mongock", name = "mongodb-s
 shedlock-spring = { group = "net.javacrumbs.shedlock", name = "shedlock-spring", version.ref = "shedlock" }
 shedlock-provider-mongo = { group = "net.javacrumbs.shedlock", name = "shedlock-provider-mongo", version.ref = "shedlock" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "ktlint" }
+spring-mockk = { group = "com.ninja-squad", name = "springmockk", version.ref = "springmockk" }

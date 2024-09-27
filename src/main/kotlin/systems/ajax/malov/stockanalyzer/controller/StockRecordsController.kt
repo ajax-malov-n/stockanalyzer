@@ -1,9 +1,9 @@
 package systems.ajax.malov.stockanalyzer.controller
 
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
@@ -13,15 +13,14 @@ import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 class StockRecordsController(private val stockRecordAnalyzerService: StockRecordAnalyzerService) {
 
     @GetMapping("/bestFive")
-    fun getFiveBestStockSymbolsWithStockRecords(): ResponseEntity<AggregatedStockRecordResponseDto> = ResponseEntity
-        .ok(
-            toAggregatedStockItemResponseDto(
-                stockRecordAnalyzerService
-                    .getFiveBestStockSymbolsWithStockRecords()
-            )
-        )
+    fun getFiveBestStockSymbolsWithStockRecords(): Mono<AggregatedStockRecordResponseDto> =
+        stockRecordAnalyzerService
+            .getFiveBestStockSymbolsWithStockRecords()
+            .map {
+                toAggregatedStockItemResponseDto(it)
+            }
 
     @GetMapping("/symbols")
-    fun getAllManageableStockSymbols(): ResponseEntity<List<String>> =
-        ResponseEntity.ok(stockRecordAnalyzerService.getAllManageableStocksSymbols())
+    fun getAllManageableStockSymbols(): Mono<List<String>> =
+        stockRecordAnalyzerService.getAllManageableStocksSymbols()
 }

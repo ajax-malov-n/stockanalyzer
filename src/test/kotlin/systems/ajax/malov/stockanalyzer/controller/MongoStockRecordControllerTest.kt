@@ -1,52 +1,63 @@
 package systems.ajax.malov.stockanalyzer.controller
 
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import org.springframework.http.HttpStatus
+import reactor.core.publisher.Mono
+import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.aggregatedStockRecordResponseDto
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
+import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
-import kotlin.test.assertEquals
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class MongoStockRecordControllerTest {
 
-    @Mock
+    @MockK
     private lateinit var stockRecordAnalyzerService: StockRecordAnalyzerService
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var stockRecordsController: StockRecordsController
 
     @Test
     fun `getFiveBestStockSymbolsWithStockRecords calls service and retrieves five best stocks symbols with records`() {
-        whenever(stockRecordAnalyzerService.getFiveBestStockSymbolsWithStockRecords())
-            .thenReturn(notAggregatedResponseForFiveBestStockSymbolsWithStockRecords())
-
+        // GIVEN
+        every {
+            stockRecordAnalyzerService.getFiveBestStockSymbolsWithStockRecords()
+        } returns Mono.just(notAggregatedResponseForFiveBestStockSymbolsWithStockRecords())
         val expected = aggregatedStockRecordResponseDto()
 
-        val response = stockRecordsController.getFiveBestStockSymbolsWithStockRecords()
+        // WHEN
+        val response: Mono<AggregatedStockRecordResponseDto> =
+            stockRecordsController.getFiveBestStockSymbolsWithStockRecords()
 
-        verify(stockRecordAnalyzerService)
-            .getFiveBestStockSymbolsWithStockRecords()
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(expected, response.body)
+        // THEN
+        response.test()
+            .expectNext(expected)
+            .verifyComplete()
+        verify { stockRecordAnalyzerService.getFiveBestStockSymbolsWithStockRecords() }
     }
 
     @Test
     fun `getAllManageableStockSymbols calls service and retrieves all manageable stocks`() {
-        whenever(stockRecordAnalyzerService.getAllManageableStocksSymbols())
-            .thenReturn(listOf(TEST_STOCK_SYMBOL))
+        // GIVEN
+        val expected = listOf(TEST_STOCK_SYMBOL)
+        every {
+            stockRecordAnalyzerService.getAllManageableStocksSymbols()
+        } returns Mono.just(expected)
 
-        val response = stockRecordsController.getAllManageableStockSymbols()
+        // WHEN
+        val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
 
-        verify(stockRecordAnalyzerService)
-            .getAllManageableStocksSymbols()
-        assertEquals(HttpStatus.OK, response.statusCode)
+        // THEN
+        verify { stockRecordAnalyzerService.getAllManageableStocksSymbols() }
+        response.test()
+            .expectNext(expected)
+            .verifyComplete()
     }
 }
