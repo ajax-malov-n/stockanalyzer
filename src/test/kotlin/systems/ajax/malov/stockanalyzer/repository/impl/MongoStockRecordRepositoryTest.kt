@@ -13,6 +13,7 @@ import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import kotlin.test.assertNotNull
 
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     @Autowired
@@ -25,7 +26,9 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val actual = mongoStockRecordRepository.insertAll(expected)
 
         actual.test()
-            .expectNextMatches { expected[0].id != null }
+            .assertNext {
+                assertNotNull(expected[0].id, "Id must not be null after insertion")
+            }
             .verifyComplete()
     }
 
