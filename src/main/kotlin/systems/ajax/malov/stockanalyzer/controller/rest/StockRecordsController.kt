@@ -1,4 +1,4 @@
-package systems.ajax.malov.stockanalyzer.controller
+package systems.ajax.malov.stockanalyzer.controller.rest
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

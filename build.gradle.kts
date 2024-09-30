@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.dependency.management)
     alias(libs.plugins.detekt)
+    id("com.google.protobuf") version "0.9.4"
     id("io.github.surpsg.delta-coverage") version "2.4.0"
     id("jacoco")
     `java-test-fixtures`
@@ -47,6 +48,11 @@ dependencies {
 
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
+    implementation("io.nats:jnats:2.16.14")
+
+    implementation("com.google.protobuf:protobuf-java:3.24.3")
+    implementation(project(":internal-api"))
+
     testImplementation(libs.mockito.kotlin)
     testImplementation("io.projectreactor:reactor-test:3.5.11")
     testImplementation("org.testcontainers:junit-jupiter")
@@ -57,6 +63,21 @@ dependencies {
     testImplementation(libs.spring.mockk)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+allprojects {
+    group = "systems.ajax.malov"
+    version = "0.0.1-SNAPSHOT"
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply(plugin = "kotlin")
+    apply(plugin = "com.google.protobuf")
+}
+
 
 kotlin {
     compilerOptions {

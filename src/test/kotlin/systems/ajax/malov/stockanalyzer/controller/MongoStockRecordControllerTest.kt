@@ -12,6 +12,7 @@ import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.aggregatedStockRecordResponseDto
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
+import systems.ajax.malov.stockanalyzer.controller.rest.StockRecordsController
 import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 

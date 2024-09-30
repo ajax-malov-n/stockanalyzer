@@ -14,3 +14,6 @@ mongock:
 
 logExecutionTime:
   enabled: true
+
+nats:
+    url: "nats://nats:4222"
