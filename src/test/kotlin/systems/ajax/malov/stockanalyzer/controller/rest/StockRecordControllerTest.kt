@@ -1,4 +1,4 @@
-package systems.ajax.malov.stockanalyzer.controller
+package systems.ajax.malov.stockanalyzer.controller.rest
 
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -17,7 +17,7 @@ import systems.ajax.malov.stockanalyzer.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 
 @ExtendWith(MockKExtension::class)
-class MongoStockRecordControllerTest {
+class StockRecordControllerTest {
 
     @MockK
     private lateinit var stockRecordAnalyzerService: StockRecordAnalyzerService

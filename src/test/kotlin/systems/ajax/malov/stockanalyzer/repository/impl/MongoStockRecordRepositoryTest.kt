@@ -36,7 +36,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     fun `getAllStockSymbols retrieves all stock symbols`() {
         val listOfUnsavedStocks = listOf(unsavedStockRecord().copy(symbol = "AJAX"))
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .subscribe()
+            .collectList()
+            .block()
 
         val actual = mongoStockRecordRepository.findAllStockSymbols()
 
@@ -63,7 +64,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val secondBestStock = secondPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .subscribe()
+            .collectList()
+            .block()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             secondBestStock.symbol to listOf(secondBestStock)
@@ -99,7 +101,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .subscribe()
+            .collectList()
+            .block()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             "Not provided" to listOf(secondBestStock)
@@ -133,7 +136,8 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(nullStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .subscribe()
+            .collectList()
+            .block()
         val from = Date.from(testDate().plus(3, ChronoUnit.DAYS))
         val to = Date.from(testDate().plus(5, ChronoUnit.DAYS))
 

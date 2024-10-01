@@ -11,3 +11,6 @@ logExecutionTime:
 
 scheduling:
   enabled: false
+
+nats:
+  url: "nats://localhost:4222"
