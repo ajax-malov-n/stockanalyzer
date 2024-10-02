@@ -4,7 +4,7 @@ import "systems/ajax/malov/internalapi/commonmodel/stock/short_stock.proto";
 import "systems/ajax/malov/internalapi/commonmodel/stock/big_decimal.proto";
 
 
-package systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto;
+package systems.ajax.malov.input.reqreply.stock.get_five_best_stock_symbols_with_stocks.proto;
 
 option java_multiple_files = true;
 
@@ -13,10 +13,10 @@ message GetFiveBestStockSymbolsWithStockRecordsRequest {
 }
 
 message GetFiveBestStockSymbolsWithStockRecordsResponse {
-    repeated AggregatedStockRecordItemResponseDto stockSymbols = 1;
+  repeated AggregatedStockRecordItemResponseDto stockSymbols = 1;
 }
 
 message AggregatedStockRecordItemResponseDto{
-    string stockSymbol = 1;
-    repeated commonmodel.stock.short_stock.proto.ShortStockRecordResponseDto data = 2;
+  string stockSymbol = 1;
+  repeated commonmodel.stock.short_stock.proto.ShortStockRecordResponseDto data = 2;
 }
