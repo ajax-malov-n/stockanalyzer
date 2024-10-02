@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":internal-api"))
 
     testImplementation(libs.mockito.kotlin)
+    testImplementation("berlin.yuna:nats-server-embedded:2.10.22-rc.2")
     testImplementation("io.projectreactor:reactor-test:3.5.11")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")

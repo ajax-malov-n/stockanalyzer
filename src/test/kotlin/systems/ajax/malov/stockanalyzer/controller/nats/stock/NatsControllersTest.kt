@@ -1,11 +1,10 @@
 package systems.ajax.malov.stockanalyzer.controller.nats.stock
 
+import berlin.yuna.natsserver.embedded.annotation.EnableNatsServer
 import com.google.protobuf.ByteString
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
-import io.mockk.InternalPlatformDsl.toArray
 import io.nats.client.Connection
-import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
 import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
@@ -24,11 +23,11 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.Duration
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
+@EnableNatsServer(port = 4222)
 class NatsControllersTest : AbstractMongoIntegrationTest {
 
     @Autowired
@@ -64,7 +63,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
         )
 
         // THEN
-        assertEquals(hashSetOf(expectedResponse),hashSetOf(actual))
+        assertEquals(hashSetOf(expectedResponse), hashSetOf(actual))
     }
 
 
@@ -82,10 +81,10 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
 
         val expectedResponse =
             mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
-            .map {
-                buildResponse(it)
-            }
-           .block()
+                .map {
+                    buildResponse(it)
+                }
+                .block()
         val request = GetFiveBestStockSymbolsWithStockRecordsRequest
             .getDefaultInstance()
 
@@ -96,7 +95,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
             GetFiveBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
-        assertEquals(expectedResponse,actual)
+        assertEquals(expectedResponse, actual)
     }
 
     private fun <RequestT : GeneratedMessageV3, ResponseT : GeneratedMessageV3> doRequest(
@@ -117,7 +116,8 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
         return GetFiveBestStockSymbolsWithStockRecordsResponse.newBuilder()
             .addAllStockSymbols(aggregatedData.map { (symbol, stocks) ->
                 symbol.let { stock ->
-                    systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.AggregatedStockRecordItemResponseDto.newBuilder().setStockSymbol(stock)
+                    systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.AggregatedStockRecordItemResponseDto.newBuilder()
+                        .setStockSymbol(stock)
                         .addAllData(stocks.map {
                             ShortStockRecordResponseDto.newBuilder()
                                 .setLowPrice(convertToBDecimal(it.lowPrice))
