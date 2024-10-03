@@ -156,6 +156,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         // THEN
         actual.test()
+            .expectNext(emptyMap())
             .verifyComplete()
     }
 }

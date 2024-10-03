@@ -1,24 +1,35 @@
 version: "3.8"
 
 services:
-  app:
-    build: .
-    container_name: app
+
+  domain:
+    build:
+      context: .
+      dockerfile: DockerfileDomainService
+    container_name: domain
     depends_on:
       mongo:
         condition: service_healthy
       nats:
         condition: service_started
-    ports:
-      - "8080:8080"
     environment:
       - MONGO_DB_NAME=${MONGO_DB}
       - MONGO_PASSWORD=${MONGO_ROOT_PASSWORD}
       - MONGO_USERNAME=${MONGO_ROOT_USERNAME}
       - FINNHUB_API_TOKEN=${FINNHUB_API_TOKEN}
-      - SYMBOLS=${SYMBOLS}
     env_file:
       - .env
+
+  gateway:
+    build:
+      context: .
+      dockerfile: DockerfileGw
+    container_name: gateway
+    depends_on:
+      domain:
+        condition: service_started
+    ports:
+      - "8080:8080"
 
   mongo:
     image: mongo:7.0.14
@@ -40,7 +51,7 @@ services:
       - mongo-data:/data/db
 
   nats:
-    image: nats
+    image: nats:2.7.0-alpine
     ports:
       - "4222:4222"
     healthcheck:

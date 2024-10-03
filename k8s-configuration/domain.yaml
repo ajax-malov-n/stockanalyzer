@@ -1,25 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stockanalyzer
+  name: domain-deployment
   labels:
-    app: stockanalyzer
+    app: domain
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: stockanalyzer
+      app: domain
   template:
     metadata:
       labels:
-        app: stockanalyzer
+        app: domain
     spec:
       containers:
-        - name: stockanalyzer
-          image: stockanalyzer-app
+        - name: domain
+          image: stockanalyzer-domain
           imagePullPolicy: Never
-          ports:
-            - containerPort: 8080
           env:
             - name: MONGO_DB_NAME
               valueFrom:
@@ -39,19 +37,5 @@ spec:
             - name: FINNHUB_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: stockanalyzer-secret
+                  name: domain-secret
                   key: finnhubApiToken
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: stockanalyzer-service
-spec:
-  selector:
-    app: stockanalyzer
-  type: NodePort
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-      nodePort: 30003

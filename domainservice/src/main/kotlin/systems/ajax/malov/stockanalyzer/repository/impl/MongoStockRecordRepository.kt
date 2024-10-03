@@ -58,6 +58,7 @@ class MongoStockRecordRepository(
             .map { mapWithAllDataRecords ->
                 getOnlyMostRecentNDataRecords(mapWithAllDataRecords)
             }
+            .defaultIfEmpty(emptyMap())
     }
 
     private fun fetchNBestStockSymbolsWithStockRecords(
