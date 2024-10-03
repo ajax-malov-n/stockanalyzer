@@ -1,5 +1,6 @@
 plugins {
     `kotlin-conventions`
+    id("delta-coverage-conventions")
 }
 
 allprojects {
@@ -9,4 +10,10 @@ allprojects {
     repositories {
         mavenCentral()
     }
+}
+
+tasks.named("check") {
+    dependsOn("deltaCoverage")
+    dependsOn("detektMain")
+    dependsOn("detektTest")
 }

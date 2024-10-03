@@ -9,27 +9,39 @@ finnhub-kotlin-client = "2.0.20"
 mongock = "5.2.4"
 shedlock = "5.16.0"
 ktlint = "1.23.6"
-protobuf = "0.9.4"
 deltaCoverageVer = "2.4.0"
+nats = "2.16.14"
+natsServerEmbedded = "2.10.22-rc.2"
+reactoTest = "3.5.11"
+protobufPlugin = "0.9.4"
+protobuf = "3.24.3"
+
 
 [libraries]
+
+#Plugins
 kotlinJvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlinSpring = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
 springBoot = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
 dependencyManagement = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "dependency-management" }
-
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
-
-
-shedlock-spring = { module = "net.javacrumbs.shedlock:shedlock-spring", version.ref = "shedlock" }
-shedlock-provider-mongo = { module = "net.javacrumbs.shedlock:shedlock-provider-mongo", version.ref = "shedlock" }
-
-protobuf = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
 deltaCoverage = { module = "io.github.surpsg:delta-coverage-gradle", version.ref = "deltaCoverageVer" }
 
+#Libraries
+kotlinSpring = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
+shedlock-spring = { module = "net.javacrumbs.shedlock:shedlock-spring", version.ref = "shedlock" }
+shedlock-provider-mongo = { module = "net.javacrumbs.shedlock:shedlock-provider-mongo", version.ref = "shedlock" }
+protobuf = { group = "com.google.protobuf", name = "protobuf-java", version.ref = "protobuf" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 finnhub-kotlin-client = { group = "io.finnhub", name = "kotlin-client", version.ref = "finnhub-kotlin-client" }
 mongock-springboot-v3 = { group = "io.mongock", name = "mongock-springboot-v3", version.ref = "mongock" }
 mongock-mongodb-springdata-v4-driver = { group = "io.mongock", name = "mongodb-springdata-v4-driver", version.ref = "mongock" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "ktlint" }
 spring-mockk = { group = "com.ninja-squad", name = "springmockk", version.ref = "springmockk" }
+jNats = { group = "io.nats", name = "jnats", version.ref = "nats" }
+jNatsServerEmbedded = { group = "berlin.yuna", name = "nats-server-embedded", version.ref = "natsServerEmbedded" }
+pReactoTest = { group = "io.projectreactor", name = "reactor-test", version.ref = "reactoTest" }
+
+protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
+
+[plugins]
+protobufPlugin = { id = "com.google.protobuf", version.ref = "protobufPlugin" }

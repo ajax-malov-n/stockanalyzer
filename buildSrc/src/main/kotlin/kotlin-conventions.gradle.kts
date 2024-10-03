@@ -43,3 +43,9 @@ tasks.withType<Detekt>().configureEach {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+configurations {
+    named("testFixturesImplementation") {
+        extendsFrom(configurations.implementation.get())
+    }
+}

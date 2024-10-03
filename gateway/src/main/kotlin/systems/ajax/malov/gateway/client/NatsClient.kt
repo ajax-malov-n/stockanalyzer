@@ -1,4 +1,4 @@
-package systems.ajax.malov.systems.ajax.malov.gateway.client
+package systems.ajax.malov.gateway.client
 
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser

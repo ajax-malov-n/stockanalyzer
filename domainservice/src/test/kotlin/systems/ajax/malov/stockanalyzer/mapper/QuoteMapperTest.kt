@@ -1,5 +1,6 @@
 package systems.ajax.malov.stockanalyzer.mapper
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import stockanalyzer.utils.QuoteFixture.quote
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
@@ -7,7 +8,6 @@ import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.QuoteMapper.toStockRecord
 import java.math.BigDecimal
-import kotlin.test.assertEquals
 
 class QuoteMapperTest {
 

@@ -1,5 +1,6 @@
 package stockanalyzer.utils
 
+import org.bson.types.ObjectId
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import java.math.BigDecimal
 import java.time.Clock
@@ -9,7 +10,7 @@ import java.time.ZoneId
 
 object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
-    val ID = ObjectID
+    val ID = ObjectId.get()
     val testDate = Clock.fixed(Instant.now(), ZoneId.of("UTC")).instant()
 
     fun testDate(): Instant = Clock.fixed(Instant.now(), ZoneId.of("UTC")).instant()

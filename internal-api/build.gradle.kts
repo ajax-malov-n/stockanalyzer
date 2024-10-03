@@ -1,15 +1,16 @@
 plugins {
     `kotlin-conventions`
-    id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.protobufPlugin)
 }
 
 
 dependencies {
-    api("com.google.protobuf:protobuf-java:3.24.3")
+    api(libs.protobuf)
 }
+//artifact = libs.protoc.get().toString()
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.24.3"
+        artifact = libs.protoc.get().toString()
     }
 }

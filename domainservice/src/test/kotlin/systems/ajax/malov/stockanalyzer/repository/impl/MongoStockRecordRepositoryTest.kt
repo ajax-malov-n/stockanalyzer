@@ -1,21 +1,31 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
+import io.nats.client.Connection
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.mock.mockito.MockBean
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
+import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.assertNotNull
 
+@SuppressWarnings("UnusedPrivateProperty")
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
+    @MockBean
+    private lateinit var natsConnection: Connection
+
+    @MockBean
+    private lateinit var natsControllerBeanPostProcessor: NatsControllerBeanPostProcessor
+
     @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
 
