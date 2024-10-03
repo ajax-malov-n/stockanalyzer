@@ -22,7 +22,6 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
             val request = controller.parser.parseFrom(message.data)
 
             controller.handle(request).subscribe {
-                println("LOX")
                 controller.connection.publish(message.replyTo, it.toByteArray())
             }
         }.subscribe(controller.subject)

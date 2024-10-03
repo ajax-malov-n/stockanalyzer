@@ -9,5 +9,5 @@ message GetAllManageableStockSymbolsRequest {
 }
 
 message GetAllManageableStockSymbolsResponse {
-    repeated string symbols = 1;
+  repeated string symbols = 1;
 }

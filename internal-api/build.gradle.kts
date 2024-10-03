@@ -3,11 +3,9 @@ plugins {
     alias(libs.plugins.protobufPlugin)
 }
 
-
 dependencies {
     api(libs.protobuf)
 }
-//artifact = libs.protoc.get().toString()
 
 protobuf {
     protoc {
