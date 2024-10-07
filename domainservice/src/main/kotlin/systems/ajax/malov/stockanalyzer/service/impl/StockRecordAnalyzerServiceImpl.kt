@@ -15,13 +15,12 @@ class StockRecordAnalyzerServiceImpl(
     private val stockRecordRepository: StockRecordRepository,
 ) : StockRecordAnalyzerService {
 
-    @Suppress("MagicNumber")
     @LogExecutionTime
-    override fun getFiveBestStockSymbolsWithStockRecords(): Mono<Map<String, List<MongoStockRecord>>> {
+    override fun getFiveBestStockSymbolsWithStockRecords(n: Int): Mono<Map<String, List<MongoStockRecord>>> {
         val dateOfRequest = Instant.now()
         return stockRecordRepository
             .findTopNStockSymbolsWithStockRecords(
-                5,
+                n,
                 Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS)),
                 Date.from(dateOfRequest)
             )

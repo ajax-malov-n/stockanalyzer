@@ -9,8 +9,8 @@ import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_five_best_stock_symbols_with_stocks.proto.GetFiveBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_five_best_stock_symbols_with_stocks.proto.GetFiveBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetFiveBestStockSymbolsWithStockRecordsRequestMapper.toGetFiveBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
@@ -46,7 +46,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
             .collectList()
             .block()
         val expectedResponse = GetAllManageableStockSymbolsResponse.newBuilder().apply {
-            addAllSymbols(symbols)
+            successBuilder.addAllSymbols(symbols)
         }.build()
 
         // WHEN
@@ -78,14 +78,14 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
                     toGetFiveBestStockSymbolsWithStockRecordsRequest(it)
                 }
                 .block()
-        val request = GetFiveBestStockSymbolsWithStockRecordsRequest
+        val request = GetNBestStockSymbolsWithStockRecordsRequest
             .getDefaultInstance()
 
         // WHEN
         val actual = doRequest(
-            NatsSubject.StockRequest.GET_FIVE_BEST_STOCK_SYMBOLS,
+            NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
             request,
-            GetFiveBestStockSymbolsWithStockRecordsResponse.parser()
+            GetNBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
         assertEquals(expectedResponse, actual)

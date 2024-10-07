@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package systems.ajax.malov.commonmodel.stock.big_decimal.proto;
+package systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto;
 
 option java_multiple_files = true;
 

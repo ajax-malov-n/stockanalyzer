@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.NatsSubject.STOCK_QUEUE_GROUP
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS
 import systems.ajax.malov.stockanalyzer.controller.nats.NatsController
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
@@ -13,18 +14,20 @@ import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 @Component
 class GetAllManageableStocksNatsController(
     override val connection: Connection,
-    private val stockRecordAnalyzerServiceImpl: StockRecordAnalyzerService,
+    private val stockRecordAnalyzerService: StockRecordAnalyzerService,
 ) : NatsController<GetAllManageableStockSymbolsRequest, GetAllManageableStockSymbolsResponse> {
 
+    override val queueGroup: String = STOCK_QUEUE_GROUP
     override val subject: String = GET_ALL_MAN_SYMBOLS
     override val parser: Parser<GetAllManageableStockSymbolsRequest> = GetAllManageableStockSymbolsRequest.parser()
 
     override fun handle(request: GetAllManageableStockSymbolsRequest): Mono<GetAllManageableStockSymbolsResponse> {
-        return stockRecordAnalyzerServiceImpl
+        return stockRecordAnalyzerService
             .getAllManageableStocksSymbols()
             .map {
-                GetAllManageableStockSymbolsResponse.newBuilder()
-                    .addAllSymbols(it)
+                GetAllManageableStockSymbolsResponse.newBuilder().apply {
+                    successBuilder.addAllSymbols(it)
+                }
                     .build()
             }
     }

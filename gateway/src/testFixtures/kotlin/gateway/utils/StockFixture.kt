@@ -1,18 +1,20 @@
 package gateway.utils
 
 import com.google.protobuf.ByteString
-import systems.ajax.malov.commonmodel.stock.big_decimal.proto.BDecimal
-import systems.ajax.malov.commonmodel.stock.big_decimal.proto.BInteger
-import systems.ajax.malov.commonmodel.stock.short_stock.proto.ShortStockRecordResponseDto
-import systems.ajax.malov.input.reqreply.stock.get_five_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponseDto
-import systems.ajax.malov.input.reqreply.stock.get_five_best_stock_symbols_with_stocks.proto.GetFiveBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.gateway.dto.GetNBestStockSymbolsWithStockRecordsRequestDto
+import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponse
+import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BDecimal
+import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BInteger
+import systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortStockRecordResponse
 import java.nio.ByteBuffer
 
 
 object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
-    fun createGetFiveBestStockSymbolsWithStockRecordsResponse(): GetFiveBestStockSymbolsWithStockRecordsResponse {
-        val stockRecords: MutableList<ShortStockRecordResponseDto> = ArrayList()
+    fun createGetNBestStockSymbolsWithStockRecordsRequestDto(n: Int) = GetNBestStockSymbolsWithStockRecordsRequestDto(n)
+    fun createGetNBestStockSymbolsWithStockRecordsResponse(): GetNBestStockSymbolsWithStockRecordsResponse {
+        val stockRecords: MutableList<ShortStockRecordResponse> = ArrayList()
 
         val openPrice = BDecimal.newBuilder()
             .setScale(2)
@@ -50,7 +52,7 @@ object StockFixture {
             )
             .build()
 
-        val stockRecord: ShortStockRecordResponseDto = createShortStockRecord(
+        val stockRecord: ShortStockRecordResponse = createShortStockRecord(
             openPrice,
             highPrice,
             lowPrice,
@@ -60,13 +62,16 @@ object StockFixture {
 
         stockRecords.add(stockRecord)
 
-        val aggregatedStockRecord: AggregatedStockRecordItemResponseDto =
-            AggregatedStockRecordItemResponseDto.newBuilder()
+        val aggregatedStockRecord: AggregatedStockRecordItemResponse =
+            AggregatedStockRecordItemResponse.newBuilder()
                 .setStockSymbol(TEST_STOCK_SYMBOL)
                 .addAllData(stockRecords)
                 .build()
-        return GetFiveBestStockSymbolsWithStockRecordsResponse.newBuilder()
-            .addStockSymbols(aggregatedStockRecord).build()
+        return GetNBestStockSymbolsWithStockRecordsResponse.newBuilder()
+            .apply {
+                successBuilder.addStockSymbols(aggregatedStockRecord)
+            }
+            .build()
     }
 
     private fun longToByteString(value: Long): ByteString {
@@ -77,8 +82,8 @@ object StockFixture {
     private fun createShortStockRecord(
         openPrice: BDecimal, highPrice: BDecimal,
         lowPrice: BDecimal, currentPrice: BDecimal,
-    ): ShortStockRecordResponseDto {
-        return ShortStockRecordResponseDto.newBuilder()
+    ): ShortStockRecordResponse {
+        return ShortStockRecordResponse.newBuilder()
             .setOpenPrice(openPrice)
             .setHighPrice(highPrice)
             .setLowPrice(lowPrice)

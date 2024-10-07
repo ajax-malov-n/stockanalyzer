@@ -6,6 +6,8 @@ import io.nats.client.Connection
 import reactor.core.publisher.Mono
 
 interface NatsController<RequestT : GeneratedMessageV3, ResponseT : GeneratedMessageV3> {
+    val queueGroup: String
+
     val subject: String
 
     val connection: Connection

@@ -18,12 +18,13 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.assertNotNull
 
-@SuppressWarnings("UnusedPrivateProperty")
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     @MockBean
+    @SuppressWarnings("UnusedPrivateProperty")
     private lateinit var natsConnection: Connection
 
     @MockBean
+    @SuppressWarnings("UnusedPrivateProperty")
     private lateinit var natsControllerBeanPostProcessor: NatsControllerBeanPostProcessor
 
     @Autowired

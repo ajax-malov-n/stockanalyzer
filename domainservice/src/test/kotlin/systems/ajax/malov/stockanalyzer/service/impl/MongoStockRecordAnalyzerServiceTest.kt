@@ -39,7 +39,7 @@ class MongoStockRecordAnalyzerServiceTest {
         } returns Mono.just(retrievedStocks)
 
         // WHEN
-        val actual = stockAnalyzerService.getFiveBestStockSymbolsWithStockRecords()
+        val actual = stockAnalyzerService.getFiveBestStockSymbolsWithStockRecords(5)
 
         // THEN
         actual.test()

@@ -9,5 +9,16 @@ message GetAllManageableStockSymbolsRequest {
 }
 
 message GetAllManageableStockSymbolsResponse {
-  repeated string symbols = 1;
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success{
+    repeated string symbols = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
 }
