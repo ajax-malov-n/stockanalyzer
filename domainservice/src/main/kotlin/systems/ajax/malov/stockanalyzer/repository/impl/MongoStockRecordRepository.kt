@@ -43,7 +43,7 @@ class MongoStockRecordRepository(
         n: Int,
         from: Date,
         to: Date,
-    ): Mono<Map<String, List<MongoStockRecord>>> {
+    ): Mono<LinkedHashMap<String, List<MongoStockRecord>>> {
         val maxChangeMono = getMaxBigDecimal(MongoStockRecord::change.name, from, to)
         val maxPercentChangeMono = getMaxBigDecimal(MongoStockRecord::percentChange.name, from, to)
 
@@ -58,7 +58,7 @@ class MongoStockRecordRepository(
             .map { mapWithAllDataRecords ->
                 getOnlyMostRecentNDataRecords(mapWithAllDataRecords)
             }
-            .defaultIfEmpty(emptyMap())
+            .defaultIfEmpty(linkedMapOf())
     }
 
     private fun fetchNBestStockSymbolsWithStockRecords(
@@ -162,9 +162,9 @@ class MongoStockRecordRepository(
 
     private fun getOnlyMostRecentNDataRecords(
         map: Map<String, List<MongoStockRecord>>,
-    ): Map<String, List<MongoStockRecord>> {
-        return map.mapValues {
-            it.value.sortedByDescending { stockRecord -> stockRecord.dateOfRetrieval }
+    ): LinkedHashMap<String, List<MongoStockRecord>> {
+        return map.entries.associateTo(LinkedHashMap()) { (key, value) ->
+            key to value.sortedByDescending { stockRecord -> stockRecord.dateOfRetrieval }
                 .take(NUMBER_OF_HISTORY_RECORDS_PER_STOCK_SYMBOL)
         }
     }

@@ -1,6 +1,7 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTime
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -16,7 +17,7 @@ class StockRecordAnalyzerServiceImpl(
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime
-    override fun getFiveBestStockSymbolsWithStockRecords(n: Int): Mono<Map<String, List<MongoStockRecord>>> {
+    override fun getNBestStockSymbolsWithStockRecords(n: Int): Mono<LinkedHashMap<String, List<MongoStockRecord>>> {
         val dateOfRequest = Instant.now()
         return stockRecordRepository
             .findTopNStockSymbolsWithStockRecords(
@@ -26,7 +27,7 @@ class StockRecordAnalyzerServiceImpl(
             )
     }
 
-    override fun getAllManageableStocksSymbols(): Mono<List<String>> {
-        return stockRecordRepository.findAllStockSymbols().collectList()
+    override fun getAllManageableStocksSymbols(): Flux<String> {
+        return stockRecordRepository.findAllStockSymbols()
     }
 }

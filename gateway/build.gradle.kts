@@ -1,5 +1,4 @@
 plugins {
-    `kotlin-conventions`
     `spring-conventions`
 }
 

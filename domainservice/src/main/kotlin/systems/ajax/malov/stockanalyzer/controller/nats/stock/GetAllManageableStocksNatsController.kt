@@ -24,6 +24,7 @@ class GetAllManageableStocksNatsController(
     override fun handle(request: GetAllManageableStockSymbolsRequest): Mono<GetAllManageableStockSymbolsResponse> {
         return stockRecordAnalyzerService
             .getAllManageableStocksSymbols()
+            .collectList()
             .map {
                 GetAllManageableStockSymbolsResponse.newBuilder().apply {
                     successBuilder.addAllSymbols(it)

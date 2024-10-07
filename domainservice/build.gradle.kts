@@ -1,6 +1,4 @@
 plugins {
-    java
-    `java-test-fixtures`
     `spring-conventions`
 }
 

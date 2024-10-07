@@ -25,7 +25,7 @@ class PopulateStockDataBackgroundJobTest {
     private lateinit var populateStockDataBackgroundJob: PopulateStockDataBackgroundJob
 
     @Test
-    fun `aggregateStockData calls external API to retrieve data and then calls repository to save stocks`() {
+    fun `aggregateStockData should retrieve data and then calls repository to save stocks`() {
         // GIVEN
         val retrievedStockRecords = listOf(unsavedStockRecord())
         every {

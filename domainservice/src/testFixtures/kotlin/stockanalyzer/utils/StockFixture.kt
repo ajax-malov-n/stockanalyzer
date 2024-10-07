@@ -65,5 +65,5 @@ object StockFixture {
     )
 
     fun notAggregatedResponseForFiveBestStockSymbolsWithStockRecords() =
-        mapOf(TEST_STOCK_SYMBOL to listOf(savedStockRecord()))
+        linkedMapOf(TEST_STOCK_SYMBOL to listOf(savedStockRecord()))
 }

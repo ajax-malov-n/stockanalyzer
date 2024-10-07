@@ -20,7 +20,6 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
     private fun <RequestT : GeneratedMessageV3, ResponseT : GeneratedMessageV3> initializeController(
         controller: NatsController<RequestT, ResponseT>,
     ) {
-        // Handle error
         controller.connection.createDispatcher { message ->
             Mono.fromSupplier {
                 controller.parser.parseFrom(message.data)

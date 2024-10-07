@@ -4,8 +4,7 @@ services:
 
   domain:
     build:
-      context: .
-      dockerfile: DockerfileDomainService
+      context: ./domainservice/
     container_name: domain
     depends_on:
       mongo:
@@ -22,8 +21,7 @@ services:
 
   gateway:
     build:
-      context: .
-      dockerfile: DockerfileGw
+      context: ./gateway/
     container_name: gateway
     depends_on:
       domain:

@@ -31,7 +31,7 @@ detekt {
     config.from(file("detekt.yml"))
 }
 
-tasks.withType<Detekt>().configureEach {
+tasks.withType<Detekt> {
     reports {
         html.required.set(true)
         xml.required.set(true)

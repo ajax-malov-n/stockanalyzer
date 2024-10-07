@@ -25,10 +25,10 @@ class MongoStockRecordAnalyzerServiceTest {
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl
 
     @Test
-    fun `getFiveBestStockSymbolsWithStockRecords calls repository and returns five bests stock symbols with records`() {
+    fun `getFiveBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
         // GIVEN
         val savedStock = savedStockRecord()
-        val retrievedStocks = mapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
+        val retrievedStocks = linkedMapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForFiveBestStockSymbolsWithStockRecords()
         every {
             stockRecordRepository.findTopNStockSymbolsWithStockRecords(
@@ -39,7 +39,7 @@ class MongoStockRecordAnalyzerServiceTest {
         } returns Mono.just(retrievedStocks)
 
         // WHEN
-        val actual = stockAnalyzerService.getFiveBestStockSymbolsWithStockRecords(5)
+        val actual = stockAnalyzerService.getNBestStockSymbolsWithStockRecords(5)
 
         // THEN
         actual.test()
@@ -51,7 +51,7 @@ class MongoStockRecordAnalyzerServiceTest {
     }
 
     @Test
-    fun `getAllManageableStocksSymbols calls repository and returns all stocks symbols`() {
+    fun `getAllManageableStocksSymbols should retrieve all stock symbols`() {
         // GIVEN
         val expected = listOf(TEST_STOCK_SYMBOL)
         every { stockRecordRepository.findAllStockSymbols() } returns expected.toFlux()
@@ -62,7 +62,7 @@ class MongoStockRecordAnalyzerServiceTest {
         // THEN
         verify { stockRecordRepository.findAllStockSymbols() }
         actual.test()
-            .expectNext(expected)
+            .expectNext(TEST_STOCK_SYMBOL)
             .verifyComplete()
     }
 }

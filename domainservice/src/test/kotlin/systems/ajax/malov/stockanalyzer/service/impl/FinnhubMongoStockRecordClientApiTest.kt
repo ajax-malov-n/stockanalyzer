@@ -27,7 +27,7 @@ class FinnhubMongoStockRecordClientApiTest {
     }
 
     @Test
-    fun `getAllStockRecords calls Finnhub API and retrieves stock records`() {
+    fun `getAllStockRecords should retrieve stock records`() {
         // GIVEN
         val expected = listOf(unsavedStockRecord())
         val quote = Quote(1f, 1f, 1f, 1f, 1f, 1f, 1f)
@@ -45,7 +45,7 @@ class FinnhubMongoStockRecordClientApiTest {
     }
 
     @Test
-    fun `getAllStockRecords returns empty flux when client throws exception`() {
+    fun `getAllStockRecords should return empty flux when client throws exception`() {
         // GIVEN
         every {
             finnhubStockApi.quote(TEST_STOCK_SYMBOL)

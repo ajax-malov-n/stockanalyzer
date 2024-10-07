@@ -31,7 +31,7 @@ class GetNBestStockSymbolsWithStockRecordsNatsController(
         } else {
             DEFAULT_NUMBER_FOR_BEST_STOCKS
         }
-        return stockRecordAnalyzerService.getFiveBestStockSymbolsWithStockRecords(requestedStocks)
+        return stockRecordAnalyzerService.getNBestStockSymbolsWithStockRecords(requestedStocks)
             .map { toGetFiveBestStockSymbolsWithStockRecordsRequest(it) }
     }
 }

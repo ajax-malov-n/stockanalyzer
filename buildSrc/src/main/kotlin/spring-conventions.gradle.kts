@@ -10,12 +10,11 @@ plugins {
 
 
 dependencies {
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation(libDeps.spring.mockk)
-
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libDeps.spring.mockk)
     testImplementation(libDeps.pReactoTest)
 }

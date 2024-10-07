@@ -11,21 +11,21 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 object GetFiveBestStockSymbolsWithStockRecordsRequestMapper {
-    fun toGetFiveBestStockSymbolsWithStockRecordsRequest(aggregatedData: Map<String, List<MongoStockRecord>>):
+    fun toGetFiveBestStockSymbolsWithStockRecordsRequest(aggregatedData: LinkedHashMap<String, List<MongoStockRecord>>):
         GetNBestStockSymbolsWithStockRecordsResponse {
         return GetNBestStockSymbolsWithStockRecordsResponse.newBuilder().apply {
-            successBuilder.addAllStockSymbols(
-                aggregatedData.map { (symbol, stocks) ->
-                    toAggregatedStockRecordItemResponseDto(symbol, stocks)
+            val aggregatedItems = aggregatedData.sequencedEntrySet()
+                .fold(mutableListOf<AggregatedStockRecordItemResponse>()) { acc, (symbol, stocks) ->
+                    acc.apply { add(toAggregatedStockRecordItemResponseDto(symbol, stocks)) }
                 }
-            )
+            successBuilder.addAllStockSymbols(aggregatedItems)
         }.build()
     }
 
     private fun toAggregatedStockRecordItemResponseDto(
         stock: String,
         stocks: List<MongoStockRecord>,
-    ): AggregatedStockRecordItemResponse? =
+    ): AggregatedStockRecordItemResponse =
         AggregatedStockRecordItemResponse.newBuilder().setStockSymbol(stock)
             .addAllData(
                 stocks.map {
@@ -44,10 +44,10 @@ object GetFiveBestStockSymbolsWithStockRecordsRequestMapper {
             .build()
 
     private fun convertToBInteger(bigInteger: BigInteger): BInteger {
-        val builder = BInteger.newBuilder()
-        val bytes: ByteString = ByteString.copyFrom(bigInteger.toByteArray())
-        builder.setValue(bytes)
-        return builder.build()
+        return BInteger.newBuilder().apply {
+            val bytes: ByteString = ByteString.copyFrom(bigInteger.toByteArray())
+            setValue(bytes)
+        }.build()
     }
 
     private fun convertToBDecimal(bigDecimal: BigDecimal?): BDecimal {
