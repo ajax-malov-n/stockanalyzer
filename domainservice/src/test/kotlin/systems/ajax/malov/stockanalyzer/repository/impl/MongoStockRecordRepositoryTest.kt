@@ -128,8 +128,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2, secondBestStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .collectList()
-            .block()
+            .blockLast()
         val expected = mapOf(
             bestStock1.symbol to listOf(bestStock1, bestStock2),
             "Not provided" to listOf(secondBestStock)
@@ -163,8 +162,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         )
         val listOfUnsavedStocks = listOf(nullStock)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .collectList()
-            .block()
+            .blockLast()
         val from = Date.from(testDate().plus(3, ChronoUnit.DAYS))
         val to = Date.from(testDate().plus(5, ChronoUnit.DAYS))
 
