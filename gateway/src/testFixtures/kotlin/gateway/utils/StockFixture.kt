@@ -1,52 +1,54 @@
 package gateway.utils
 
 import com.google.protobuf.ByteString
-import systems.ajax.malov.gateway.dto.GetNBestStockSymbolsWithStockRecordsRequestDto
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponse
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BDecimal
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BInteger
+import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponse
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto
+import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigIntegerProto
 import systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortStockRecordResponse
 import java.nio.ByteBuffer
 
 
 object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
-    fun createGetNBestStockSymbolsWithStockRecordsRequestDto(n: Int) = GetNBestStockSymbolsWithStockRecordsRequestDto(n)
-    fun createGetNBestStockSymbolsWithStockRecordsResponse(): GetNBestStockSymbolsWithStockRecordsResponse {
+    fun createGetBestStockSymbolsWithStockRecordsRequestDto(quantity: Int) =
+        GetBestStockSymbolsWithStockRecordsRequestDto(quantity)
+
+    fun createGetBestStockSymbolsWithStockRecordsResponse(): GetBestStockSymbolsWithStockRecordsResponse {
         val stockRecords: MutableList<ShortStockRecordResponse> = ArrayList()
 
-        val openPrice = BDecimal.newBuilder()
+        val openPrice = BigDecimalProto.newBuilder()
             .setScale(2)
             .setIntVal(
-                BInteger.newBuilder()
+                BigIntegerProto.newBuilder()
                     .setValue(longToByteString(14500))
                     .build()
             )
             .build()
 
-        val highPrice = BDecimal.newBuilder()
+        val highPrice = BigDecimalProto.newBuilder()
             .setScale(2)
             .setIntVal(
-                BInteger.newBuilder()
+                BigIntegerProto.newBuilder()
                     .setValue(longToByteString(15000))
                     .build()
             )
             .build()
 
-        val lowPrice = BDecimal.newBuilder()
+        val lowPrice = BigDecimalProto.newBuilder()
             .setScale(2)
             .setIntVal(
-                BInteger.newBuilder()
+                BigIntegerProto.newBuilder()
                     .setValue(longToByteString(14000))
                     .build()
             )
             .build()
 
-        val currentPrice = BDecimal.newBuilder()
+        val currentPrice = BigDecimalProto.newBuilder()
             .setScale(2)
             .setIntVal(
-                BInteger.newBuilder()
+                BigIntegerProto.newBuilder()
                     .setValue(longToByteString(14550))
                     .build()
             )
@@ -67,7 +69,7 @@ object StockFixture {
                 .setStockSymbol(TEST_STOCK_SYMBOL)
                 .addAllData(stockRecords)
                 .build()
-        return GetNBestStockSymbolsWithStockRecordsResponse.newBuilder()
+        return GetBestStockSymbolsWithStockRecordsResponse.newBuilder()
             .apply {
                 successBuilder.addStockSymbols(aggregatedStockRecord)
             }
@@ -80,8 +82,8 @@ object StockFixture {
     }
 
     private fun createShortStockRecord(
-        openPrice: BDecimal, highPrice: BDecimal,
-        lowPrice: BDecimal, currentPrice: BDecimal,
+        openPrice: BigDecimalProto, highPrice: BigDecimalProto,
+        lowPrice: BigDecimalProto, currentPrice: BigDecimalProto,
     ): ShortStockRecordResponse {
         return ShortStockRecordResponse.newBuilder()
             .setOpenPrice(openPrice)

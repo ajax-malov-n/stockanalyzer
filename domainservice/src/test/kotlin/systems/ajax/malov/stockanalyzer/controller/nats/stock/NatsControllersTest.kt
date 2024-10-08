@@ -9,10 +9,10 @@ import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.stockanalyzer.mapper.proto.GetFiveBestStockSymbolsWithStockRecordsRequestMapper.toGetFiveBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
 import java.time.Duration
@@ -61,7 +61,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
     }
 
     @Test
-    fun `getFiveBestStocksToBuy should return success response`() {
+    fun `getBestStocksToBuy should return success response`() {
         // GIVEN
         val bestStock1 = StockFixture.firstPlaceStockRecord()
         val bestStock2 = StockFixture.alsoFirstPlaceStockRecord()
@@ -73,19 +73,19 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
         val to = Date.from(testDate())
 
         val expectedResponse =
-            mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
+            mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to)
                 .map {
-                    toGetFiveBestStockSymbolsWithStockRecordsRequest(it)
+                    toGetBestStockSymbolsWithStockRecordsRequest(it)
                 }
                 .block()
-        val request = GetNBestStockSymbolsWithStockRecordsRequest
+        val request = GetBestStockSymbolsWithStockRecordsRequest
             .getDefaultInstance()
 
         // WHEN
         val actual = doRequest(
             NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
             request,
-            GetNBestStockSymbolsWithStockRecordsResponse.parser()
+            GetBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
         assertEquals(expectedResponse, actual)

@@ -74,7 +74,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     }
 
     @Test
-    fun `findTopNStockSymbolsWithStockRecords should retrieve N best stocks symbols with stock records`() {
+    fun `findTopStockSymbolsWithStockRecords should retrieve best stocks symbols with stock records`() {
         // GIVEN
         val bestStock1 = firstPlaceStockRecord()
         val bestStock2 = alsoFirstPlaceStockRecord()
@@ -90,7 +90,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val to = Date.from(testDate().plus(1, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(2, from, to)
+        val actual = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(2, from, to)
 
         // THEN
         actual.test()
@@ -101,7 +101,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     }
 
     @Test
-    fun `findTopNStockSymbolsWithStockRecords should retrieve fiveBestStocksSymbols with stockRecords with nulls`() {
+    fun `findTopStockSymbolsWithStockRecords should retrieve BestStocksSymbols with stockRecords with nulls`() {
         // GIVEN
         val bestStock1 = firstPlaceStockRecord().copy(
             dateOfRetrieval = testDate()
@@ -138,7 +138,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val to = Date.from(testDate().plus(11, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
+        val actual = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
         actual.test()
@@ -149,7 +149,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
     }
 
     @Test
-    fun `findTopNStockSymbolsWithStockRecords should retrieve stockRecords even if we have stock with all nulls`() {
+    fun `findTopStockSymbolsWithStockRecords should retrieve stockRecords even if we have stock with all nulls`() {
         // GIVEN
         val nullStock = secondPlaceStockRecord().copy(
             openPrice = null,
@@ -169,7 +169,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
         val to = Date.from(testDate().plus(5, ChronoUnit.DAYS))
 
         // WHEN
-        val actual = mongoStockRecordRepository.findTopNStockSymbolsWithStockRecords(5, from, to)
+        val actual = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to)
 
         // THEN
         actual.test()

@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
-import stockanalyzer.utils.StockFixture.notAggregatedResponseForFiveBestStockSymbolsWithStockRecords
+import stockanalyzer.utils.StockFixture.notAggregatedResponseForBestStockSymbolsWithStockRecords
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
@@ -25,13 +25,13 @@ class MongoStockRecordAnalyzerServiceTest {
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl
 
     @Test
-    fun `getFiveBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
+    fun `getBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
         // GIVEN
         val savedStock = savedStockRecord()
         val retrievedStocks = linkedMapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
-        val expected = notAggregatedResponseForFiveBestStockSymbolsWithStockRecords()
+        val expected = notAggregatedResponseForBestStockSymbolsWithStockRecords()
         every {
-            stockRecordRepository.findTopNStockSymbolsWithStockRecords(
+            stockRecordRepository.findTopStockSymbolsWithStockRecords(
                 eq(5),
                 any(),
                 any()
@@ -39,14 +39,14 @@ class MongoStockRecordAnalyzerServiceTest {
         } returns Mono.just(retrievedStocks)
 
         // WHEN
-        val actual = stockAnalyzerService.getNBestStockSymbolsWithStockRecords(5)
+        val actual = stockAnalyzerService.getBestStockSymbolsWithStockRecords(5)
 
         // THEN
         actual.test()
             .expectNext(expected)
             .verifyComplete()
         verify {
-            stockRecordRepository.findTopNStockSymbolsWithStockRecords(eq(5), any(), any())
+            stockRecordRepository.findTopStockSymbolsWithStockRecords(eq(5), any(), any())
         }
     }
 

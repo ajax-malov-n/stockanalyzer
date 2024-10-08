@@ -6,8 +6,8 @@ package systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto;
 option java_multiple_files = true;
 
 message ShortStockRecordResponse{
-  big_decimal.proto.BDecimal openPrice = 1;
-  big_decimal.proto.BDecimal highPrice = 2;
-  big_decimal.proto.BDecimal lowPrice = 3;
-  big_decimal.proto.BDecimal currentPrice = 4;
+  big_decimal.proto.BigDecimalProto openPrice = 1;
+  big_decimal.proto.BigDecimalProto highPrice = 2;
+  big_decimal.proto.BigDecimalProto lowPrice = 3;
+  big_decimal.proto.BigDecimalProto currentPrice = 4;
 }

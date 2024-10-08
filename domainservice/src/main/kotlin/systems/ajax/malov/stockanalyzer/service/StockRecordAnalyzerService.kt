@@ -5,6 +5,6 @@ import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 
 interface StockRecordAnalyzerService {
-    fun getNBestStockSymbolsWithStockRecords(n: Int): Mono<LinkedHashMap<String, List<MongoStockRecord>>>
+    fun getBestStockSymbolsWithStockRecords(quantity: Int): Mono<LinkedHashMap<String, List<MongoStockRecord>>>
     fun getAllManageableStocksSymbols(): Flux<String>
 }

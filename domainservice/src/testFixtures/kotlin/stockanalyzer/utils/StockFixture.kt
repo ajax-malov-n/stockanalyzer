@@ -64,6 +64,6 @@ object StockFixture {
         dateOfRetrieval = Instant.now()
     )
 
-    fun notAggregatedResponseForFiveBestStockSymbolsWithStockRecords() =
+    fun notAggregatedResponseForBestStockSymbolsWithStockRecords() =
         linkedMapOf(TEST_STOCK_SYMBOL to listOf(savedStockRecord()))
 }

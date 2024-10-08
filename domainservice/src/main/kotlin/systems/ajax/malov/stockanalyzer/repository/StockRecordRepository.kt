@@ -8,8 +8,8 @@ import java.util.Date
 interface StockRecordRepository {
     fun insertAll(mongoStockRecords: List<MongoStockRecord>): Flux<MongoStockRecord>
 
-    fun findTopNStockSymbolsWithStockRecords(
-        n: Int,
+    fun findTopStockSymbolsWithStockRecords(
+        quantity: Int,
         from: Date,
         to: Date,
     ): Mono<LinkedHashMap<String, List<MongoStockRecord>>>

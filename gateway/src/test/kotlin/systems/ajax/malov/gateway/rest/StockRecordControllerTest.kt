@@ -1,8 +1,8 @@
 package systems.ajax.malov.gateway.rest
 
 import gateway.utils.StockFixture.TEST_STOCK_SYMBOL
-import gateway.utils.StockFixture.createGetNBestStockSymbolsWithStockRecordsRequestDto
-import gateway.utils.StockFixture.createGetNBestStockSymbolsWithStockRecordsResponse
+import gateway.utils.StockFixture.createGetBestStockSymbolsWithStockRecordsRequestDto
+import gateway.utils.StockFixture.createGetBestStockSymbolsWithStockRecordsResponse
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -17,8 +17,8 @@ import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_n_best_stock_symbols_with_stocks.proto.GetNBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
 
 @ExtendWith(MockKExtension::class)
@@ -30,16 +30,16 @@ class StockRecordControllerTest {
     private lateinit var stockRecordsController: StockRecordsController
 
     @Test
-    fun `getNBestStockSymbolsWithStockRecords should retrieve n best stock symbols with records`() {
+    fun `getBestStockSymbolsWithStockRecords should retrieve best stock symbols with records`() {
         // GIVEN
-        val natsResponse = createGetNBestStockSymbolsWithStockRecordsResponse()
-        val requestDto = createGetNBestStockSymbolsWithStockRecordsRequestDto(5)
-        val requestProto = GetNBestStockSymbolsWithStockRecordsRequest.newBuilder().setN(5).build()
+        val natsResponse = createGetBestStockSymbolsWithStockRecordsResponse()
+        val requestDto = createGetBestStockSymbolsWithStockRecordsRequestDto(5)
+        val requestProto = GetBestStockSymbolsWithStockRecordsRequest.newBuilder().setQuantity(5).build()
         every {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
-                GetNBestStockSymbolsWithStockRecordsResponse.parser()
+                GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         } returns Mono.just(natsResponse)
         val expected = natsResponse.toAggregatedStockItemResponseDto()
@@ -56,23 +56,23 @@ class StockRecordControllerTest {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
-                GetNBestStockSymbolsWithStockRecordsResponse.parser()
+                GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         }
     }
 
     @Test
-    fun `getNBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
+    fun `getBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
         // GIVEN
-        val natsResponse = createGetNBestStockSymbolsWithStockRecordsResponse()
-        val requestDto = createGetNBestStockSymbolsWithStockRecordsRequestDto(5)
-            .copy(n = null)
-        val requestProto = GetNBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
+        val natsResponse = createGetBestStockSymbolsWithStockRecordsResponse()
+        val requestDto = createGetBestStockSymbolsWithStockRecordsRequestDto(5)
+            .copy(quantity = null)
+        val requestProto = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         every {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
-                GetNBestStockSymbolsWithStockRecordsResponse.parser()
+                GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         } returns Mono.just(natsResponse)
         val expected = natsResponse.toAggregatedStockItemResponseDto()
@@ -89,7 +89,7 @@ class StockRecordControllerTest {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
-                GetNBestStockSymbolsWithStockRecordsResponse.parser()
+                GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         }
     }

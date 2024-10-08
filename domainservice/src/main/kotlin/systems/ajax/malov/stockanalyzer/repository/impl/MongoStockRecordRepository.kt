@@ -39,8 +39,8 @@ class MongoStockRecordRepository(
             .all()
     }
 
-    override fun findTopNStockSymbolsWithStockRecords(
-        n: Int,
+    override fun findTopStockSymbolsWithStockRecords(
+        quantity: Int,
         from: Date,
         to: Date,
     ): Mono<LinkedHashMap<String, List<MongoStockRecord>>> {
@@ -49,7 +49,7 @@ class MongoStockRecordRepository(
 
         return Mono.zip(maxChangeMono, maxPercentChangeMono)
             .flatMap { (maxChange, maxPercentChange) ->
-                fetchNBestStockSymbolsWithStockRecords(from, to, maxChange, maxPercentChange, n)
+                fetchBestStockSymbolsWithStockRecords(from, to, maxChange, maxPercentChange, quantity)
                     .collectList()
             }
             .map { results ->
@@ -61,12 +61,12 @@ class MongoStockRecordRepository(
             .defaultIfEmpty(linkedMapOf())
     }
 
-    private fun fetchNBestStockSymbolsWithStockRecords(
+    private fun fetchBestStockSymbolsWithStockRecords(
         from: Date,
         to: Date,
         maxChange: BigDecimal,
         maxPercentChange: BigDecimal,
-        n: Int,
+        quantity: Int,
     ): Flux<ResultingClass> {
         val matchOperation: MatchOperation =
             Aggregation.match(
@@ -85,7 +85,7 @@ class MongoStockRecordRepository(
             projectOperation,
             weightedPipeline,
             Aggregation.sort(Sort.by("weight").descending()),
-            Aggregation.limit(n.toLong())
+            Aggregation.limit(quantity.toLong())
         )
 
         return reactiveMongoTemplate.aggregate(

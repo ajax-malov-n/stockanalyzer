@@ -4,11 +4,11 @@ package systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto;
 
 option java_multiple_files = true;
 
-message BDecimal {
+message BigDecimalProto {
   int32 scale = 1;
-  BInteger int_val = 2;
+  BigIntegerProto int_val = 2;
 }
 
-message BInteger {
+message BigIntegerProto {
   bytes value = 1;
 }
