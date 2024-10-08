@@ -19,7 +19,7 @@ class StockRecordAnalyzerServiceImpl(
     @LogExecutionTime
     override fun getBestStockSymbolsWithStockRecords(
         quantity: Int,
-    ): Mono<LinkedHashMap<String, List<MongoStockRecord>>> {
+    ): Mono<Map<String, List<MongoStockRecord>>> {
         val dateOfRequest = Instant.now()
         return stockRecordRepository
             .findTopStockSymbolsWithStockRecords(

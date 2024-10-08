@@ -38,8 +38,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
                 .copy(symbol = "AJAXSYS", dateOfRetrieval = testDate.plus(Duration.ofDays(10)))
         )
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .collectList()
-            .block()
+            .blockLast()
         val request = GetAllManageableStockSymbolsRequest
             .getDefaultInstance()
         val symbols = mongoStockRecordRepository.findAllStockSymbols()
@@ -67,8 +66,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
         val bestStock2 = StockFixture.alsoFirstPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .collectList()
-            .block()
+            .blockLast()
         val from = Date.from(testDate().minus(1, ChronoUnit.HOURS))
         val to = Date.from(testDate())
 

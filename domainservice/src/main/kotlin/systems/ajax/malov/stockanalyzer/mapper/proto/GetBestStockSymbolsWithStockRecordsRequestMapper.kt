@@ -12,9 +12,9 @@ import java.math.BigInteger
 
 object GetBestStockSymbolsWithStockRecordsRequestMapper {
     fun toGetBestStockSymbolsWithStockRecordsRequest(
-        aggregatedData: LinkedHashMap<String, List<MongoStockRecord>>,
+        aggregatedData: Map<String, List<MongoStockRecord>>,
     ): GetBestStockSymbolsWithStockRecordsResponse {
-        val aggregatedItems = aggregatedData.sequencedEntrySet()
+        val aggregatedItems = aggregatedData.entries
             .map { (symbol, stocks) -> toAggregatedStockRecordItemResponseDto(symbol, stocks) }
             .fold(GetBestStockSymbolsWithStockRecordsResponse.Success.newBuilder()) { successBuilder, next ->
                 successBuilder.addStockSymbols(next)

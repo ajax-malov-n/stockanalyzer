@@ -12,7 +12,7 @@ interface StockRecordRepository {
         quantity: Int,
         from: Date,
         to: Date,
-    ): Mono<LinkedHashMap<String, List<MongoStockRecord>>>
+    ): Mono<Map<String, List<MongoStockRecord>>>
 
     fun findAllStockSymbols(): Flux<String>
 }
