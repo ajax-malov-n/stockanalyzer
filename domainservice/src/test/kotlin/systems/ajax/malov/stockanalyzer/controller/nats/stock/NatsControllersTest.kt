@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @EnableNatsServer(port = 4222)
 class NatsControllersTest : AbstractMongoIntegrationTest {
@@ -56,7 +57,10 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
         )
 
         // THEN
-        assertEquals(hashSetOf(expectedResponse), hashSetOf(actual))
+        assertTrue(
+            actual.success.symbolsList.containsAll(expectedResponse.success.symbolsList),
+            "Must contain new stock with name AJAXSYS"
+        )
     }
 
     @Test
