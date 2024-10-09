@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: gwstockanalyzer
+
+nats:
+  url: "nats://nats:4222"

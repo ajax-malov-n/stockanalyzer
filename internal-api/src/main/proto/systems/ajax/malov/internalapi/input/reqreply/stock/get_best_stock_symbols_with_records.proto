@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "systems/ajax/malov/internalapi/commonmodel/stock/short_stock_response.proto";
+import "systems/ajax/malov/internalapi/commonmodel/stock/big_decimal.proto";
+
+package systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto;
+
+option java_multiple_files = true;
+
+message GetBestStockSymbolsWithStockRecordsRequest {
+  optional int32 quantity = 1;
+}
+
+message GetBestStockSymbolsWithStockRecordsResponse {
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success{
+    repeated AggregatedStockRecordItemResponse stockSymbols = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
+}
+
+message AggregatedStockRecordItemResponse{
+  string stockSymbol = 1;
+  repeated systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortStockRecordResponse data = 2;
+}

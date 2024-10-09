@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto;
+
+option java_multiple_files = true;
+
+message GetAllManageableStockSymbolsRequest {
+
+}
+
+message GetAllManageableStockSymbolsResponse {
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success{
+    repeated string symbols = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
+}

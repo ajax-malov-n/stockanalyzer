@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: domain-deployment
+  labels:
+    app: domain
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: domain
+  template:
+    metadata:
+      labels:
+        app: domain
+    spec:
+      containers:
+        - name: domain
+          image: stockanalyzer-domain
+          imagePullPolicy: Never
+          env:
+            - name: MONGO_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mongodb-configmap
+                  key: mongo-init-db
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: FINNHUB_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: domain-secret
+                  key: finnhubApiToken

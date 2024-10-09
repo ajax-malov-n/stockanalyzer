@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto;
+
+option java_multiple_files = true;
+
+message BigDecimalProto {
+  int32 scale = 1;
+  BigIntegerProto int_val = 2;
+}
+
+message BigIntegerProto {
+  bytes value = 1;
+}

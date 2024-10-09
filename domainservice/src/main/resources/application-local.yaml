@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:secret@localhost:27017/stocks?authSource=admin
+
+nats:
+  url: "nats://localhost:4222"
