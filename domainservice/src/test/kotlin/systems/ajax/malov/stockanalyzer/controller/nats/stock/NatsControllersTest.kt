@@ -90,6 +90,7 @@ class NatsControllersTest : AbstractMongoIntegrationTest {
             GetBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
+        // THEN
         assertEquals(expectedResponse, actual)
     }
 
