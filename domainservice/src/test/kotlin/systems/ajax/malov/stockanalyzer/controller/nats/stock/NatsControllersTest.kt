@@ -5,13 +5,14 @@ import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
@@ -22,6 +23,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@SpringBootTest
 @EnableNatsServer(port = 4222)
 class NatsControllersTest : AbstractMongoIntegrationTest {
 

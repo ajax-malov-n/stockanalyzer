@@ -1,6 +1,5 @@
 package systems.ajax.malov.stockanalyzer.repository
 
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
@@ -8,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.containers.MongoDBContainer
 
-@SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = [AbstractMongoIntegrationTest.Initializer::class])
 interface AbstractMongoIntegrationTest {

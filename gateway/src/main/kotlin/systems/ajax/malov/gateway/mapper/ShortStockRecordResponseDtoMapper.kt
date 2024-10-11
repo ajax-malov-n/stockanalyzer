@@ -11,19 +11,19 @@ import systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortS
 object ShortStockRecordResponseDtoMapper {
     fun protoShortStockDto.toShortStockRecordResponseDto() =
         ShortStockRecordResponseDto(
-            convertBDecimalToBigDecimal(lowPrice),
-            convertBDecimalToBigDecimal(highPrice),
-            convertBDecimalToBigDecimal(currentPrice),
-            convertBDecimalToBigDecimal(openPrice)
+            convertBigDecimalProtoToBigDecimal(lowPrice),
+            convertBigDecimalProtoToBigDecimal(highPrice),
+            convertBigDecimalProtoToBigDecimal(currentPrice),
+            convertBigDecimalProtoToBigDecimal(openPrice)
         )
 
-    private fun convertBIntegerToBigInteger(message: BigIntegerProto): BigInteger {
+    private fun convertToBigIntegerProto(message: BigIntegerProto): BigInteger {
         val bytes: ByteString = message.value
         return BigInteger(bytes.toByteArray())
     }
 
-    private fun convertBDecimalToBigDecimal(message: BigDecimalProto): BigDecimal {
-        val bigInt = convertBIntegerToBigInteger(message.intVal)
+    private fun convertBigDecimalProtoToBigDecimal(message: BigDecimalProto): BigDecimal {
+        val bigInt = convertToBigIntegerProto(message.intVal)
         return BigDecimal(bigInt, message.scale)
     }
 }

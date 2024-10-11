@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto;
+package systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto;
 
 option java_multiple_files = true;
 

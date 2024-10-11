@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
@@ -19,14 +20,9 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.assertNotNull
 
+@SpringBootTest
+@MockBean(value = [Connection::class, NatsControllerBeanPostProcessor::class])
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
-    @MockBean
-    @SuppressWarnings("UnusedPrivateProperty")
-    private lateinit var natsConnection: Connection
-
-    @MockBean
-    @SuppressWarnings("UnusedPrivateProperty")
-    private lateinit var natsControllerBeanPostProcessor: NatsControllerBeanPostProcessor
 
     @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
@@ -39,7 +35,7 @@ class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
         actual.test()
             .assertNext {
-                assertNotNull(expected[0].id, "Id must not be null after insertion")
+                assertNotNull(it.id, "Id must not be null after insertion")
             }
             .verifyComplete()
     }

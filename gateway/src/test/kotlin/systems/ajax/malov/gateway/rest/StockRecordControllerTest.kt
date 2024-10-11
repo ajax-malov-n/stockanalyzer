@@ -15,11 +15,11 @@ import reactor.kotlin.test.test
 import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 
 @ExtendWith(MockKExtension::class)
 class StockRecordControllerTest {

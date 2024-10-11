@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "systems/ajax/malov/internalapi/commonmodel/stock/big_decimal.proto";
+import "google/protobuf/timestamp.proto";
+
+package systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto;
+
+option java_multiple_files = true;
+
+message NotificationStockPrice {
+  string stockSymbolName = 1;
+  systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto price = 2;
+  string userId = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
