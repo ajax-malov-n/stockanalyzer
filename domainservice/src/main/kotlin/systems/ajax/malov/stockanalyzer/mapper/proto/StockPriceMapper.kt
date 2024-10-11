@@ -14,13 +14,15 @@ object StockPriceMapper {
             .setTimestamp(
                 dateOfRetrieval?.let {
                     toTimestampProto(it)
-                }
+                } ?: Timestamp.getDefaultInstance()
             )
             .build()
     }
 
-    private fun toTimestampProto(dateOfRetrieval: Instant): Timestamp.Builder? =
-        Timestamp.newBuilder()
+    private fun toTimestampProto(dateOfRetrieval: Instant): Timestamp {
+        return Timestamp.newBuilder()
             .setSeconds(dateOfRetrieval.epochSecond)
             .setNanos(dateOfRetrieval.nano)
+            .build()
+    }
 }

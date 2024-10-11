@@ -36,7 +36,6 @@ class MongoUserTrackedSymbolRepository(
                 findQuery,
                 MongoUserTrackedSymbol.COLLECTION_NAME
             )
-            .doOnNext { println("HERE $it") }
     }
 
     override fun deleteUserTrackedSymbol(ids: List<ObjectId>): Mono<Unit> {

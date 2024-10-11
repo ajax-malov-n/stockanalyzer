@@ -14,6 +14,10 @@ import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
+import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
@@ -21,7 +25,16 @@ import java.util.Date
 import kotlin.test.assertNotNull
 
 @SpringBootTest
-@MockBean(value = [Connection::class, NatsControllerBeanPostProcessor::class])
+@MockBean(
+    value = [
+        Connection::class,
+        NatsControllerBeanPostProcessor::class,
+        StockPriceNotificationProcessor::class,
+        KafkaConsumerConfiguration::class,
+        KafkaProducerConfiguration::class,
+        StockPriceKafkaProducer::class
+    ]
+)
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
 
     @Autowired
