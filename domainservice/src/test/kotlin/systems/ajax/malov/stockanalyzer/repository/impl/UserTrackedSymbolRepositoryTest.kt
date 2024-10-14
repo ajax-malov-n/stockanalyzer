@@ -2,9 +2,11 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import io.nats.client.Connection
 import org.bson.types.ObjectId
+import org.mockito.Mockito.verifyNoInteractions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.exists
@@ -13,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import reactor.kotlin.test.test
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
@@ -34,7 +37,8 @@ import kotlin.test.assertFalse
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
         KafkaProducerConfiguration::class,
-        StockPriceKafkaProducer::class
+        StockPriceKafkaProducer::class,
+        NatsDispatcherConfig::class,
     ]
 )
 class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {
@@ -42,7 +46,7 @@ class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {
     @Autowired
     private lateinit var userTrackedSymbolRepository: UserTrackedSymbolRepository
 
-    @Autowired
+    @SpyBean
     private lateinit var mongoTemplate: MongoTemplate
 
     @Test
@@ -90,5 +94,21 @@ class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {
             ),
             "User tracked symbol must be not found after deletion"
         )
+    }
+
+    @Test
+    fun `should return unit immediately if list is empty`() {
+        // GIVEN
+        val emptyList = listOf<ObjectId>()
+
+        // WHEN
+        val actual = userTrackedSymbolRepository.deleteUserTrackedSymbol(emptyList)
+
+        // THEN
+        actual.test()
+            .expectNext(Unit)
+            .verifyComplete()
+
+        verifyNoInteractions(mongoTemplate)
     }
 }

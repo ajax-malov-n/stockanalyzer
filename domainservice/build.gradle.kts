@@ -26,6 +26,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+    testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.jNatsServerEmbedded)
     testImplementation("org.testcontainers:junit-jupiter")

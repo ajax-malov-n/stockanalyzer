@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.repository.UserTrackedSymbolRepository
 import java.math.BigDecimal
@@ -39,11 +38,17 @@ class MongoUserTrackedSymbolRepository(
     }
 
     override fun deleteUserTrackedSymbol(ids: List<ObjectId>): Mono<Unit> {
-        return reactiveMongoTemplate.findAllAndRemove<MongoUserTrackedSymbol>(
-            Query.query(
-                Criteria.where(Fields.UNDERSCORE_ID).`in`(ids)
-            ),
-            MongoUserTrackedSymbol.COLLECTION_NAME
-        ).then(Unit.toMono())
+        return Mono.defer {
+            if (ids.isEmpty()) {
+                Mono.just(Unit)
+            } else {
+                reactiveMongoTemplate.findAllAndRemove<MongoUserTrackedSymbol>(
+                    Query.query(
+                        Criteria.where(Fields.UNDERSCORE_ID).`in`(ids)
+                    ),
+                    MongoUserTrackedSymbol.COLLECTION_NAME
+                ).then(Mono.just(Unit))
+            }
+        }
     }
 }

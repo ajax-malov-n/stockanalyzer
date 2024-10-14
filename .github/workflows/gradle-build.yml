@@ -33,6 +33,9 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
+      - name: Run Docker Compose
+        run: docker compose up -f ./.github/docker-compose.yml --build --force-recreate -d
+
       - name: Build with Gradle
         run: ./gradlew build -x deltaCoverage --parallel
 
@@ -55,3 +58,7 @@ jobs:
         with:
           check_name: 'Unit Tests Report'
           files: '**/build/test-results/*/TEST-*.xml'
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f ./.github/docker-compose.yml down

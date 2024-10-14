@@ -6,14 +6,29 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.mongodb.core.MongoTemplate
+import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import kotlin.test.Test
 import kotlin.test.assertNull
 
 @SpringBootTest
-@MockBean(value = [Connection::class, NatsControllerBeanPostProcessor::class])
+@MockBean(
+    value = [
+        Connection::class,
+        NatsControllerBeanPostProcessor::class,
+        StockPriceNotificationProcessor::class,
+        KafkaConsumerConfiguration::class,
+        KafkaProducerConfiguration::class,
+        StockPriceKafkaProducer::class,
+        NatsDispatcherConfig::class,
+    ]
+)
 class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
 
     @Autowired
