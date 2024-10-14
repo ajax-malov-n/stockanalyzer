@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -26,9 +27,7 @@ class StockPriceKafkaProducer(
                         .toFlux()
                 )
             }
-            .takeLast(1)
-            .singleOrEmpty()
-            .map { }
+            .then(Unit.toMono())
     }
 
     private fun buildKafkaStockPriceMessage(stockPrice: StockPrice): SenderRecord<String, StockPrice, Nothing?> {
