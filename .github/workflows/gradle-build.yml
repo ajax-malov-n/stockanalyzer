@@ -34,7 +34,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Run Docker Compose
-        run: docker compose up -f ./.github/docker-compose.yml --build --force-recreate -d
+        run: docker compose -f ./.github/docker-compose.yml up --build --force-recreate -d
 
       - name: Build with Gradle
         run: ./gradlew build -x deltaCoverage --parallel
