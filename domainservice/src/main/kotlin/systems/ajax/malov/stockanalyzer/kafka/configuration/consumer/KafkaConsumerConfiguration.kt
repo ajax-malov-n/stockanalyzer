@@ -25,7 +25,7 @@ class KafkaConsumerConfiguration(
         return createKafkaReceiver(
             baseConsumerProperties(customProperties),
             KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE,
-            KafkaTopic.STOCK_PRICE_CONSUMER_GROUP
+            "stockPriceConsumerGroup"
         )
     }
 }

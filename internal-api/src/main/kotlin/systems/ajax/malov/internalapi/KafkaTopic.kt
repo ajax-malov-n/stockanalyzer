@@ -2,7 +2,6 @@ package systems.ajax.malov.internalapi
 
 object KafkaTopic {
     private const val REQUEST_PREFIX = "ajax.systems.stockanalyzer.output.pub"
-    const val STOCK_PRICE_CONSUMER_GROUP = "stockPriceConsumerGroup"
 
     object KafkaStockPriceEvents {
         private const val STOCK_PREFIX = "$REQUEST_PREFIX.stock"
