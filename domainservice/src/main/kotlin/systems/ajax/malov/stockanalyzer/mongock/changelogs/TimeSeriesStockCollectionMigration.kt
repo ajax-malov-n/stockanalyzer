@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.CollectionOptions
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.timeseries.Granularity
 
-@ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "1", author = "malov.n@ajax.com")
+@ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "001", author = "malov.n@ajax.com")
 class TimeSeriesStockCollectionMigration {
 
     @Execution

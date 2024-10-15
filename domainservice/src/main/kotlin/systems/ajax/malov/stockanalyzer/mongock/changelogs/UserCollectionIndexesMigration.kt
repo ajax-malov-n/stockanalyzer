@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.index.Index
 import org.springframework.data.mongodb.core.indexOps
 import systems.ajax.malov.stockanalyzer.entity.MongoUser
 
-@ChangeUnit(id = "CreateUserCollectionIndexesChangelog", order = "2", author = "malov.n@ajax.com")
+@ChangeUnit(id = "CreateUserCollectionIndexesChangelog", order = "002", author = "malov.n@ajax.com")
 class UserCollectionIndexesMigration(private val mongoTemplate: MongoTemplate) {
     private lateinit var indexName: String
 
