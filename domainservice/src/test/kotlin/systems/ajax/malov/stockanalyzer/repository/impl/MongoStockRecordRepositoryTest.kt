@@ -19,6 +19,7 @@ import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsum
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
@@ -35,6 +36,7 @@ import kotlin.test.assertNotNull
         KafkaProducerConfiguration::class,
         StockPriceKafkaProducer::class,
         NatsDispatcherConfig::class,
+        StockPriceNotificationProducer::class,
     ]
 )
 class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {

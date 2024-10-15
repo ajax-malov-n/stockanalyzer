@@ -59,6 +59,3 @@ jobs:
           check_name: 'Unit Tests Report'
           files: '**/build/test-results/*/TEST-*.xml'
 
-      - name: Shutdown
-        if: always()
-        run: docker compose -f ./.github/docker-compose.yml down

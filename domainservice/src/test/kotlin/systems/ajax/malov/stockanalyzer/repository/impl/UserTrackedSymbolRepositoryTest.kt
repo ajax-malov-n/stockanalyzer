@@ -22,6 +22,7 @@ import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsum
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.UserTrackedSymbolRepository
 import java.math.BigDecimal
@@ -39,6 +40,7 @@ import kotlin.test.assertFalse
         KafkaProducerConfiguration::class,
         StockPriceKafkaProducer::class,
         NatsDispatcherConfig::class,
+        StockPriceNotificationProducer::class,
     ]
 )
 class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {

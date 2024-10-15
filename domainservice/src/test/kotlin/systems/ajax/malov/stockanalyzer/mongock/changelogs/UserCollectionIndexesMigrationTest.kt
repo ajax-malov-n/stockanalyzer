@@ -13,6 +13,7 @@ import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsum
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import kotlin.test.Test
 import kotlin.test.assertNull
@@ -28,6 +29,7 @@ import kotlin.test.assertTrue
         KafkaProducerConfiguration::class,
         StockPriceKafkaProducer::class,
         NatsDispatcherConfig::class,
+        StockPriceNotificationProducer::class,
     ]
 )
 class UserCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
@@ -41,10 +43,10 @@ class UserCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
 
     @Test
     fun `should create unique index on email field`() {
-        // Act: Execute the migration
+        // GIVEN WHEN
         userCollectionIndexesMigration.value.createUserCollectionIndex(mongoTemplate)
 
-        // Assert: Verify that the index has been created
+        // THEN
         val indexInfoList = mongoTemplate.indexOps(MongoUser::class.java).indexInfo
         val indexInfo = indexInfoList.find { it.name == "${MongoUser::email.name}_1" }
 
@@ -54,13 +56,13 @@ class UserCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
 
     @Test
     fun `should rollback index creation`() {
-        // Arrange: First create the index
+        // GIVEN
         userCollectionIndexesMigration.value.createUserCollectionIndex(mongoTemplate)
 
-        // Act: Rollback the index creation
+        // WHEN
         userCollectionIndexesMigration.value.rollback()
 
-        // Assert: Verify that the index has been removed
+        // THEN
         val indexInfoList = mongoTemplate.indexOps(MongoUser::class.java).indexInfo
         val indexInfo = indexInfoList.find { it.name == "${MongoUser::email.name}_1" }
 

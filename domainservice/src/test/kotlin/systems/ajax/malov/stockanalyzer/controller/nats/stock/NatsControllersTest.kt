@@ -18,6 +18,7 @@ import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsum
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
@@ -35,7 +36,8 @@ import kotlin.test.assertTrue
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
         KafkaProducerConfiguration::class,
-        StockPriceKafkaProducer::class
+        StockPriceKafkaProducer::class,
+        StockPriceNotificationProducer::class,
     ]
 )
 class NatsControllersTest : AbstractMongoIntegrationTest {

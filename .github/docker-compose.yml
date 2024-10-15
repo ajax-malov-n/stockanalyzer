@@ -4,7 +4,7 @@ services:
   broker:
     image: confluentinc/confluent-local:7.4.1
     hostname: broker
-    container_name: broker
+    container_name: test_broker
     ports:
       - "8082:8082"
       - "9092:9092"

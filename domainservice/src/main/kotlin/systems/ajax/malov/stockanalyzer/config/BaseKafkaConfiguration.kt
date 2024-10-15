@@ -35,10 +35,10 @@ open class BaseKafkaConfiguration(
     }
 
     protected fun baseProducerProperties(
-        customProperties: MutableMap<String, Any> = mutableMapOf(),
+        customProperties: Map<String, Any> = mapOf(),
     ): MutableMap<String, Any> {
         val buildProperties: MutableMap<String, Any> = kafkaProperties.producer.buildProperties(null)
-        val baseProperties: MutableMap<String, Any> = mutableMapOf(
+        val baseProperties: Map<String, Any> = mapOf(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to KafkaProtobufSerializer::class.java.name,
@@ -50,10 +50,10 @@ open class BaseKafkaConfiguration(
     }
 
     protected fun baseConsumerProperties(
-        customProperties: MutableMap<String, Any> = mutableMapOf(),
+        customProperties: Map<String, Any> = mapOf(),
     ): MutableMap<String, Any> {
         val buildProperties: MutableMap<String, Any> = kafkaProperties.consumer.buildProperties(null)
-        val baseProperties: MutableMap<String, Any> = mutableMapOf(
+        val baseProperties: Map<String, Any> = mapOf(
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaProtobufDeserializer::class.java.name,

@@ -13,6 +13,7 @@ import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsum
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import kotlin.test.Test
 import kotlin.test.assertNull
@@ -27,6 +28,7 @@ import kotlin.test.assertNull
         KafkaProducerConfiguration::class,
         StockPriceKafkaProducer::class,
         NatsDispatcherConfig::class,
+        StockPriceNotificationProducer::class,
     ]
 )
 class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
@@ -40,10 +42,10 @@ class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegration
 
     @Test
     fun `should create compound index on stockSymbolName and thresholdPrice`() {
-        // Act: Execute the migration to create the compound index
+        // GIVEN WHEN
         userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex(mongoTemplate)
 
-        // Assert: Verify that the compound index has been created
+        // THEN
         val indexInfoList = mongoTemplate.indexOps(MongoUserTrackedSymbol::class.java).indexInfo
         val compoundIndexInfo = indexInfoList.find {
             it.name ==
@@ -55,13 +57,13 @@ class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegration
 
     @Test
     fun `should rollback compound index creation`() {
-        // Arrange: First create the index
+        // GIVEN
         userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex(mongoTemplate)
 
-        // Act: Perform rollback
+        // WHEN
         userTrackedSymbolCollectionIndexesMigration.value.rollback()
 
-        // Assert: Verify that the index has been removed
+        // THEN
         val indexInfoList = mongoTemplate.indexOps(MongoUserTrackedSymbol::class.java).indexInfo
         val compoundIndexInfo = indexInfoList.find {
             it.name ==
