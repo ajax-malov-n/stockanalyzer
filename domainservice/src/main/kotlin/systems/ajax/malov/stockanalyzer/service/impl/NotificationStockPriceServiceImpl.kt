@@ -1,6 +1,7 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto.NotificationStockPrice
 import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
@@ -18,29 +19,34 @@ class NotificationStockPriceServiceImpl(
         return findUsersToNotify(stockPrice)
             .collectList()
             .flatMap { userTrackedSymbols ->
-                buildKafkaNotifications(userTrackedSymbols, stockPrice)
+                deleteUserTrackedSymbols(userTrackedSymbols).thenReturn(
+                    buildStockPriceNotifications(userTrackedSymbols, stockPrice)
+                )
             }
     }
 
-    private fun buildKafkaNotifications(
-        userTrackedSymbols: List<MongoUserTrackedSymbol>,
-        stockPrice: StockPrice,
-    ): Mono<List<NotificationStockPrice>> {
+    private fun deleteUserTrackedSymbols(userTrackedSymbols: MutableList<MongoUserTrackedSymbol>): Mono<Unit> {
         return userTrackedSymbolRepository
             .deleteUserTrackedSymbol(
                 userTrackedSymbols.mapNotNull { it.id }
-            ).thenReturn(
-                userTrackedSymbols
-                    .mapNotNull { it.userId }
-                    .map { userId ->
-                        stockPrice.toNotificationStockPrice(userId)
-                    }
             )
     }
 
-    private fun findUsersToNotify(stockPrice: StockPrice) =
-        userTrackedSymbolRepository.findUserIdsToNotify(
+    private fun buildStockPriceNotifications(
+        userTrackedSymbols: List<MongoUserTrackedSymbol>,
+        stockPrice: StockPrice,
+    ): List<NotificationStockPrice> {
+        return userTrackedSymbols
+            .mapNotNull { it.userId }
+            .map { userId ->
+                stockPrice.toNotificationStockPrice(userId)
+            }
+    }
+
+    private fun findUsersToNotify(stockPrice: StockPrice): Flux<MongoUserTrackedSymbol> {
+        return userTrackedSymbolRepository.findUserIdsToNotify(
             stockPrice.stockSymbolName,
             convertBigDecimalProtoToBigDecimal(stockPrice.price)
         )
+    }
 }
