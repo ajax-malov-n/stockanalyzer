@@ -11,7 +11,6 @@ data class MongoUser(
     @Id
     var id: ObjectId?,
     val email: String?,
-    val trackedSymbols: List<MongoUserTrackedSymbol> = emptyList(),
 ) {
     companion object {
         const val COLLECTION_NAME = "users"

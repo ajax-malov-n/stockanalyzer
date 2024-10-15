@@ -1,8 +1,11 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
+import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
+import scala.Tuple2
 import systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto.NotificationStockPrice
 import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
@@ -15,32 +18,32 @@ import systems.ajax.malov.stockanalyzer.service.NotificationStockPriceService
 class NotificationStockPriceServiceImpl(
     private val userTrackedSymbolRepository: UserTrackedSymbolRepository,
 ) : NotificationStockPriceService {
-    override fun createUsersNotifications(stockPrice: StockPrice): Mono<List<NotificationStockPrice>> {
+    override fun createUsersNotifications(
+        stockPrice: StockPrice,
+    ): Mono<List<Tuple2<NotificationStockPrice, ObjectId>>> {
         return findUsersToNotify(stockPrice)
             .collectList()
             .flatMap { userTrackedSymbols ->
-                deleteUserTrackedSymbols(userTrackedSymbols).thenReturn(
-                    buildStockPriceNotifications(userTrackedSymbols, stockPrice)
-                )
+                buildStockPriceNotifications(userTrackedSymbols, stockPrice)
             }
     }
 
-    private fun deleteUserTrackedSymbols(userTrackedSymbols: MutableList<MongoUserTrackedSymbol>): Mono<Unit> {
+    override fun deleteUserTrackedSymbols(ids: List<ObjectId>): Mono<Unit> {
         return userTrackedSymbolRepository
             .deleteUserTrackedSymbol(
-                userTrackedSymbols.mapNotNull { it.id }
+                ids
             )
     }
 
+    @SuppressWarnings("UnsafeCallOnNullableType")
     private fun buildStockPriceNotifications(
         userTrackedSymbols: List<MongoUserTrackedSymbol>,
         stockPrice: StockPrice,
-    ): List<NotificationStockPrice> {
+    ): Mono<List<Tuple2<NotificationStockPrice, ObjectId>>> {
         return userTrackedSymbols
-            .mapNotNull { it.userId }
-            .map { userId ->
-                stockPrice.toNotificationStockPrice(userId)
-            }
+            .map { userTrackedSymbol ->
+                Tuple2(stockPrice.toNotificationStockPrice(userTrackedSymbol.userId!!), userTrackedSymbol.id!!)
+            }.toMono()
     }
 
     private fun findUsersToNotify(stockPrice: StockPrice): Flux<MongoUserTrackedSymbol> {
