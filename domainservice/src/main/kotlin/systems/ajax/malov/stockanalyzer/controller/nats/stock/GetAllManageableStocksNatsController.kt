@@ -4,7 +4,6 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-import systems.ajax.malov.internalapi.NatsSubject.STOCK_QUEUE_GROUP
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
@@ -31,5 +30,9 @@ class GetAllManageableStocksNatsController(
                 }
                     .build()
             }
+    }
+
+    companion object {
+        const val STOCK_QUEUE_GROUP = "stockQueueGroup"
     }
 }

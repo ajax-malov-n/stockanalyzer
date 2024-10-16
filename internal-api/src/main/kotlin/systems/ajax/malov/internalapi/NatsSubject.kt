@@ -2,7 +2,6 @@ package systems.ajax.malov.internalapi
 
 object NatsSubject {
     private const val REQUEST_PREFIX = "ajax.systems.stockanalyzer.input.request"
-    const val STOCK_QUEUE_GROUP = "stockQueueGroup"
 
     object StockRequest {
         private const val STOCK_PREFIX = "$REQUEST_PREFIX.stock"
