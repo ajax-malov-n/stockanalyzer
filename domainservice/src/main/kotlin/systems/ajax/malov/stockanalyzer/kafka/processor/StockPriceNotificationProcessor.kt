@@ -2,10 +2,13 @@ package systems.ajax.malov.stockanalyzer.kafka.processor
 
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kotlin.core.publisher.toMono
-import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.service.NotificationStockPriceService
 
@@ -17,20 +20,28 @@ class StockPriceNotificationProcessor(
 ) {
     @PostConstruct
     fun subscribeToEvents() {
-        kafkaStockPriceConsumer.receiveAutoAck()
+        kafkaStockPriceConsumer.receiveBatch()
             .flatMap { stockPriceConsumerRecords ->
-                stockPriceConsumerRecords.flatMap { stockPriceConsumerRecord ->
-                    notificationStockPriceService.createUsersNotifications(stockPriceConsumerRecord.value())
+                stockPriceConsumerRecords.flatMap { record ->
+                    handle(record.value())
+                        .doFinally { record.receiverOffset().acknowledge() }
                 }
-            }.flatMap { notifications ->
-                kafkaNotificationStockPriceSender.sendNotificationStockPrice(notifications.map { it._1 })
-                    .thenMany(notifications.toMono())
-            }
-            .flatMap { notifications ->
-                notificationStockPriceService
-                    .deleteUserTrackedSymbols(notifications.map { it._2 })
             }
             .subscribeOn(Schedulers.boundedElastic())
             .subscribe()
+    }
+
+    private fun handle(stockPrice: StockPrice): Mono<Unit> {
+        return notificationStockPriceService
+            .createUsersNotifications(stockPrice)
+            .collectList()
+            .flatMapMany {
+                kafkaNotificationStockPriceSender.sendNotificationStockPrice(it.map { (stockPrice, _) -> stockPrice })
+                    .thenMany(it.toMono())
+            }.flatMap { notifications ->
+                notificationStockPriceService
+                    .deleteUserTrackedSymbols(notifications.map { (_, userTrackedStockId) -> userTrackedStockId })
+            }
+            .then(Unit.toMono())
     }
 }

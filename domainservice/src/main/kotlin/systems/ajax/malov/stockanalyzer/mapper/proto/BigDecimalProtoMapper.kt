@@ -1,8 +1,8 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
 import com.google.protobuf.ByteString
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigIntegerProto
+import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
+import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -23,7 +23,7 @@ object BigDecimalProtoMapper {
     private fun convertToBigIntegerProto(bigInteger: BigInteger): BigIntegerProto {
         return BigIntegerProto.newBuilder().apply {
             val bytes: ByteString = ByteString.copyFrom(bigInteger.toByteArray())
-            setValue(bytes)
+            value = bytes
         }.build()
     }
 

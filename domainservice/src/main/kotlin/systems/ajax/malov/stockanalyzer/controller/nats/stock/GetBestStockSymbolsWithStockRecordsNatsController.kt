@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import systems.ajax.malov.internalapi.NatsSubject.STOCK_QUEUE_GROUP
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.const.AppConst.DEFAULT_QUANTITY_FOR_BEST_STOCKS
 import systems.ajax.malov.stockanalyzer.controller.nats.NatsController
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest

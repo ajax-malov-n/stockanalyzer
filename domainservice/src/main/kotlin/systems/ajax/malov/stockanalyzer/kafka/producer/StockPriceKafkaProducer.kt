@@ -8,25 +8,20 @@ import reactor.kafka.sender.SenderRecord
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.internalapi.KafkaTopic
-import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.proto.StockPriceMapper.toStockPrice
-import java.time.Duration
 
 @Component
 class StockPriceKafkaProducer(
     private val kafkaStockPriceKafkaProducer: KafkaSender<String, StockPrice>,
 ) {
     fun sendStockPrice(mongoStockRecords: List<MongoStockRecord>): Mono<Unit> {
-        return mongoStockRecords.map { it.toStockPrice() }
-            .toFlux()
-            .buffer(Duration.ofSeconds(1))
-            .flatMap {
-                kafkaStockPriceKafkaProducer.send(
-                    it.map { stockPrice -> buildKafkaStockPriceMessage(stockPrice) }
-                        .toFlux()
-                )
-            }
+        return kafkaStockPriceKafkaProducer.send(
+            mongoStockRecords.map { it.toStockPrice() }
+                .map { stockPrice -> buildKafkaStockPriceMessage(stockPrice) }
+                .toFlux()
+        )
             .then(Unit.toMono())
     }
 

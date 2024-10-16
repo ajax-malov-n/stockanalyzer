@@ -2,11 +2,11 @@ package gateway.utils
 
 import com.google.protobuf.ByteString
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigIntegerProto
-import systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortStockRecordResponse
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponse
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
+import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
+import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import java.nio.ByteBuffer
 
 

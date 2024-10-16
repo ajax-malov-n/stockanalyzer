@@ -18,11 +18,12 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.internalapi.KafkaTopic
-import systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto.NotificationStockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
@@ -69,20 +70,29 @@ class StockPriceNotificationProcessorTest : AbstractMongoIntegrationTest {
                 thresholdPrice = mongoStockRecords.first().currentPrice!!.subtract(BigDecimal("0.5"))
             )
         mongoTemplate.insert(mongoUserTrackedStock)
-        stockPrideProducer.sendStockPrice(mongoStockRecords)
-            .block()
-
-        // WHEN
         stockPriceNotificationProcessor.subscribeToEvents()
 
+        val receivedNotifications = mutableListOf<NotificationStockPrice>()
+
+        notificationStockPriceConsumer.receive()
+            .doOnNext { receivedNotifications.add(it.value()) }
+            .timeout(Duration.ofSeconds(5), Mono.empty())
+            .subscribeOn(Schedulers.boundedElastic())
+            .subscribe()
+
+        // WHEN
+        stockPrideProducer.sendStockPrice(mongoStockRecords)
+            .delaySubscription(Duration.ofSeconds(1))
+            .subscribeOn(Schedulers.boundedElastic())
+            .subscribe()
+
         // THEN
-        assertNotNull(
-            notificationStockPriceConsumer.receive()
-                .timeout(Duration.ofSeconds(5), Mono.empty())
-                .filter { it.value().stockSymbolName == mongoStockRecords.first().symbol }
-                .blockFirst(),
-            "Published message must be consumed within 5 seconds"
-        )
+        await().pollDelay(Duration.ofMillis(100)).atMost(5, TimeUnit.SECONDS).untilAsserted {
+            assertNotNull(
+                receivedNotifications.any { it.stockSymbolName == mongoStockRecords.first().symbol },
+                "Published message must be consumed within 5 seconds"
+            )
+        }
 
         await().pollDelay(Duration.ofMillis(100)).atMost(5, TimeUnit.SECONDS).untilAsserted {
             assertFalse(

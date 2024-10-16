@@ -8,34 +8,25 @@ import reactor.kafka.sender.SenderRecord
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.internalapi.KafkaTopic
-import systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto.NotificationStockPrice
-import java.time.Duration
+import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 
 @Component
 class StockPriceNotificationProducer(
     private val kafkaNotificationStockPriceKafkaProducer: KafkaSender<String, NotificationStockPrice>,
 ) {
-    fun sendNotificationStockPrice(notificationStockPrices: List<NotificationStockPrice>): Mono<Unit> {
-        return notificationStockPrices
-            .toFlux()
-            .buffer(Duration.ofSeconds(1))
-            .flatMap {
-                kafkaNotificationStockPriceKafkaProducer.send(
-                    it.map { stockPrice -> buildKafkaNotificationStockPriceMessage(stockPrice) }
-                        .toFlux()
-                )
-            }
-            .then(Unit.toMono())
+    fun sendNotificationStockPrice(notifications: List<NotificationStockPrice>): Mono<Unit> {
+        return kafkaNotificationStockPriceKafkaProducer.send(
+            notifications.map { it.buildKafkaNotification() }
+                .toFlux()
+        ).then(Unit.toMono())
     }
 
-    private fun buildKafkaNotificationStockPriceMessage(
-        notificationStockPriceDto: NotificationStockPrice,
-    ): SenderRecord<String, NotificationStockPrice, Any?> {
+    private fun NotificationStockPrice.buildKafkaNotification(): SenderRecord<String, NotificationStockPrice, Any?> {
         return SenderRecord.create(
             ProducerRecord(
                 KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE,
-                notificationStockPriceDto.stockSymbolName,
-                notificationStockPriceDto
+                stockSymbolName,
+                this
             ),
             null
         )

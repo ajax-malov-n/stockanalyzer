@@ -10,10 +10,10 @@ import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.internalapi.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 
 @RestController
 @RequestMapping("/api/v1/stock-records")

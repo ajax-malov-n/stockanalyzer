@@ -1,13 +1,13 @@
 syntax = "proto3";
 import "systems/ajax/malov/internalapi/commonmodel/stock/big_decimal.proto";
 
-package systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto;
+package systems.ajax.malov.internalapi.commonmodel.stock;
 
 option java_multiple_files = true;
 
 message ShortStockRecordResponse{
-  big_decimal.proto.BigDecimalProto open_price = 1;
-  big_decimal.proto.BigDecimalProto high_price = 2;
-  big_decimal.proto.BigDecimalProto low_price = 3;
-  big_decimal.proto.BigDecimalProto current_price = 4;
+  BigDecimalProto open_price = 1;
+  BigDecimalProto high_price = 2;
+  BigDecimalProto low_price = 3;
+  BigDecimalProto current_price = 4;
 }

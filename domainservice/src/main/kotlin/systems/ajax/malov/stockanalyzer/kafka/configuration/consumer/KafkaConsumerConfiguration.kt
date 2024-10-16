@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.kafka.receiver.KafkaReceiver
 import systems.ajax.malov.internalapi.KafkaTopic
-import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 
 @Configuration
@@ -25,7 +25,11 @@ class KafkaConsumerConfiguration(
         return createKafkaReceiver(
             baseConsumerProperties(customProperties),
             KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE,
-            "stockPriceConsumerGroup"
+            CONSUMER_STOCK_PRICE_GROUP
         )
+    }
+
+    companion object {
+        private const val CONSUMER_STOCK_PRICE_GROUP = "stockPriceConsumerGroup"
     }
 }

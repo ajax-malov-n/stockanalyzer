@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.kafka.sender.KafkaSender
-import systems.ajax.malov.internalapi.output.pubsub.stock.notification_stock_price.proto.NotificationStockPrice
-import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 
 @Configuration

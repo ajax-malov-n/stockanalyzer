@@ -12,12 +12,8 @@ nats:
 
 logging:
   level:
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              MongoTemplate: DEBUG
-              MongoOperations: DEBUG
-              query: DEBUG
+    org.springframework.data.mongodb.core:
+      MongoTemplate: DEBUG
+      MongoOperations: DEBUG
+      query: DEBUG
     org.mongodb.driver: DEBUG

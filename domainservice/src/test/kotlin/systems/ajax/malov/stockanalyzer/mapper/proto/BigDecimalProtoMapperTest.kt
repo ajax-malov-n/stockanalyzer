@@ -1,6 +1,6 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto
+import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertBigDecimalProtoToBigDecimal
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertToBigDecimalProto
 import java.math.BigDecimal
@@ -17,7 +17,7 @@ class BigDecimalProtoMapperTest {
         val actual = convertBigDecimalProtoToBigDecimal(bigDecimalProto)
 
         // Then
-        val expected = BigDecimal("1")
+        val expected = BigDecimal.ONE
         assertEquals(expected, actual)
     }
 }

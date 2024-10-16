@@ -2,7 +2,7 @@ package systems.ajax.malov.stockanalyzer.mapper.proto
 
 import com.google.protobuf.Timestamp
 import stockanalyzer.utils.StockFixture.savedStockRecord
-import systems.ajax.malov.internalapi.output.pubsub.stock.stock_price.proto.StockPrice
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertToBigDecimalProto
 import systems.ajax.malov.stockanalyzer.mapper.proto.StockPriceMapper.toStockPrice
@@ -46,7 +46,6 @@ class StockPriceMapperTest {
         val expected = StockPrice.newBuilder()
             .setPrice(convertToBigDecimalProto(mongoRecord.currentPrice))
             .setStockSymbolName(mongoRecord.symbol)
-            .setTimestamp(Timestamp.getDefaultInstance())
             .build()
         assertEquals(expected, actual)
     }

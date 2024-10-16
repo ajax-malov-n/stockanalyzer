@@ -23,7 +23,14 @@ class PopulateStockDataBackgroundJob(
 
         stockRecordClientApi.getAllStockRecords()
             .collectList()
-            .flatMap { stockPriceKafkaProducer.sendStockPrice(it).onErrorResume { Unit.toMono() }.thenReturn(it) }
+            .flatMap {
+                stockPriceKafkaProducer.sendStockPrice(it)
+                    .onErrorResume { error ->
+                        log.error("Error was acquired during sending stock price messages", error)
+                        Unit.toMono()
+                    }
+                    .thenReturn(it)
+            }
             .flatMapMany { records ->
                 stockRecordRepository.insertAll(records)
             }

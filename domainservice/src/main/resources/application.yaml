@@ -5,7 +5,7 @@ spring:
     mongodb:
       uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
   kafka:
-    bootstrap-servers: http://broker:9092
+    bootstrap-servers: http://kafka:9092
     properties:
       schema.registry.url: http://schema-registry:8081
 api:
