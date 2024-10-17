@@ -22,6 +22,7 @@ services:
       - FINNHUB_API_TOKEN=${FINNHUB_API_TOKEN}
     env_file:
       - .env
+    profiles: [ all ]
 
   gateway:
     build:
@@ -32,6 +33,7 @@ services:
         condition: service_started
     ports:
       - "8080:8080"
+    profiles: [ all ]
 
   mongo:
     image: mongo:7.0.14
@@ -51,6 +53,25 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    profiles: [ all ]
+
+  mongo-test:
+    image: mongo:7.0.14
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "27017:27017"
+    profiles: [ test ]
 
   kafka:
     image: confluentinc/confluent-local:7.4.1
@@ -63,6 +84,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
       KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+    profiles: [ all,test ]
 
   kafka-ui:
     image: provectuslabs/kafka-ui:v0.7.2
@@ -75,6 +97,7 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+    profiles: [ all ]
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.5.1
@@ -85,6 +108,8 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+    profiles: [ all,test ]
+
 
   nats:
     image: nats:2.7.0-alpine
@@ -95,6 +120,7 @@ services:
       interval: 1s
       timeout: 1s
       retries: 5
+    profiles: [ all, test ]
 
 volumes:
   mongo-data:

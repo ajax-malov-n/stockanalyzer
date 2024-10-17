@@ -1,14 +1,15 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
+import com.ninjasquad.springmockk.MockkBean
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig
 import io.nats.client.Connection
+import io.nats.client.Dispatcher
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.exists
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
+import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
@@ -26,10 +28,8 @@ import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
-import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -39,14 +39,16 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
-@MockBean(
-    value = [
+@MockkBean(
+    relaxed = true,
+    classes = [
         Connection::class,
-        NatsControllerBeanPostProcessor::class,
+        Dispatcher::class,
         NatsDispatcherConfig::class,
     ]
 )
-class StockPriceNotificationProcessorTest : AbstractMongoIntegrationTest {
+@ActiveProfiles("test")
+class StockPriceNotificationProcessorTest {
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate
 

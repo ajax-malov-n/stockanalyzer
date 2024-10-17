@@ -12,12 +12,10 @@ import systems.ajax.malov.stockanalyzer.entity.MongoUser
 
 @ChangeUnit(id = "CreateUserCollectionIndexesChangelog", order = "002", author = "malov.n@ajax.com")
 class UserCollectionIndexesMigration(private val mongoTemplate: MongoTemplate) {
-    private lateinit var indexName: String
-
     @Execution
-    fun createUserCollectionIndex(mongoTemplate: MongoTemplate) {
+    fun createUserCollectionIndex() {
         mongoTemplate.indexOps<MongoUser>().apply {
-            indexName = ensureIndex(Index(MongoUser::email.name, ASC).unique())
+            ensureIndex(Index().named(INDEX_NAME).on(MongoUser::email.name, ASC).unique())
         }
     }
 
@@ -25,10 +23,11 @@ class UserCollectionIndexesMigration(private val mongoTemplate: MongoTemplate) {
     fun rollback() {
         log.info("Rolling back ${this::class.simpleName}")
 
-        mongoTemplate.indexOps<MongoUser>().dropIndex(indexName)
+        mongoTemplate.indexOps<MongoUser>().dropIndex(INDEX_NAME)
     }
 
     companion object {
         private val log = LoggerFactory.getLogger(UserCollectionIndexesMigration::class.java)
+        private val INDEX_NAME = "${MongoUser::email.name}_1"
     }
 }

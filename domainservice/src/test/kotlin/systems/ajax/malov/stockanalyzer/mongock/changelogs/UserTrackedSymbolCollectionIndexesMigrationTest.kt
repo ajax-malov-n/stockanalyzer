@@ -1,28 +1,30 @@
 package systems.ajax.malov.stockanalyzer.mongock.changelogs
 
+import com.ninjasquad.springmockk.MockkBean
 import io.nats.client.Connection
+import io.nats.client.Dispatcher
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.test.context.ActiveProfiles
 import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
-import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import kotlin.test.Test
 import kotlin.test.assertNull
 
 @SpringBootTest
-@MockBean(
-    value = [
+@ActiveProfiles("test")
+@MockkBean(
+    relaxed = true,
+    classes = [
         Connection::class,
-        NatsControllerBeanPostProcessor::class,
+        Dispatcher::class,
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
         KafkaProducerConfiguration::class,
@@ -31,7 +33,7 @@ import kotlin.test.assertNull
         StockPriceNotificationProducer::class,
     ]
 )
-class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegrationTest {
+class UserTrackedSymbolCollectionIndexesMigrationTest {
 
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate
@@ -43,7 +45,7 @@ class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegration
     @Test
     fun `should create compound index on stockSymbolName and thresholdPrice`() {
         // GIVEN WHEN
-        userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex(mongoTemplate)
+        userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex()
 
         // THEN
         val indexInfoList = mongoTemplate.indexOps(MongoUserTrackedSymbol::class.java).indexInfo
@@ -58,7 +60,7 @@ class UserTrackedSymbolCollectionIndexesMigrationTest : AbstractMongoIntegration
     @Test
     fun `should rollback compound index creation`() {
         // GIVEN
-        userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex(mongoTemplate)
+        userTrackedSymbolCollectionIndexesMigration.value.createUserTrackedSymbolCollectionIndex()
 
         // WHEN
         userTrackedSymbolCollectionIndexesMigration.value.rollback()

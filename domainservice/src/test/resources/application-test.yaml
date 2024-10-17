@@ -16,6 +16,9 @@ nats:
   url: "nats://localhost:4222"
 
 spring:
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/stocks?authSource=admin
   kafka:
     consumer:
       auto-offset-reset: earliest

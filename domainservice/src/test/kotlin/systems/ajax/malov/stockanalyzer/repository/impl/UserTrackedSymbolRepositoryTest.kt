@@ -1,29 +1,30 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
+import com.ninjasquad.springmockk.MockkBean
+import com.ninjasquad.springmockk.SpykBean
+import io.mockk.Called
+import io.mockk.verify
 import io.nats.client.Connection
+import io.nats.client.Dispatcher
 import org.bson.types.ObjectId
-import org.mockito.Mockito.verifyNoInteractions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.exists
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
+import org.springframework.test.context.ActiveProfiles
 import reactor.kotlin.test.test
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
-import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.UserTrackedSymbolRepository
 import java.math.BigDecimal
 import kotlin.test.Test
@@ -31,10 +32,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 @SpringBootTest
-@MockBean(
-    value = [
+@ActiveProfiles("test")
+@MockkBean(
+    relaxed = true,
+    classes = [
         Connection::class,
-        NatsControllerBeanPostProcessor::class,
+        Dispatcher::class,
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
         KafkaProducerConfiguration::class,
@@ -43,12 +46,12 @@ import kotlin.test.assertFalse
         StockPriceNotificationProducer::class,
     ]
 )
-class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {
+class UserTrackedSymbolRepositoryTest {
 
     @Autowired
     private lateinit var userTrackedSymbolRepository: UserTrackedSymbolRepository
 
-    @SpyBean
+    @SpykBean // dont use mockito
     private lateinit var mongoTemplate: MongoTemplate
 
     @Test
@@ -111,6 +114,6 @@ class UserTrackedSymbolRepositoryTest : AbstractMongoIntegrationTest {
             .expectNext(Unit)
             .verifyComplete()
 
-        verifyNoInteractions(mongoTemplate)
+        verify { mongoTemplate wasNot Called }
     }
 }

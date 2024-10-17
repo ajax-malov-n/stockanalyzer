@@ -1,12 +1,12 @@
 package systems.ajax.malov.stockanalyzer.controller.nats.stock
 
-import berlin.yuna.natsserver.embedded.annotation.EnableNatsServer
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
+import com.ninjasquad.springmockk.MockkBean
 import io.nats.client.Connection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.ActiveProfiles
 import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
 import systems.ajax.malov.internalapi.NatsSubject
@@ -20,7 +20,6 @@ import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationPr
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -30,8 +29,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @SpringBootTest
-@EnableNatsServer(port = 4222)
-@MockBean(
+@MockkBean(
+    relaxed = true,
     value = [
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
@@ -40,7 +39,8 @@ import kotlin.test.assertTrue
         StockPriceNotificationProducer::class,
     ]
 )
-class NatsControllersTest : AbstractMongoIntegrationTest {
+@ActiveProfiles("test")
+class NatsControllersTest {
 
     @Autowired
     private lateinit var natsConnection: Connection

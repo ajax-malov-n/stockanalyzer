@@ -1,12 +1,14 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
+import com.ninjasquad.springmockk.MockkBean
 import io.nats.client.Connection
+import io.nats.client.Dispatcher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.ActiveProfiles
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
@@ -14,23 +16,23 @@ import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
-import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.NatsControllerBeanPostProcessor
 import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.assertNotNull
 
 @SpringBootTest
-@MockBean(
-    value = [
+@ActiveProfiles("test")
+@MockkBean(
+    relaxed = true,
+    classes = [
         Connection::class,
-        NatsControllerBeanPostProcessor::class,
+        Dispatcher::class,
         StockPriceNotificationProcessor::class,
         KafkaConsumerConfiguration::class,
         KafkaProducerConfiguration::class,
@@ -39,7 +41,7 @@ import kotlin.test.assertNotNull
         StockPriceNotificationProducer::class,
     ]
 )
-class MongoStockRecordRepositoryTest : AbstractMongoIntegrationTest {
+class MongoStockRecordRepositoryTest {
 
     @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
