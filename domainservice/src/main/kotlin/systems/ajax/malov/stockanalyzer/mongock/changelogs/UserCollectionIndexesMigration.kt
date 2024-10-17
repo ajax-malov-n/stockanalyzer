@@ -14,9 +14,12 @@ import systems.ajax.malov.stockanalyzer.entity.MongoUser
 class UserCollectionIndexesMigration(private val mongoTemplate: MongoTemplate) {
     @Execution
     fun createUserCollectionIndex() {
-        mongoTemplate.indexOps<MongoUser>().apply {
-            ensureIndex(Index().named(INDEX_NAME).on(MongoUser::email.name, ASC).unique())
-        }
+        mongoTemplate.indexOps<MongoUser>()
+            .ensureIndex(
+                Index().named(INDEX_NAME)
+                    .on(MongoUser::email.name, ASC)
+                    .unique()
+            )
     }
 
     @RollbackExecution
