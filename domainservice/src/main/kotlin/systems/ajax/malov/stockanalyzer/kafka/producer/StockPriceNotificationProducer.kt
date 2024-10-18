@@ -12,21 +12,21 @@ import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 
 @Component
 class StockPriceNotificationProducer(
-    private val kafkaNotificationStockPriceKafkaProducer: KafkaSender<String, NotificationStockPrice>,
+    private val kafkaNotificationStockPriceSender: KafkaSender<String, ByteArray>,
 ) {
     fun sendNotificationStockPrice(notifications: List<NotificationStockPrice>): Mono<Unit> {
-        return kafkaNotificationStockPriceKafkaProducer.send(
+        return kafkaNotificationStockPriceSender.send(
             notifications.map { it.buildKafkaNotification() }
                 .toFlux()
         ).then(Unit.toMono())
     }
 
-    private fun NotificationStockPrice.buildKafkaNotification(): SenderRecord<String, NotificationStockPrice, Any?> {
+    private fun NotificationStockPrice.buildKafkaNotification(): SenderRecord<String, ByteArray, Any?> {
         return SenderRecord.create(
             ProducerRecord(
                 KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE,
                 stockSymbolName,
-                this
+                toByteArray()
             ),
             null
         )

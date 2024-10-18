@@ -1,10 +1,9 @@
 package systems.ajax.malov.stockanalyzer.config
 
-import com.google.protobuf.GeneratedMessageV3
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.ByteArrayDeserializer
+import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -15,22 +14,21 @@ import reactor.kafka.sender.SenderOptions
 
 open class BaseKafkaConfiguration(
     private val bootstrapServers: String,
-    private val schemaRegistryUrl: String,
     private val kafkaProperties: KafkaProperties,
 ) {
-    protected fun <T : GeneratedMessageV3> createKafkaSender(
+    protected fun createKafkaSender(
         properties: MutableMap<String, Any>,
-    ): KafkaSender<String, T> {
+    ): KafkaSender<String, ByteArray> {
         return KafkaSender.create(SenderOptions.create(properties))
     }
 
-    protected fun <T : GeneratedMessageV3> createKafkaReceiver(
+    protected fun createKafkaReceiver(
         properties: MutableMap<String, Any>,
         topic: String,
         groupId: String,
-    ): KafkaReceiver<String, T> {
+    ): KafkaReceiver<String, ByteArray> {
         properties[ConsumerConfig.GROUP_ID_CONFIG] = groupId
-        val options = ReceiverOptions.create<String, T>(properties).subscription(setOf(topic))
+        val options = ReceiverOptions.create<String, ByteArray>(properties).subscription(setOf(topic))
         return KafkaReceiver.create(options)
     }
 
@@ -41,8 +39,7 @@ open class BaseKafkaConfiguration(
         val baseProperties: Map<String, Any> = mapOf(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to KafkaProtobufSerializer::class.java.name,
-            "schema.registry.url" to schemaRegistryUrl
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to ByteArraySerializer::class.java.name,
         )
         buildProperties.putAll(baseProperties)
         buildProperties.putAll(customProperties)
@@ -56,8 +53,7 @@ open class BaseKafkaConfiguration(
         val baseProperties: Map<String, Any> = mapOf(
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to KafkaProtobufDeserializer::class.java.name,
-            "schema.registry.url" to schemaRegistryUrl
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java.name,
         )
         buildProperties.putAll(baseProperties)
         buildProperties.putAll(customProperties)

@@ -26,5 +26,3 @@ spring:
         session.timeout.ms: 10000
         max.poll.interval.ms: 10000
     bootstrap-servers: http://localhost:9092
-    properties:
-      schema.registry.url: http://localhost:8081

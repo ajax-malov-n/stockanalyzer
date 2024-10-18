@@ -14,10 +14,10 @@ import systems.ajax.malov.stockanalyzer.mapper.proto.StockPriceMapper.toStockPri
 
 @Component
 class StockPriceKafkaProducer(
-    private val kafkaStockPriceKafkaProducer: KafkaSender<String, StockPrice>,
+    private val kafkaStockPriceSender: KafkaSender<String, ByteArray>,
 ) {
     fun sendStockPrice(mongoStockRecords: List<MongoStockRecord>): Mono<Unit> {
-        return kafkaStockPriceKafkaProducer.send(
+        return kafkaStockPriceSender.send(
             mongoStockRecords.map { it.toStockPrice() }
                 .map { stockPrice -> buildKafkaStockPriceMessage(stockPrice) }
                 .toFlux()
@@ -25,12 +25,12 @@ class StockPriceKafkaProducer(
             .then(Unit.toMono())
     }
 
-    private fun buildKafkaStockPriceMessage(stockPrice: StockPrice): SenderRecord<String, StockPrice, Nothing?> {
+    private fun buildKafkaStockPriceMessage(stockPrice: StockPrice): SenderRecord<String, ByteArray, Nothing?> {
         return SenderRecord.create(
             ProducerRecord(
                 KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE,
                 stockPrice.stockSymbolName,
-                stockPrice
+                stockPrice.toByteArray()
             ),
             null
         )

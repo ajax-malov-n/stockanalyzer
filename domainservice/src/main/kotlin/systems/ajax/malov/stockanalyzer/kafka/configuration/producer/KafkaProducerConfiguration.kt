@@ -5,24 +5,24 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.kafka.sender.KafkaSender
-import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 
 @Configuration
 class KafkaProducerConfiguration(
     @Value("\${spring.kafka.bootstrap-servers}") bootstrapServers: String,
-    @Value("\${spring.kafka.properties.schema.registry.url}") schemaRegistryUrl: String,
     kafkaProperties: KafkaProperties,
-) : BaseKafkaConfiguration(bootstrapServers, schemaRegistryUrl, kafkaProperties) {
+) : BaseKafkaConfiguration(
+    bootstrapServers,
+    kafkaProperties
+) {
 
     @Bean
-    fun kafkaStockPriceSender(): KafkaSender<String, StockPrice> {
+    fun kafkaStockPriceSender(): KafkaSender<String, ByteArray> {
         return createKafkaSender(baseProducerProperties())
     }
 
     @Bean
-    fun kafkaNotificationStockPriceSender(): KafkaSender<String, NotificationStockPrice> {
+    fun kafkaNotificationStockPriceSender(): KafkaSender<String, ByteArray> {
         return createKafkaSender(baseProducerProperties())
     }
 }

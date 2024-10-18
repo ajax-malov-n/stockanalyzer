@@ -14,16 +14,16 @@ import systems.ajax.malov.stockanalyzer.service.NotificationStockPriceService
 
 @Component
 class StockPriceNotificationProcessor(
-    private val kafkaStockPriceConsumer: KafkaReceiver<String, StockPrice>,
+    private val kafkaStockPriceReceiver: KafkaReceiver<String, ByteArray>,
     private val kafkaNotificationStockPriceSender: StockPriceNotificationProducer,
     private val notificationStockPriceService: NotificationStockPriceService,
 ) {
     @PostConstruct
     fun subscribeToEvents() {
-        kafkaStockPriceConsumer.receiveBatch()
+        kafkaStockPriceReceiver.receiveBatch()
             .flatMap { stockPriceConsumerRecords ->
                 stockPriceConsumerRecords.flatMap { record ->
-                    handle(record.value())
+                    handle(StockPrice.parseFrom(record.value()))
                         .doFinally { record.receiverOffset().acknowledge() }
                 }
             }

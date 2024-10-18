@@ -1,7 +1,6 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
 import com.ninjasquad.springmockk.MockkBean
-import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig
 import io.nats.client.Connection
 import io.nats.client.Dispatcher
 import org.awaitility.Awaitility.await
@@ -59,7 +58,7 @@ class StockPriceNotificationProcessorTest {
     private lateinit var stockPriceNotificationProcessor: StockPriceNotificationProcessor
 
     @Autowired
-    private lateinit var notificationStockPriceConsumer: KafkaReceiver<String, NotificationStockPrice>
+    private lateinit var kafkaNotificationStockPriceReceiver: KafkaReceiver<String, ByteArray>
 
     @Test
     fun `should publish messages`() {
@@ -76,8 +75,8 @@ class StockPriceNotificationProcessorTest {
 
         val receivedNotifications = mutableListOf<NotificationStockPrice>()
 
-        notificationStockPriceConsumer.receive()
-            .doOnNext { receivedNotifications.add(it.value()) }
+        kafkaNotificationStockPriceReceiver.receive()
+            .doOnNext { receivedNotifications.add(NotificationStockPrice.parseFrom(it.value())) }
             .timeout(Duration.ofSeconds(5), Mono.empty())
             .subscribeOn(Schedulers.boundedElastic())
             .subscribe()
@@ -111,19 +110,16 @@ class StockPriceNotificationProcessorTest {
 
     class MyKafkaTestConfiguration(
         @Value("\${spring.kafka.bootstrap-servers}") val bootstrapServer: String,
-        @Value("\${spring.kafka.properties.schema.registry.url}") schemaRegistryUrl: String,
         kafkaProperties: KafkaProperties,
-    ) : BaseKafkaConfiguration(bootstrapServer, schemaRegistryUrl, kafkaProperties) {
+    ) : BaseKafkaConfiguration(
+        bootstrapServer,
+        kafkaProperties
+    ) {
 
         @Bean
-        fun kafkaNotificationStockPriceReceiver(): KafkaReceiver<String, NotificationStockPrice> {
-            val customProperties: MutableMap<String, Any> = mutableMapOf(
-                KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE
-                    to
-                    NotificationStockPrice::class.java.name
-            )
+        fun kafkaNotificationStockPriceReceiver(): KafkaReceiver<String, ByteArray> {
             return createKafkaReceiver(
-                baseConsumerProperties(customProperties),
+                baseConsumerProperties(),
                 KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE,
                 "stockPriceNotificationConsumerGroup",
             )
