@@ -33,6 +33,10 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
+      - name: Run Docker Compose
+        run: docker compose --profile test up -d
+
+
       - name: Build with Gradle
         run: ./gradlew build -x deltaCoverage --parallel
 

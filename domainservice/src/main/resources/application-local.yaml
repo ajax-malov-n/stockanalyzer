@@ -2,6 +2,16 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:secret@localhost:27017/stocks?authSource=admin
+  kafka:
+    bootstrap-servers: http://localhost:9092
 
 nats:
   url: "nats://localhost:4222"
+
+logging:
+  level:
+    org.springframework.data.mongodb.core:
+      MongoTemplate: DEBUG
+      MongoOperations: DEBUG
+      query: DEBUG
+    org.mongodb.driver: DEBUG

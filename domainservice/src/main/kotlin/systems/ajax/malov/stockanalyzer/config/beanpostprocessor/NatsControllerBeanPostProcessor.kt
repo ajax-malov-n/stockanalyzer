@@ -1,6 +1,8 @@
 package systems.ajax.malov.stockanalyzer.config.beanpostprocessor
 
 import com.google.protobuf.GeneratedMessageV3
+import io.nats.client.Dispatcher
+import io.nats.client.MessageHandler
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -8,7 +10,7 @@ import reactor.core.scheduler.Schedulers
 import systems.ajax.malov.stockanalyzer.controller.nats.NatsController
 
 @Component
-class NatsControllerBeanPostProcessor : BeanPostProcessor {
+class NatsControllerBeanPostProcessor(private val dispatcher: Dispatcher) : BeanPostProcessor {
 
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any? {
         if (bean is NatsController<*, *>) {
@@ -20,7 +22,7 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
     private fun <RequestT : GeneratedMessageV3, ResponseT : GeneratedMessageV3> initializeController(
         controller: NatsController<RequestT, ResponseT>,
     ) {
-        controller.connection.createDispatcher { message ->
+        val handler = MessageHandler { message ->
             Mono.fromSupplier {
                 controller.parser.parseFrom(message.data)
             }.flatMap {
@@ -30,6 +32,7 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
                 .subscribe {
                     controller.connection.publish(message.replyTo, it.toByteArray())
                 }
-        }.subscribe(controller.subject, controller.queueGroup)
+        }
+        dispatcher.subscribe(controller.subject, controller.queueGroup, handler)
     }
 }

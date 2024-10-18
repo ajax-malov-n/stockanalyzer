@@ -1,19 +1,25 @@
 package systems.ajax.malov.stockanalyzer.controller.nats.stock
 
-import berlin.yuna.natsserver.embedded.annotation.EnableNatsServer
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
+import com.ninjasquad.springmockk.MockkBean
 import io.nats.client.Connection
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.NatsSubject
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
+import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.stockanalyzer.repository.AbstractMongoIntegrationTest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -22,8 +28,19 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@EnableNatsServer(port = 4222)
-class NatsControllersTest : AbstractMongoIntegrationTest {
+@SpringBootTest
+@MockkBean(
+    relaxed = true,
+    value = [
+        StockPriceNotificationProcessor::class,
+        KafkaConsumerConfiguration::class,
+        KafkaProducerConfiguration::class,
+        StockPriceKafkaProducer::class,
+        StockPriceNotificationProducer::class,
+    ]
+)
+@ActiveProfiles("test")
+class NatsControllersTest {
 
     @Autowired
     private lateinit var natsConnection: Connection

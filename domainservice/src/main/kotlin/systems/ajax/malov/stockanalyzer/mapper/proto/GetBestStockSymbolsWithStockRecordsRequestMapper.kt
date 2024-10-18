@@ -1,14 +1,10 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
-import com.google.protobuf.ByteString
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.AggregatedStockRecordItemResponse
-import systems.ajax.malov.input.reqreply.stock.get_best_stock_symbols_with_stocks.proto.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.big_decimal.proto.BigIntegerProto
-import systems.ajax.malov.internalapi.commonmodel.stock.short_stock.proto.ShortStockRecordResponse
+import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import java.math.BigDecimal
-import java.math.BigInteger
+import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertToBigDecimalProto
 
 object GetBestStockSymbolsWithStockRecordsRequestMapper {
     fun toGetBestStockSymbolsWithStockRecordsRequest(
@@ -36,26 +32,9 @@ object GetBestStockSymbolsWithStockRecordsRequestMapper {
 
     private fun toShortStockRecordResponseDto(it: MongoStockRecord): ShortStockRecordResponse? =
         ShortStockRecordResponse.newBuilder()
-            .setLowPrice(convertToBDecimal(it.lowPrice))
-            .setHighPrice(convertToBDecimal(it.highPrice))
-            .setOpenPrice(convertToBDecimal(it.openPrice))
-            .setCurrentPrice(
-                convertToBDecimal(it.currentPrice)
-            )
+            .setLowPrice(convertToBigDecimalProto(it.lowPrice))
+            .setHighPrice(convertToBigDecimalProto(it.highPrice))
+            .setOpenPrice(convertToBigDecimalProto(it.openPrice))
+            .setCurrentPrice(convertToBigDecimalProto(it.currentPrice))
             .build()
-
-    private fun convertToBInteger(bigInteger: BigInteger): BigIntegerProto {
-        return BigIntegerProto.newBuilder().apply {
-            val bytes: ByteString = ByteString.copyFrom(bigInteger.toByteArray())
-            setValue(bytes)
-        }.build()
-    }
-
-    private fun convertToBDecimal(bigDecimal: BigDecimal?): BigDecimalProto {
-        val scale: Int = bigDecimal?.scale() ?: 0
-        return BigDecimalProto.newBuilder()
-            .setScale(scale)
-            .setIntVal(convertToBInteger(bigDecimal?.unscaledValue() ?: BigInteger.ZERO))
-            .build()
-    }
 }

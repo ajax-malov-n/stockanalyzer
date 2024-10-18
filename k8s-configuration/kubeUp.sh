@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# Start Minikube
-minikube start
-
 # Set up Docker environment to use Minikube's Docker daemon
 eval $(minikube docker-env)
 
 # Build the Docker image
-docker build -f ../DockerfileDomainService -t stockanalyzer-domain ../
-docker build -f ../DockerfileGw -t stockanalyzer-gateway ../
+docker build -t stockanalyzer-domain ../domainservice
+docker build -t stockanalyzer-gateway ../gateway
 
 # Enable Ingress addon in Minikube
 minikube addons enable ingress
@@ -25,7 +22,9 @@ kubectl apply -f pv-mongo.yaml
 kubectl apply -f pvc-mongo.yaml
 
 # Wait for the services to be ready before applying the Ingress
-echo "Waiting for MongoDB and StockAnalyzer and Nats services to be ready..."
+echo "Waiting for services to be ready..."
+kubectl apply -f kafka.yaml
+kubectl wait --for=condition=ready pod -l app=kafka-headless --timeout=300s
 kubectl apply -f nats.yaml
 kubectl wait --for=condition=ready pod -l app=natsServer --timeout=300s
 kubectl apply -f mongo.yaml
