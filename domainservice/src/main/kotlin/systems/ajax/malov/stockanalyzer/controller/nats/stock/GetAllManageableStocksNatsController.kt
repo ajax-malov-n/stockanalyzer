@@ -4,10 +4,9 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.input.reqreply.stock.get_all_man_sym.proto.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.internalapi.NatsSubject.STOCK_QUEUE_GROUP
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.stockanalyzer.controller.nats.NatsController
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 
@@ -31,5 +30,9 @@ class GetAllManageableStocksNatsController(
                 }
                     .build()
             }
+    }
+
+    companion object {
+        const val STOCK_QUEUE_GROUP = "stockQueueGroup"
     }
 }

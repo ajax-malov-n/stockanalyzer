@@ -7,27 +7,30 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.CollectionOptions
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.timeseries.Granularity
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 
-@ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "1", author = "malov.n@ajax.com")
-class TimeSeriesStockCollectionMigration {
+@ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "001", author = "malov.n@ajax.com")
+class TimeSeriesStockCollectionMigration(private val mongoTemplate: MongoTemplate) {
 
     @Execution
-    fun createTimeSeriesStockCollection(mongoTemplate: MongoTemplate) {
-        if (!mongoTemplate.collectionExists("stockRecords")) {
+    fun createTimeSeriesStockCollection() {
+        if (!mongoTemplate.collectionExists(MongoStockRecord.COLLECTION_NAME)) {
             val timeSeriesOptions = CollectionOptions
                 .TimeSeriesOptions
-                .timeSeries("dateOfRetrieval")
-                .metaField("symbol")
+                .timeSeries(MongoStockRecord::dateOfRetrieval.name)
+                .metaField(MongoStockRecord::symbol.name)
                 .granularity(Granularity.MINUTES)
             val options: CollectionOptions = CollectionOptions.empty().timeSeries(timeSeriesOptions)
 
-            mongoTemplate.createCollection("stockRecords", options)
+            mongoTemplate.createCollection(MongoStockRecord.COLLECTION_NAME, options)
         }
     }
 
     @RollbackExecution
     fun rollback() {
-        log.info("Rollback for CreateTimeSeriesStockCollectionChangelog migration is not implemented")
+        log.info("Rolling back ${this::class.simpleName}")
+
+        mongoTemplate.dropCollection(MongoStockRecord.COLLECTION_NAME)
     }
 
     companion object {

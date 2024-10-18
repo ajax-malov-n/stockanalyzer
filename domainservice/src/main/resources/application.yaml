@@ -4,6 +4,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
+  kafka:
+    bootstrap-servers: kafka-0.kafka-headless.kafka.svc.cluster.local:9092
+
 api:
   finnhub:
     token: ${FINNHUB_API_TOKEN}

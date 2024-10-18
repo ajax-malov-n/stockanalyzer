@@ -20,3 +20,9 @@ tasks.named("check") {
     dependsOn("detektMain")
     dependsOn("detektTest")
 }
+
+allprojects {
+    configurations.all {
+        exclude(group = "org.mockito", module = "mockito-core")
+    }
+}
