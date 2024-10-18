@@ -1,0 +1,12 @@
+//syntax = "proto3";
+//
+//import "systems.ajax.malov.input.reqreply.stock";
+//
+//service StockService {
+//
+//  rpc getAllManageableStocksSymbols(GetAllManageableStockSymbolsRequest)
+//      returns (GetAllManageableStockSymbolsResponse);
+//
+//  rpc getBestStockSymbolsWithStockRecords(GetBestStockSymbolsWithStockRecordsRequest)
+//      returns (GetBestStockSymbolsWithStockRecordsResponse);
+//}
