@@ -83,4 +83,22 @@ class StockGrpcServiceTest {
         assertTrue(actual.hasFailure(), "Must have failure in a response")
         assertEquals(expectedResponse, actual)
     }
+
+    @Test
+    fun `should return three best stocks symbols with stock data`() {
+        // GIVEN
+        val request = GetBestStockSymbolsWithStockRecordsRequest.newBuilder()
+            .apply {
+                quantity = 3
+            }.build()
+        val expectedResponse = stockRecordAnalyzerService.getBestStockSymbolsWithStockRecords(3)
+            .map {
+                toGetBestStockSymbolsWithStockRecordsRequest(it)
+            }
+            .block()
+        // WHEN
+        val actual = client.getBestStockSymbolsWithStockRecords(request)
+        // THEN
+        assertEquals(expectedResponse, actual)
+    }
 }
