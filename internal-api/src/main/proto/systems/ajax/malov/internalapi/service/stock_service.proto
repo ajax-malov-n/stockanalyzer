@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "systems/ajax/malov/internalapi/input/reqreply/stock/get_all_manageable_stocks_symbols.proto";
+import "systems/ajax/malov/internalapi/input/reqreply/stock/get_best_stock_symbols_with_records.proto";
+
+package systems.ajax.malov.internalapi.service;
+
+service StockService {
+  rpc getAllManageableStocksSymbols(internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest)
+      returns (internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse);
+
+  rpc getBestStockSymbolsWithStockRecords(internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest)
+      returns (internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse);
+}

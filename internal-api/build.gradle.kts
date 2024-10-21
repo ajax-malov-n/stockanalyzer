@@ -3,6 +3,7 @@ import com.google.protobuf.gradle.id
 plugins {
     `kotlin-conventions`
     alias(libs.plugins.protobufPlugin)
+    `grpc-conventions`
 }
 
 dependencies {
@@ -16,11 +17,11 @@ protobuf {
 
     plugins {
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
+            artifact = libs.grpc.get().toString()
         }
 
         id("reactor-grpc") {
-            artifact = "com.salesforce.servicelibs:reactor-grpc:1.2.4"
+            artifact = libs.grpcReactor.get().toString()
         }
     }
 

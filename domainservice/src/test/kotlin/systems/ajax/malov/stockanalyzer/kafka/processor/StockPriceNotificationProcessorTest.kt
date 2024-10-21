@@ -1,8 +1,5 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
-import com.ninjasquad.springmockk.MockkBean
-import io.nats.client.Connection
-import io.nats.client.Dispatcher
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,9 +23,10 @@ import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
-import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.util.annotations.MockkGRPC
+import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -38,14 +36,8 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
-@MockkBean(
-    relaxed = true,
-    classes = [
-        Connection::class,
-        Dispatcher::class,
-        NatsDispatcherConfig::class,
-    ]
-)
+@MockkNats
+@MockkGRPC
 @ActiveProfiles("test")
 class StockPriceNotificationProcessorTest {
     @Autowired
