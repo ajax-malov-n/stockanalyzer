@@ -29,6 +29,8 @@ kubectl apply -f nats.yaml
 kubectl wait --for=condition=ready pod -l app=natsServer --timeout=300s
 kubectl apply -f mongo.yaml
 kubectl wait --for=condition=ready pod -l app=mongodb --timeout=300s
+kubectl apply -f redis.yaml
+kubectl wait --for=condition=ready pod -l app=redis --timeout=300s
 kubectl apply -f domain.yaml
 kubectl wait --for=condition=ready pod -l app=domain --timeout=300s
 kubectl apply -f gateway.yaml
