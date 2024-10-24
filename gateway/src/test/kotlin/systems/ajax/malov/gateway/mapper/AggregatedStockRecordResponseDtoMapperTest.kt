@@ -9,7 +9,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 import kotlin.test.Test
 
 @ExtendWith(MockKExtension::class)
-class AggregatedStockRecordResponseDtoMapperMapper {
+class AggregatedStockRecordResponseDtoMapperTest {
 
     @Test
     fun `should throw runtimeException with error message`() {
