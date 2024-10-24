@@ -14,9 +14,6 @@ dependencies {
     implementation(libs.shedlock.spring)
     implementation(libs.shedlock.provider.mongo)
 
-    implementation(libs.grpcSpringStarter)
-    implementation(libs.grpcServerSpringStarter)
-
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 

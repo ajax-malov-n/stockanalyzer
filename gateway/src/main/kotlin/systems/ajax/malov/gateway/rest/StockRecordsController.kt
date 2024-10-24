@@ -20,7 +20,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 class StockRecordsController(private val natsClient: NatsClient) {
 
     @GetMapping("/best")
-    fun getFiveBestStockSymbolsWithStockRecords(
+    fun getBestStockSymbolsWithStockRecords(
         @Valid requestDto: GetBestStockSymbolsWithStockRecordsRequestDto,
     ): Mono<AggregatedStockRecordResponseDto> =
         natsClient.doRequest(

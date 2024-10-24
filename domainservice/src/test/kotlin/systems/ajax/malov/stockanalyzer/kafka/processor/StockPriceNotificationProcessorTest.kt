@@ -1,5 +1,6 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
+import io.nats.client.Connection
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,9 +25,9 @@ import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.kafka.consumer.StockPriceNatsConsumer
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkGRPC
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -36,7 +37,6 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
-@MockkNats
 @MockkGRPC
 @ActiveProfiles("test")
 class StockPriceNotificationProcessorTest {
@@ -52,8 +52,14 @@ class StockPriceNotificationProcessorTest {
     @Autowired
     private lateinit var kafkaNotificationStockPriceReceiver: KafkaReceiver<String, ByteArray>
 
+    @Autowired
+    private lateinit var stockPriceNatsConsumer: StockPriceNatsConsumer
+
+    @Autowired
+    private lateinit var natsConnection: Connection
+
     @Test
-    fun `should publish messages`() {
+    fun `should consume and process stock price message and publish notification message`() {
         // GIVEN
         val mongoStockRecords = listOf(savedStockRecord().copy(symbol = "ASDFG"))
         val mongoUserTrackedStock = mongoUserTrackedSymbol()
@@ -99,6 +105,56 @@ class StockPriceNotificationProcessorTest {
             )
         }
     }
+
+//    @Test
+//    fun `should consumer stock price message`() {
+//        // GIVEN
+//        val mongoStockRecords = listOf(savedStockRecord().copy(symbol = "BBBBB"))
+//        val mongoUserTrackedStock = mongoUserTrackedSymbol()
+//            .copy(
+//                id = ObjectId("6706a8343faaa9b224585000"),
+//                stockSymbolName = mongoStockRecords.first().symbol,
+//                thresholdPrice = mongoStockRecords.first().currentPrice!!.subtract(BigDecimal("0.5"))
+//            )
+//        mongoTemplate.insert(mongoUserTrackedStock)
+//        stockPriceNatsConsumer.subscribeToEvents()
+//
+//        val receivedNotifications = mutableListOf<NotificationStockPrice>()
+//
+//        kafkaNotificationStockPriceReceiver.receive()
+//            .doOnNext { receivedNotifications.add(NotificationStockPrice.parseFrom(it.value())) }
+//            .timeout(Duration.ofSeconds(5), Mono.empty())
+//            .subscribeOn(Schedulers.boundedElastic())
+//            .subscribe()
+//
+//        // WHEN
+//        stockPrideProducer.sendStockPrice(mongoStockRecords)
+//            .delaySubscription(Duration.ofSeconds(1))
+//            .subscribeOn(Schedulers.boundedElastic())
+//            .subscribe()
+//
+//        // THEN
+//        await().pollDelay(Duration.ofMillis(100)).atMost(5, TimeUnit.SECONDS).untilAsserted {
+//            assertNotNull(
+//                natsConnection.subscribe(NatsSubject.StockRequest.getStockPriceSubject(mongoStockRecords[0].symbol!!))
+//                    .nextMessage()
+//                    .any { it.stockSymbolName == mongoStockRecords.first().symbol },
+//                "Published message must be consumed within 5 seconds"
+//            )
+//        }
+//
+//        await().pollDelay(Duration.ofMillis(100)).atMost(5, TimeUnit.SECONDS).untilAsserted {
+//            assertFalse(
+//                mongoTemplate.exists<MongoUserTrackedSymbol>(
+//                    Query.query(
+//                        Criteria.where(Fields.UNDERSCORE_ID)
+//                            .isEqualTo(mongoUserTrackedStock.id)
+//                    )
+//                ),
+//                "User tracked symbol must be not found after deletion"
+//            )
+//        }
+//    }
 
     class MyKafkaTestConfiguration(
         @Value("\${spring.kafka.bootstrap-servers}") val bootstrapServer: String,

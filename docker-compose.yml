@@ -15,8 +15,6 @@ services:
         condition: service_started
       schema-registry:
         condition: service_started
-    ports:
-      - "9091:9091"
     environment:
       - MONGO_DB_NAME=${MONGO_DB}
       - MONGO_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -34,6 +32,7 @@ services:
       domain:
         condition: service_started
     ports:
+      - "9091:9091"
       - "8080:8080"
     profiles: [ all ]
 

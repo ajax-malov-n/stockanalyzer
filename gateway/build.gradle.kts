@@ -1,5 +1,6 @@
 plugins {
     `spring-conventions`
+    `grpc-conventions`
 }
 
 dependencies {
@@ -10,6 +11,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation(libs.jNats)
+
+    implementation(libs.grpcSpringStarter)
+    implementation(libs.grpcServerSpringStarter)
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }

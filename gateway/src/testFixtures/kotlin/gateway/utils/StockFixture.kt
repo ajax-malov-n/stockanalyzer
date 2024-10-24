@@ -1,12 +1,14 @@
 package gateway.utils
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.Timestamp
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
 import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
 import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import java.nio.ByteBuffer
 
 
@@ -14,6 +16,23 @@ object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
     fun createGetBestStockSymbolsWithStockRecordsRequestDto(quantity: Int) =
         GetBestStockSymbolsWithStockRecordsRequestDto(quantity)
+
+    fun createStockPrice() = StockPrice.newBuilder().apply {
+        stockSymbolName = TEST_STOCK_SYMBOL
+        price = BigDecimalProto.newBuilder()
+            .setScale(2)
+            .setIntVal(
+                BigIntegerProto.newBuilder()
+                    .setValue(longToByteString(14500))
+                    .build()
+            )
+            .build()
+        timestamp = Timestamp.newBuilder()
+            .apply {
+                nanos = 111111
+                seconds = 11111
+            }.build()
+    }.build()
 
     fun createGetBestStockSymbolsWithStockRecordsResponse(): GetBestStockSymbolsWithStockRecordsResponse {
         val stockRecords: MutableList<ShortStockRecordResponse> = ArrayList()

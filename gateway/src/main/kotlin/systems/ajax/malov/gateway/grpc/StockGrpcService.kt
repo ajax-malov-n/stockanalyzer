@@ -1,34 +1,34 @@
-package systems.ajax.malov.stockanalyzer.controller.grpc.stock
+package systems.ajax.malov.gateway.grpc
 
 import net.devh.boot.grpc.server.service.GrpcService
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
+import systems.ajax.malov.gateway.client.NatsClient
+import systems.ajax.malov.gateway.const.AppConst.QUANTITY_VALID_RANGE
+import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetStockPriceRequest
+import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.internalapi.service.ReactorStockServiceGrpc
-import systems.ajax.malov.stockanalyzer.const.AppConst.DEFAULT_QUANTITY_FOR_BEST_STOCKS
-import systems.ajax.malov.stockanalyzer.const.AppConst.QUANTITY_VALID_RANGE
-import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 
 @GrpcService
-class StockGrpcService(private val stockRecordAnalyzerService: StockRecordAnalyzerService) :
-    ReactorStockServiceGrpc.StockServiceImplBase() {
-
+class StockGrpcService(
+    private val natsClient: NatsClient,
+) : ReactorStockServiceGrpc.StockServiceImplBase() {
     override fun getAllManageableStocksSymbols(
         request: Mono<GetAllManageableStockSymbolsRequest>,
     ): Mono<GetAllManageableStockSymbolsResponse> {
-        return stockRecordAnalyzerService
-            .getAllManageableStocksSymbols()
-            .collectList()
-            .map {
-                GetAllManageableStockSymbolsResponse.newBuilder().apply {
-                    successBuilder.addAllSymbols(it)
-                }
-                    .build()
-            }
+        return request.flatMap {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                it,
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        }
     }
 
     override fun getBestStockSymbolsWithStockRecords(
@@ -37,19 +37,30 @@ class StockGrpcService(private val stockRecordAnalyzerService: StockRecordAnalyz
         return request.flatMap { handleBestStockSymbolsWithStockRecords(it) }
     }
 
+    override fun getCurrentStockPrice(request: Mono<GetStockPriceRequest>): Flux<StockPrice> {
+        return request.flatMapMany {
+            natsClient.subscribe(
+                it.symbolName,
+            )
+        }
+    }
+
     fun handleBestStockSymbolsWithStockRecords(request: GetBestStockSymbolsWithStockRecordsRequest):
         Mono<GetBestStockSymbolsWithStockRecordsResponse> {
-        val requestedStocks = if (request.hasQuantity()) {
+        val validRequest = if (request.hasQuantity()) {
             if (request.quantity in QUANTITY_VALID_RANGE) {
-                request.quantity
+                request
             } else {
                 return createFailureResponse()
             }
         } else {
-            DEFAULT_QUANTITY_FOR_BEST_STOCKS
+            request
         }
-        return stockRecordAnalyzerService.getBestStockSymbolsWithStockRecords(requestedStocks)
-            .map { toGetBestStockSymbolsWithStockRecordsRequest(it) }
+        return natsClient.doRequest(
+            NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
+            validRequest,
+            GetBestStockSymbolsWithStockRecordsResponse.parser()
+        )
     }
 
     private fun createFailureResponse(): Mono<GetBestStockSymbolsWithStockRecordsResponse> {
