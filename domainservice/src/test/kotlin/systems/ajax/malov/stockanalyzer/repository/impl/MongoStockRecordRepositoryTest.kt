@@ -12,7 +12,6 @@ import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkGRPC
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import java.math.BigDecimal
@@ -24,7 +23,6 @@ import kotlin.test.assertNotNull
 @ActiveProfiles("test")
 @MockkNats
 @MockkKafka
-@MockkGRPC
 class MongoStockRecordRepositoryTest {
 
     @Autowired

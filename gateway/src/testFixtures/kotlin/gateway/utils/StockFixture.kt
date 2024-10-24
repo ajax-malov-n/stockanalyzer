@@ -2,13 +2,13 @@ package gateway.utils
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.Timestamp
+import systems.ajax.malov.commonproto.stock.BigDecimalProto
+import systems.ajax.malov.commonproto.stock.BigIntegerProto
+import systems.ajax.malov.commonproto.stock.ShortStockRecord
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
-import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
-import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import java.nio.ByteBuffer
 
 
@@ -35,7 +35,7 @@ object StockFixture {
     }.build()
 
     fun createGetBestStockSymbolsWithStockRecordsResponse(): GetBestStockSymbolsWithStockRecordsResponse {
-        val stockRecords: MutableList<ShortStockRecordResponse> = ArrayList()
+        val stockRecords: MutableList<ShortStockRecord> = ArrayList()
 
         val openPrice = BigDecimalProto.newBuilder()
             .setScale(2)
@@ -73,7 +73,7 @@ object StockFixture {
             )
             .build()
 
-        val stockRecord: ShortStockRecordResponse = createShortStockRecord(
+        val stockRecord: ShortStockRecord = createShortStockRecord(
             openPrice,
             highPrice,
             lowPrice,
@@ -81,6 +81,10 @@ object StockFixture {
         )
 
 
+        stockRecords.add(stockRecord)
+        stockRecords.add(stockRecord)
+        stockRecords.add(stockRecord)
+        stockRecords.add(stockRecord)
         stockRecords.add(stockRecord)
 
         val aggregatedStockRecord: AggregatedStockRecordItemResponse =
@@ -103,8 +107,8 @@ object StockFixture {
     private fun createShortStockRecord(
         openPrice: BigDecimalProto, highPrice: BigDecimalProto,
         lowPrice: BigDecimalProto, currentPrice: BigDecimalProto,
-    ): ShortStockRecordResponse {
-        return ShortStockRecordResponse.newBuilder()
+    ): ShortStockRecord {
+        return ShortStockRecord.newBuilder()
             .setOpenPrice(openPrice)
             .setHighPrice(highPrice)
             .setLowPrice(lowPrice)

@@ -36,7 +36,7 @@ class StockRecordControllerTest {
         val requestDto = createGetBestStockSymbolsWithStockRecordsRequestDto(5)
         val requestProto = GetBestStockSymbolsWithStockRecordsRequest.newBuilder().setQuantity(5).build()
         every {
-            natsClient.getStream(
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -53,7 +53,7 @@ class StockRecordControllerTest {
             .expectNext(expected)
             .verifyComplete()
         verify {
-            natsClient.getStream(
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -69,7 +69,7 @@ class StockRecordControllerTest {
             .copy(quantity = null)
         val requestProto = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         every {
-            natsClient.getStream(
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -86,7 +86,7 @@ class StockRecordControllerTest {
             .expectNext(expected)
             .verifyComplete()
         verify {
-            natsClient.getStream(
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -105,7 +105,7 @@ class StockRecordControllerTest {
             .build()
 
         every {
-            natsClient.getStream(
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -121,7 +121,74 @@ class StockRecordControllerTest {
             .verifyComplete()
 
         verify {
-            natsClient.getStream(
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        }
+    }
+
+    @Test
+    fun `should throw runtimeException with error message`() {
+        // GIVEN
+        val natsResponse = GetAllManageableStockSymbolsResponse.newBuilder()
+            .apply {
+                failureBuilder.message = "Error"
+            }.build()
+
+        every {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        } returns Mono.just(natsResponse)
+
+        // WHEN
+        val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
+
+        // THEN
+        response.test()
+            .expectErrorMatches {
+                it.message == "Error" && it.javaClass == RuntimeException::class.java
+            }
+            .verify()
+
+        verify {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        }
+    }
+
+    @Test
+    fun `should throw runtimeException`() {
+        // GIVEN
+        val natsResponse = GetAllManageableStockSymbolsResponse.getDefaultInstance()
+
+        every {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        } returns Mono.just(natsResponse)
+
+        // WHEN
+        val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
+
+        // THEN
+        response.test()
+            .expectErrorMatches {
+                it.message == "Required message is empty" && it.javaClass == RuntimeException::class.java
+            }
+            .verify()
+
+        verify {
+            natsClient.doRequest(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()

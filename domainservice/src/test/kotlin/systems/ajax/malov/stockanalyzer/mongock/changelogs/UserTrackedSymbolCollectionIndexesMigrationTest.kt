@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.ActiveProfiles
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkGRPC
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import kotlin.test.Test
@@ -14,7 +13,6 @@ import kotlin.test.assertNull
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockkGRPC
 @MockkNats
 @MockkKafka
 class UserTrackedSymbolCollectionIndexesMigrationTest {

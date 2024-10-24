@@ -4,7 +4,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":grpc-api"))
     implementation(project(":internal-api"))
+
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")

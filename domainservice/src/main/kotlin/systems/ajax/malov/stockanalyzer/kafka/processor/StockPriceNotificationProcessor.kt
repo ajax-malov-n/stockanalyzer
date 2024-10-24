@@ -8,7 +8,7 @@ import reactor.kafka.receiver.KafkaReceiver
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.service.NotificationStockPriceService
 

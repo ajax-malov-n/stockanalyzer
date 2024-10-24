@@ -7,8 +7,8 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kotlin.core.publisher.toMono
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 
 @Component
 class StockPriceNatsConsumer(
@@ -30,7 +30,8 @@ class StockPriceNatsConsumer(
 
     private fun handle(stockPrice: StockPrice): Mono<Unit> {
         return nastConnection.publish(
-            NatsSubject.StockRequest.getStockPriceSubject(stockPrice.stockSymbolName), stockPrice.toByteArray()
+            NatsSubject.StockRequest.getStockPriceSubject(stockPrice.stockSymbolName),
+            stockPrice.toByteArray()
         ).toMono()
     }
 }

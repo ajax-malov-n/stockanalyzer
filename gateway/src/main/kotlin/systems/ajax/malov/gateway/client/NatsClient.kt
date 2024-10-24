@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 
 @Component
 class NatsClient(
@@ -35,8 +35,7 @@ class NatsClient(
 
     fun subscribe(stockSymbolName: String): Flux<StockPrice> {
         val sink = Sinks.many().unicast().onBackpressureBuffer<StockPrice>()
-        dispatcher.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName))
-        { message ->
+        dispatcher.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName)) { message ->
             sink.tryEmitNext(StockPrice.parseFrom(message.data))
         }
         return sink.asFlux()

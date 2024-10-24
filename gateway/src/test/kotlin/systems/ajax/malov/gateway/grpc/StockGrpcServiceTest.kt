@@ -15,15 +15,21 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.gateway.client.NatsClient
+import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
+import systems.ajax.malov.gateway.mapper.GetBestStockSymbolsWithStockRecordsResponseMapper.toGrpc
+import systems.ajax.malov.grpcapi.reqres.stock.GetAllManageableStockSymbolsRequest
+import systems.ajax.malov.grpcapi.reqres.stock.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.malov.grpcapi.reqres.stock.GetStockPriceRequest
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
-import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
-import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.internalapi.input.reqreply.stock.GetStockPriceRequest
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import kotlin.test.assertEquals
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest as InternalGetAllManageableStockSymbolsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse as InternalGetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest as InternalGetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse as InternalGetBestStockSymbolsWithStockRecordsResponse
 
 @ExtendWith(MockKExtension::class)
 class StockGrpcServiceTest {
@@ -37,30 +43,33 @@ class StockGrpcServiceTest {
     fun `getBestStockSymbolsWithStockRecords should retrieve best stock symbols with records`() {
         // GIVEN
         val expected = createGetBestStockSymbolsWithStockRecordsResponse()
-        val request = GetBestStockSymbolsWithStockRecordsRequest.newBuilder().apply {
-            quantity = 3
+        val requestNats = InternalGetBestStockSymbolsWithStockRecordsRequest.newBuilder().apply {
+            quantity = 5
+        }.build()
+        val requestGrpc = GetBestStockSymbolsWithStockRecordsRequest.newBuilder().apply {
+            quantity = 5
         }.build()
         every {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
-                request,
-                GetBestStockSymbolsWithStockRecordsResponse.parser()
+                requestNats,
+                InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         } returns Mono.just(expected)
 
         // WHEN
         val response: Mono<GetBestStockSymbolsWithStockRecordsResponse> =
-            stockGrpcService.getBestStockSymbolsWithStockRecords(request.toMono())
+            stockGrpcService.getBestStockSymbolsWithStockRecords(requestGrpc.toMono())
 
         // THEN
         response.test()
-            .expectNext(expected)
+            .expectNext(expected.toGrpc())
             .verifyComplete()
         verify {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
-                request,
-                GetBestStockSymbolsWithStockRecordsResponse.parser()
+                requestNats,
+                InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         }
     }
@@ -69,28 +78,29 @@ class StockGrpcServiceTest {
     fun `getBestStockSymbolsWithStockRecords should retrieve five best stock symbols with records`() {
         // GIVEN
         val expected = createGetBestStockSymbolsWithStockRecordsResponse()
-        val request = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
+        val requestNats = InternalGetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
+        val requestGrpc = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         every {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
-                request,
-                GetBestStockSymbolsWithStockRecordsResponse.parser()
+                requestNats,
+                InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         } returns Mono.just(expected)
 
         // WHEN
         val response: Mono<GetBestStockSymbolsWithStockRecordsResponse> =
-            stockGrpcService.getBestStockSymbolsWithStockRecords(request.toMono())
+            stockGrpcService.getBestStockSymbolsWithStockRecords(requestGrpc.toMono())
 
         // THEN
         response.test()
-            .expectNext(expected)
+            .expectNext(expected.toGrpc())
             .verifyComplete()
         verify {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
-                request,
-                GetBestStockSymbolsWithStockRecordsResponse.parser()
+                requestNats,
+                InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
         }
     }
@@ -98,7 +108,7 @@ class StockGrpcServiceTest {
     @Test
     fun `getAllManageableStockSymbols should retrieve all manageable stocks`() {
         // GIVEN
-        val expected = GetAllManageableStockSymbolsResponse.newBuilder()
+        val expected = InternalGetAllManageableStockSymbolsResponse.newBuilder()
             .apply {
                 successBuilder.addAllSymbols(listOf(TEST_STOCK_SYMBOL))
             }
@@ -107,8 +117,8 @@ class StockGrpcServiceTest {
         every {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
-                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
-                GetAllManageableStockSymbolsResponse.parser()
+                InternalGetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                InternalGetAllManageableStockSymbolsResponse.parser()
             )
         } returns Mono.just(expected)
 
@@ -118,14 +128,14 @@ class StockGrpcServiceTest {
 
         // THEN
         response.test()
-            .expectNext(expected)
+            .expectNext(expected.toGrpc())
             .verifyComplete()
 
         verify {
             natsClient.doRequest(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
-                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
-                GetAllManageableStockSymbolsResponse.parser()
+                InternalGetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                InternalGetAllManageableStockSymbolsResponse.parser()
             )
         }
     }
@@ -135,28 +145,28 @@ class StockGrpcServiceTest {
         // GIVEN
         val stockPrice = createStockPrice()
         val expected = listOf(stockPrice).toFlux()
+        val request = GetStockPriceRequest.newBuilder().apply {
+            symbolName = stockPrice.stockSymbolName
+        }.build()
 
         every {
             natsClient.subscribe(
-                NatsSubject.StockRequest.getStockPriceSubject(stockPrice.stockSymbolName)
+                stockPrice.stockSymbolName
             )
         } returns expected
 
         // WHEN
         val response: Flux<StockPrice> =
-            stockGrpcService.getCurrentStockPrice(GetStockPriceRequest.newBuilder().apply {
-                symbolName = stockPrice.stockSymbolName
-            }.build())
+            stockGrpcService.getCurrentStockPrice(request)
 
         // THEN
         response.test()
             .assertNext { assertEquals(stockPrice, it) }
-            .expectNextCount(0)
             .verifyComplete()
 
         verify {
             natsClient.subscribe(
-                NatsSubject.StockRequest.getStockPriceSubject(stockPrice.stockSymbolName)
+                stockPrice.stockSymbolName
             )
         }
     }
