@@ -2,7 +2,6 @@ package systems.ajax.malov.stockanalyzer.controller.nats.stock
 
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
-import com.ninjasquad.springmockk.MockkBean
 import io.nats.client.Connection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,13 +13,9 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
-import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
-import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
+import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -29,16 +24,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @SpringBootTest
-@MockkBean(
-    relaxed = true,
-    value = [
-        StockPriceNotificationProcessor::class,
-        KafkaConsumerConfiguration::class,
-        KafkaProducerConfiguration::class,
-        StockPriceKafkaProducer::class,
-        StockPriceNotificationProducer::class,
-    ]
-)
+@MockkKafka
 @ActiveProfiles("test")
 class NatsControllersTest {
 

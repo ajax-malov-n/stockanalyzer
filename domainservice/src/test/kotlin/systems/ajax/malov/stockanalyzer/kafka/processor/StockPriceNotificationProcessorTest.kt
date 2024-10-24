@@ -1,8 +1,5 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
-import com.ninjasquad.springmockk.MockkBean
-import io.nats.client.Connection
-import io.nats.client.Dispatcher
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,12 +18,11 @@ import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
-import stockanalyzer.utils.StockFixture.savedStockRecord
+import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.config.BaseKafkaConfiguration
-import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import java.math.BigDecimal
@@ -38,14 +34,6 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
-@MockkBean(
-    relaxed = true,
-    classes = [
-        Connection::class,
-        Dispatcher::class,
-        NatsDispatcherConfig::class,
-    ]
-)
 @ActiveProfiles("test")
 class StockPriceNotificationProcessorTest {
     @Autowired
@@ -61,9 +49,9 @@ class StockPriceNotificationProcessorTest {
     private lateinit var kafkaNotificationStockPriceReceiver: KafkaReceiver<String, ByteArray>
 
     @Test
-    fun `should publish messages`() {
+    fun `should consume and process stock price message and publish notification message`() {
         // GIVEN
-        val mongoStockRecords = listOf(savedStockRecord().copy(symbol = "ASDFG"))
+        val mongoStockRecords = listOf(unsavedStockRecord().copy(symbol = "ASDFG"))
         val mongoUserTrackedStock = mongoUserTrackedSymbol()
             .copy(
                 id = ObjectId("6706a8343faaa9b224585999"),

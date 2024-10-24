@@ -26,7 +26,17 @@ class KafkaConsumerConfiguration(
         )
     }
 
+    @Bean
+    fun kafkaStockPriceNatsReceiver(): KafkaReceiver<String, ByteArray> {
+        return createKafkaReceiver(
+            baseConsumerProperties(),
+            KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE,
+            NATS_CONSUMER_STOCK_PRICE_GROUP
+        )
+    }
+
     companion object {
         private const val CONSUMER_STOCK_PRICE_GROUP = "stockPriceConsumerGroup"
+        private const val NATS_CONSUMER_STOCK_PRICE_GROUP = "natsStockPriceConsumerGroup"
     }
 }

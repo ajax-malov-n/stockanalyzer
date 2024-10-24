@@ -12,6 +12,7 @@ import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
+import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse.ResponseCase
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 
@@ -20,7 +21,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 class StockRecordsController(private val natsClient: NatsClient) {
 
     @GetMapping("/best")
-    fun getFiveBestStockSymbolsWithStockRecords(
+    fun getBestStockSymbolsWithStockRecords(
         @Valid requestDto: GetBestStockSymbolsWithStockRecordsRequestDto,
     ): Mono<AggregatedStockRecordResponseDto> =
         natsClient.doRequest(
@@ -41,7 +42,11 @@ class StockRecordsController(private val natsClient: NatsClient) {
             NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
             GetAllManageableStockSymbolsRequest.getDefaultInstance(),
             GetAllManageableStockSymbolsResponse.parser()
-        ).map {
-            it.success.symbolsList
+        ).handle { proto, sink ->
+            when (proto.responseCase!!) {
+                ResponseCase.SUCCESS -> sink.next(proto.success.symbolsList)
+                ResponseCase.FAILURE -> sink.error(RuntimeException(proto.failure.message))
+                ResponseCase.RESPONSE_NOT_SET -> sink.error(RuntimeException("Required message is empty"))
+            }
         }
 }

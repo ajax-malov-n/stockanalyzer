@@ -6,8 +6,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
+import systems.ajax.malov.commonproto.stock.StockPrice
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertBigDecimalProtoToBigDecimal
 import systems.ajax.malov.stockanalyzer.mapper.proto.NotificationStockPriceMapper.toNotificationStockPrice

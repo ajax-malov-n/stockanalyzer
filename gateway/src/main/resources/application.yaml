@@ -4,3 +4,9 @@ spring:
 
 nats:
   url: "nats://nats:4222"
+
+grpc:
+  server:
+    port: 9091
+    security:
+      enabled: false

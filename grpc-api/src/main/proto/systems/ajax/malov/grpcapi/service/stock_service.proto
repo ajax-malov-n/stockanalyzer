@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "systems/ajax/malov/grpcapi/reqres/stock/get_all_manageable_stocks_symbols.proto";
+import "systems/ajax/malov/grpcapi/reqres/stock/get_best_stock_symbols_with_records.proto";
+import "systems/ajax/malov/grpcapi/reqres/stock/get_stock_price.proto";
+import "systems/ajax/malov/commonproto/stock/stock_price.proto";
+
+package systems.ajax.malov.grpcapi.service;
+
+service StockService {
+  rpc getAllManageableStocksSymbols(grpcapi.reqres.stock.GetAllManageableStockSymbolsRequest)
+      returns (grpcapi.reqres.stock.GetAllManageableStockSymbolsResponse);
+
+  rpc getBestStockSymbolsWithStockRecords(grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsRequest)
+      returns (grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsResponse);
+
+  rpc getCurrentStockPrice(grpcapi.reqres.stock.GetStockPriceRequest)
+      returns (stream commonproto.stock.StockPrice);
+}

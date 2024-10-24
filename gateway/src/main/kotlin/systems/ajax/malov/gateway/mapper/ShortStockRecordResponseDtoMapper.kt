@@ -1,15 +1,15 @@
 package systems.ajax.malov.gateway.mapper
 
 import com.google.protobuf.ByteString
+import systems.ajax.malov.commonproto.stock.BigDecimalProto
+import systems.ajax.malov.commonproto.stock.BigIntegerProto
+import systems.ajax.malov.commonproto.stock.ShortStockRecord
 import systems.ajax.malov.gateway.dto.ShortStockRecordResponseDto
-import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
-import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
 import java.math.BigDecimal
 import java.math.BigInteger
 
 object ShortStockRecordResponseDtoMapper {
-    fun ShortStockRecordResponse.toShortStockRecordResponseDto() =
+    fun ShortStockRecord.toShortStockRecordResponseDto() =
         ShortStockRecordResponseDto(
             convertBigDecimalProtoToBigDecimal(lowPrice),
             convertBigDecimalProtoToBigDecimal(highPrice),

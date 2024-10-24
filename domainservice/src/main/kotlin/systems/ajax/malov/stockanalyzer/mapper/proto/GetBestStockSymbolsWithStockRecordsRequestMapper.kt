@@ -1,6 +1,6 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
-import systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse
+import systems.ajax.malov.commonproto.stock.ShortStockRecord
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
@@ -30,8 +30,8 @@ object GetBestStockSymbolsWithStockRecordsRequestMapper {
             .build()
     }
 
-    private fun toShortStockRecordResponseDto(it: MongoStockRecord): ShortStockRecordResponse? =
-        ShortStockRecordResponse.newBuilder()
+    private fun toShortStockRecordResponseDto(it: MongoStockRecord): ShortStockRecord? =
+        ShortStockRecord.newBuilder()
             .setLowPrice(convertToBigDecimalProto(it.lowPrice))
             .setHighPrice(convertToBigDecimalProto(it.highPrice))
             .setOpenPrice(convertToBigDecimalProto(it.openPrice))
