@@ -7,7 +7,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 
 object AggregatedStockRecordResponseDtoMapper {
 
-    @SuppressWarnings("FunctionReturnTypeSpacing")
+    @SuppressWarnings("FunctionReturnTypeSpacing", "TooGenericExceptionThrown")
     fun GetBestStockSymbolsWithStockRecordsResponse.toAggregatedStockItemResponseDto():
         AggregatedStockRecordResponseDto {
         return when (responseCase!!) {

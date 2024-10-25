@@ -55,7 +55,7 @@ class StockGrpcServiceTest {
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(expected)
+        } returns expected.toMono()
 
         // WHEN
         val response: Mono<GetBestStockSymbolsWithStockRecordsResponse> =
@@ -86,7 +86,7 @@ class StockGrpcServiceTest {
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(expected)
+        } returns expected.toMono()
 
         // WHEN
         val response: Mono<GetBestStockSymbolsWithStockRecordsResponse> =
@@ -120,7 +120,7 @@ class StockGrpcServiceTest {
                 InternalGetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 InternalGetAllManageableStockSymbolsResponse.parser()
             )
-        } returns Mono.just(expected)
+        } returns expected.toMono()
 
         // WHEN
         val response: Mono<GetAllManageableStockSymbolsResponse> =

@@ -1,9 +1,10 @@
 syntax = "proto3";
 
+package systems.ajax.malov.internalapi.output.pubsub.stock;
+
 import "systems/ajax/malov/commonproto/stock/big_decimal.proto";
 import "google/protobuf/timestamp.proto";
 
-package systems.ajax.malov.internalapi.output.pubsub.stock;
 
 option java_multiple_files = true;
 

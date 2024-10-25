@@ -1,7 +1,8 @@
 syntax = "proto3";
-import "systems/ajax/malov/commonproto/stock/big_decimal.proto";
 
 package systems.ajax.malov.commonproto.stock;
+
+import "systems/ajax/malov/commonproto/stock/big_decimal.proto";
 
 option java_multiple_files = true;
 

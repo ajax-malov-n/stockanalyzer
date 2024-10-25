@@ -6,6 +6,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 
 object GetAllManageableStockSymbolsResponseMapper {
 
+    @SuppressWarnings("TooGenericExceptionThrown")
     fun InternalGetAllManageableStockSymbolsResponse.toGrpc(): GetAllManageableStockSymbolsResponse {
         return when (responseCase!!) {
             ResponseCase.SUCCESS -> GetAllManageableStockSymbolsResponse.newBuilder().also {

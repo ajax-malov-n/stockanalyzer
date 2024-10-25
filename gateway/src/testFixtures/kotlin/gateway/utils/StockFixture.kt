@@ -41,7 +41,9 @@ object StockFixture {
             .setScale(2)
             .setIntVal(
                 BigIntegerProto.newBuilder()
-                    .setValue(longToByteString(14500))
+                    .apply {
+                        value = longToByteString(14500)
+                    }
                     .build()
             )
             .build()
@@ -50,7 +52,9 @@ object StockFixture {
             .setScale(2)
             .setIntVal(
                 BigIntegerProto.newBuilder()
-                    .setValue(longToByteString(15000))
+                    .apply {
+                        value = longToByteString(14500)
+                    }
                     .build()
             )
             .build()
@@ -59,7 +63,9 @@ object StockFixture {
             .setScale(2)
             .setIntVal(
                 BigIntegerProto.newBuilder()
-                    .setValue(longToByteString(14000))
+                    .apply {
+                        value = longToByteString(14500)
+                    }
                     .build()
             )
             .build()
@@ -68,7 +74,9 @@ object StockFixture {
             .setScale(2)
             .setIntVal(
                 BigIntegerProto.newBuilder()
-                    .setValue(longToByteString(14550))
+                    .apply {
+                        value = longToByteString(14500)
+                    }
                     .build()
             )
             .build()
@@ -81,11 +89,9 @@ object StockFixture {
         )
 
 
-        stockRecords.add(stockRecord)
-        stockRecords.add(stockRecord)
-        stockRecords.add(stockRecord)
-        stockRecords.add(stockRecord)
-        stockRecords.add(stockRecord)
+        repeat(5) {
+            stockRecords.add(stockRecord)
+        }
 
         val aggregatedStockRecord: AggregatedStockRecordItemResponse =
             AggregatedStockRecordItemResponse.newBuilder()

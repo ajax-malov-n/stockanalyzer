@@ -7,6 +7,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 
 object GetBestStockSymbolsWithStockRecordsResponseMapper {
 
+    @SuppressWarnings("TooGenericExceptionThrown")
     fun InternalGetBestStockSymbolsWithStockRecordsResponse.toGrpc(): GetBestStockSymbolsWithStockRecordsResponse {
         return when (responseCase!!) {
             ResponseCase.SUCCESS ->

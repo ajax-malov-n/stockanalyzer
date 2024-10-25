@@ -1,9 +1,10 @@
 syntax = "proto3";
 
+package systems.ajax.malov.internalapi.input.reqreply.stock;
+
 import "systems/ajax/malov/commonproto/stock/big_decimal.proto";
 import "systems/ajax/malov/commonproto/stock/short_stock_response.proto";
 
-package systems.ajax.malov.internalapi.input.reqreply.stock;
 
 option java_multiple_files = true;
 

@@ -65,12 +65,13 @@ class StockPriceNatsConsumerTest {
 
     fun subscribe(stockSymbolName: String): Flux<StockPrice> {
         val sink = Sinks.many().unicast().onBackpressureBuffer<StockPrice>()
-        dispatcher.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName)) { message ->
-            sink.tryEmitNext(StockPrice.parseFrom(message.data))
-        }
+        val subscription =
+            dispatcher.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName)) { message ->
+                sink.tryEmitNext(StockPrice.parseFrom(message.data))
+            }
         return sink.asFlux()
             .doFinally {
-                dispatcher.unsubscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName))
+                dispatcher.unsubscribe(subscription)
             }
     }
 }

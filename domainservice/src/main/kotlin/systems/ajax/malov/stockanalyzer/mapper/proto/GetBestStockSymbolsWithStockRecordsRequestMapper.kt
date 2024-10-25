@@ -30,7 +30,7 @@ object GetBestStockSymbolsWithStockRecordsRequestMapper {
             .build()
     }
 
-    private fun toShortStockRecordResponseDto(it: MongoStockRecord): ShortStockRecord? =
+    private fun toShortStockRecordResponseDto(it: MongoStockRecord): ShortStockRecord =
         ShortStockRecord.newBuilder()
             .setLowPrice(convertToBigDecimalProto(it.lowPrice))
             .setHighPrice(convertToBigDecimalProto(it.highPrice))

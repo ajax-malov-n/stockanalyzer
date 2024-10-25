@@ -11,6 +11,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
@@ -41,7 +42,7 @@ class StockRecordControllerTest {
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
         val expected = natsResponse.toAggregatedStockItemResponseDto()
 
         // WHEN
@@ -74,7 +75,7 @@ class StockRecordControllerTest {
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
         val expected = natsResponse.toAggregatedStockItemResponseDto()
 
         // WHEN
@@ -110,7 +111,7 @@ class StockRecordControllerTest {
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
 
         // WHEN
         val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
@@ -143,7 +144,7 @@ class StockRecordControllerTest {
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
 
         // WHEN
         val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
@@ -151,7 +152,7 @@ class StockRecordControllerTest {
         // THEN
         response.test()
             .expectErrorMatches {
-                it.message == "Error" && it.javaClass == RuntimeException::class.java
+                it is RuntimeException && it.message == "Error"
             }
             .verify()
 
@@ -175,7 +176,7 @@ class StockRecordControllerTest {
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
 
         // WHEN
         val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
@@ -183,7 +184,7 @@ class StockRecordControllerTest {
         // THEN
         response.test()
             .expectErrorMatches {
-                it.message == "Required message is empty" && it.javaClass == RuntimeException::class.java
+                it is RuntimeException && it.message == "Required message is empty"
             }
             .verify()
 
