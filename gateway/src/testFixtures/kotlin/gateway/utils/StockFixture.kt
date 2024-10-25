@@ -23,7 +23,9 @@ object StockFixture {
             .setScale(2)
             .setIntVal(
                 BigIntegerProto.newBuilder()
-                    .setValue(longToByteString(14500))
+                    .apply {
+                        value = longToByteString(14500)
+                    }
                     .build()
             )
             .build()
