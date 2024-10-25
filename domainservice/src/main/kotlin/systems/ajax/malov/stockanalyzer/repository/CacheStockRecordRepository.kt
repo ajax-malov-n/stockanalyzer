@@ -13,8 +13,8 @@ interface CacheStockRecordRepository {
 
     fun saveTopStockSymbolsWithStockRecords(
         quantity: Int,
-        topStocksMap: Mono<Map<String, List<MongoStockRecord>>>,
+        topStocksMap: Map<String, List<MongoStockRecord>>,
     ): Mono<Map<String, List<MongoStockRecord>>>
 
-    fun saveAllStockSymbols(stringFlux: Flux<String>): Flux<String>
+    fun saveAllStockSymbols(stockSymbols: List<String>): Flux<String>
 }

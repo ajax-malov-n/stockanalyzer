@@ -10,13 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForBestStockSymbolsWithStockRecords
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
+import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
-import systems.ajax.malov.stockanalyzer.repository.impl.RedisStockRecordRepository
 
 @ExtendWith(MockKExtension::class)
 class StockRecordAnalyzerServiceTest {
@@ -25,7 +26,7 @@ class StockRecordAnalyzerServiceTest {
     private lateinit var stockRecordRepository: StockRecordRepository
 
     @MockK
-    private lateinit var redisStockRecordRepository: RedisStockRecordRepository
+    private lateinit var redisStockRecordRepository: CacheStockRecordRepository
 
     @InjectMockKs
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl
@@ -36,7 +37,7 @@ class StockRecordAnalyzerServiceTest {
         val savedStock = savedStockRecord()
         val retrievedStocks = linkedMapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForBestStockSymbolsWithStockRecords()
-        val mono: Mono<Map<String, List<MongoStockRecord>>> = Mono.just(retrievedStocks)
+        val mono: Mono<Map<String, List<MongoStockRecord>>> = retrievedStocks.toMono()
         every {
             stockRecordRepository.findTopStockSymbolsWithStockRecords(
                 eq(5),
@@ -54,7 +55,7 @@ class StockRecordAnalyzerServiceTest {
         every {
             redisStockRecordRepository.saveTopStockSymbolsWithStockRecords(
                 eq(5),
-                mono
+                retrievedStocks
             )
         } returns mono
 
@@ -76,7 +77,7 @@ class StockRecordAnalyzerServiceTest {
         verify {
             redisStockRecordRepository.saveTopStockSymbolsWithStockRecords(
                 eq(5),
-                eq(mono)
+                retrievedStocks
             )
         }
     }
@@ -88,7 +89,7 @@ class StockRecordAnalyzerServiceTest {
         val flux = expected.toFlux()
         every { stockRecordRepository.findAllStockSymbols() } returns flux
         every { redisStockRecordRepository.findAllStockSymbols() } returns Flux.empty()
-        every { redisStockRecordRepository.saveAllStockSymbols(eq(flux)) } returns flux
+        every { redisStockRecordRepository.saveAllStockSymbols(expected) } returns flux
 
         // WHEN
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()
@@ -100,6 +101,6 @@ class StockRecordAnalyzerServiceTest {
 
         verify { stockRecordRepository.findAllStockSymbols() }
         verify { redisStockRecordRepository.findAllStockSymbols() }
-        verify { redisStockRecordRepository.saveAllStockSymbols(eq(flux)) }
+        verify { redisStockRecordRepository.saveAllStockSymbols(expected) }
     }
 }

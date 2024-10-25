@@ -6,6 +6,8 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
 import java.time.Duration
@@ -36,30 +38,28 @@ class RedisStockRecordRepository(
 
     override fun saveTopStockSymbolsWithStockRecords(
         quantity: Int,
-        topStocksMap: Mono<Map<String, List<MongoStockRecord>>>,
+        topStocksMap: Map<String, List<MongoStockRecord>>,
     ): Mono<Map<String, List<MongoStockRecord>>> {
-        return topStocksMap.flatMap {
-            reactiveMapRedisTemplate.opsForValue()
-                .set(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix), it)
-        }.flatMap {
-            reactiveMapRedisTemplate
-                .expire(
-                    createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix),
-                    Duration.ofMinutes(redisTtlMinutes.toLong())
-                )
-        }.then(topStocksMap)
+        return reactiveMapRedisTemplate.opsForValue()
+            .set(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix), topStocksMap)
+            .flatMap {
+                reactiveMapRedisTemplate
+                    .expire(
+                        createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix),
+                        Duration.ofMinutes(redisTtlMinutes.toLong())
+                    )
+            }.then(topStocksMap.toMono())
     }
 
-    override fun saveAllStockSymbols(stringFlux: Flux<String>): Flux<String> {
-        return stringFlux.flatMap {
-            reactiveStringRedisTemplate.opsForList()
-                .leftPush(createAllStockSymbolsKey(stockRecordPrefix), it)
-        }.then(
-            reactiveStringRedisTemplate.expire(
-                createAllStockSymbolsKey(stockRecordPrefix),
-                Duration.ofMinutes(redisTtlMinutes.toLong())
-            )
-        ).thenMany(stringFlux)
+    override fun saveAllStockSymbols(stockSymbols: List<String>): Flux<String> {
+        return reactiveStringRedisTemplate.opsForList()
+            .leftPushAll(createAllStockSymbolsKey(stockRecordPrefix), stockSymbols)
+            .then(
+                reactiveStringRedisTemplate.expire(
+                    createAllStockSymbolsKey(stockRecordPrefix),
+                    Duration.ofMinutes(redisTtlMinutes.toLong())
+                )
+            ).thenMany(stockSymbols.toFlux())
     }
 
     companion object {
