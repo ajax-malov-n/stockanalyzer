@@ -13,10 +13,10 @@ object GetBestStockSymbolsWithStockRecordsResponseMapper {
                 GetBestStockSymbolsWithStockRecordsResponse.newBuilder()
                     .apply {
                         successBuilder.addAllStockSymbols(
-                            success.stockSymbolsList.map {
-                                AggregatedStockRecordItemResponse.newBuilder().apply {
-                                    stockSymbol = it.stockSymbol
-                                    dataList.addAll(it.dataList)
+                            this@toGrpc.success.stockSymbolsList.map { item ->
+                                AggregatedStockRecordItemResponse.newBuilder().also {
+                                    it.setStockSymbol(item.stockSymbol)
+                                    it.addAllData(item.dataList)
                                 }.build()
                             }
                         )
