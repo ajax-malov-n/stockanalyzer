@@ -12,7 +12,6 @@ import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
 import java.time.Duration
 
-// Interface ???
 @Repository
 class RedisStockRecordRepository(
     @Qualifier("reactiveStringRedisTemplate")
