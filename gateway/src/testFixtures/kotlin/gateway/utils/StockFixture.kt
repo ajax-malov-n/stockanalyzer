@@ -11,7 +11,6 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecord
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import java.nio.ByteBuffer
 
-
 object StockFixture {
     const val TEST_STOCK_SYMBOL = "AAPL"
     fun createGetBestStockSymbolsWithStockRecordsRequestDto(quantity: Int) =
@@ -20,14 +19,14 @@ object StockFixture {
     fun createStockPrice() = StockPrice.newBuilder().apply {
         stockSymbolName = TEST_STOCK_SYMBOL
         price = BigDecimalProto.newBuilder()
-            .setScale(2)
-            .setIntVal(
-                BigIntegerProto.newBuilder()
+            .apply {
+                scale = 2
+                intVal = BigIntegerProto.newBuilder()
                     .apply {
                         value = longToByteString(14500)
                     }
                     .build()
-            )
+            }
             .build()
         timestamp = Timestamp.newBuilder()
             .apply {
@@ -40,47 +39,47 @@ object StockFixture {
         val stockRecords: MutableList<ShortStockRecord> = ArrayList()
 
         val openPrice = BigDecimalProto.newBuilder()
-            .setScale(2)
-            .setIntVal(
-                BigIntegerProto.newBuilder()
+            .apply {
+                scale = 2
+                intVal = BigIntegerProto.newBuilder()
                     .apply {
                         value = longToByteString(14500)
                     }
                     .build()
-            )
+            }
             .build()
 
         val highPrice = BigDecimalProto.newBuilder()
-            .setScale(2)
-            .setIntVal(
-                BigIntegerProto.newBuilder()
+            .apply {
+                scale = 2
+                intVal = BigIntegerProto.newBuilder()
                     .apply {
                         value = longToByteString(14500)
                     }
                     .build()
-            )
+            }
             .build()
 
         val lowPrice = BigDecimalProto.newBuilder()
-            .setScale(2)
-            .setIntVal(
-                BigIntegerProto.newBuilder()
+            .apply {
+                scale = 2
+                intVal = BigIntegerProto.newBuilder()
                     .apply {
                         value = longToByteString(14500)
                     }
                     .build()
-            )
+            }
             .build()
 
         val currentPrice = BigDecimalProto.newBuilder()
-            .setScale(2)
-            .setIntVal(
-                BigIntegerProto.newBuilder()
+            .apply {
+                scale = 2
+                intVal = BigIntegerProto.newBuilder()
                     .apply {
                         value = longToByteString(14500)
                     }
                     .build()
-            )
+            }
             .build()
 
         val stockRecord: ShortStockRecord = createShortStockRecord(
@@ -96,10 +95,10 @@ object StockFixture {
         }
 
         val aggregatedStockRecord: AggregatedStockRecordItemResponse =
-            AggregatedStockRecordItemResponse.newBuilder()
-                .setStockSymbol(TEST_STOCK_SYMBOL)
-                .addAllData(stockRecords)
-                .build()
+            AggregatedStockRecordItemResponse.newBuilder().apply {
+                stockSymbol = TEST_STOCK_SYMBOL
+                addAllData(stockRecords)
+            }.build()
         return GetBestStockSymbolsWithStockRecordsResponse.newBuilder()
             .apply {
                 successBuilder.addStockSymbols(aggregatedStockRecord)
@@ -116,12 +115,12 @@ object StockFixture {
         openPrice: BigDecimalProto, highPrice: BigDecimalProto,
         lowPrice: BigDecimalProto, currentPrice: BigDecimalProto,
     ): ShortStockRecord {
-        return ShortStockRecord.newBuilder()
-            .setOpenPrice(openPrice)
-            .setHighPrice(highPrice)
-            .setLowPrice(lowPrice)
-            .setCurrentPrice(currentPrice)
-            .build()
+        return ShortStockRecord.newBuilder().also {
+            it.openPrice = openPrice
+            it.highPrice = highPrice
+            it.lowPrice = lowPrice
+            it.currentPrice = currentPrice
+        }.build()
     }
 }
 
