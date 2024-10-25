@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
+import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
 import java.time.Duration
 
 // Interface ???
@@ -20,20 +21,20 @@ class RedisStockRecordRepository(
     private val stockRecordPrefix: String,
     @Value("\${spring.data.redis.ttl.minutes}")
     private val redisTtlMinutes: String,
-) {
-    fun findTopStockSymbolsWithStockRecords(
+) : CacheStockRecordRepository {
+    override fun findTopStockSymbolsWithStockRecords(
         quantity: Int,
     ): Mono<Map<String, List<MongoStockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
             .get(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix))
     }
 
-    fun findAllStockSymbols(): Flux<String> {
+    override fun findAllStockSymbols(): Flux<String> {
         return reactiveStringRedisTemplate.opsForList()
             .range(createAllStockSymbolsKey(stockRecordPrefix), 0, -1)
     }
 
-    fun saveTopStockSymbolsWithStockRecords(
+    override fun saveTopStockSymbolsWithStockRecords(
         quantity: Int,
         topStocksMap: Mono<Map<String, List<MongoStockRecord>>>,
     ): Mono<Map<String, List<MongoStockRecord>>> {
@@ -49,7 +50,7 @@ class RedisStockRecordRepository(
         }.then(topStocksMap)
     }
 
-    fun saveAllStockSymbols(stringFlux: Flux<String>): Flux<String> {
+    override fun saveAllStockSymbols(stringFlux: Flux<String>): Flux<String> {
         return stringFlux.flatMap {
             reactiveStringRedisTemplate.opsForList()
                 .leftPush(createAllStockSymbolsKey(stockRecordPrefix), it)
