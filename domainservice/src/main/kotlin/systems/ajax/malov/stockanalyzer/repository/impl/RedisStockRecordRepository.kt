@@ -40,14 +40,11 @@ class RedisStockRecordRepository(
         topStocksMap: Map<String, List<MongoStockRecord>>,
     ): Mono<Map<String, List<MongoStockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
-            .set(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix), topStocksMap)
-            .flatMap {
-                reactiveMapRedisTemplate
-                    .expire(
-                        createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix),
-                        Duration.ofMinutes(redisTtlMinutes.toLong())
-                    )
-            }.then(topStocksMap.toMono())
+            .set(
+                createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix),
+                topStocksMap,
+                Duration.ofMinutes(redisTtlMinutes.toLong())
+            ).then(topStocksMap.toMono())
     }
 
     override fun saveAllStockSymbols(stockSymbols: List<String>): Flux<String> {
