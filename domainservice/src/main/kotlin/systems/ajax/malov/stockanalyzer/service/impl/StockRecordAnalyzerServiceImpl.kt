@@ -6,7 +6,6 @@ import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTime
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
-import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -15,7 +14,6 @@ import java.util.Date
 @Service
 class StockRecordAnalyzerServiceImpl(
     private val stockRedisRecordRepository: CacheStockRecordRepository,
-    private val stockMongoRecordRepository: StockRecordRepository,
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime
@@ -26,30 +24,10 @@ class StockRecordAnalyzerServiceImpl(
         val from = Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS))
         val to = Date.from(dateOfRequest)
         return stockRedisRecordRepository
-            .findTopStockSymbolsWithStockRecords(
-                quantity,
-            ).switchIfEmpty(
-                stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(
-                    quantity,
-                    from,
-                    to
-                ).flatMap {
-                    stockRedisRecordRepository.saveTopStockSymbolsWithStockRecords(
-                        quantity,
-                        it
-                    )
-                }
-            )
+            .findTopStockSymbolsWithStockRecords(quantity, from, to)
     }
 
     override fun getAllManageableStocksSymbols(): Flux<String> {
         return stockRedisRecordRepository.findAllStockSymbols()
-            .switchIfEmpty(
-                stockMongoRecordRepository.findAllStockSymbols()
-                    .collectList()
-                    .flatMapMany {
-                        stockRedisRecordRepository.saveAllStockSymbols(it)
-                    }
-            )
     }
 }

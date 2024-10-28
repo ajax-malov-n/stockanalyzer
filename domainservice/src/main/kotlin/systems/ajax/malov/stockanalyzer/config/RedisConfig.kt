@@ -3,22 +3,46 @@ package systems.ajax.malov.stockanalyzer.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.lettuce.core.ClientOptions
+import io.lettuce.core.TimeoutOptions
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
+import java.time.Duration
 
 @Configuration
 @EnableCaching
-class RedisConfig {
+class RedisConfig(
+    @Value("\${spring.data.redis.timeout.millis}") val timeout: Long,
+    @Value("\${spring.data.redis.host}") val host: String,
+) {
+    @Bean
+    fun reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory {
+        val config = RedisStandaloneConfiguration(host)
+        val client: ClientOptions = ClientOptions.builder()
+            .timeoutOptions(
+                TimeoutOptions.builder()
+                    .timeoutCommands(true)
+                    .fixedTimeout(Duration.ofMinutes(timeout))
+                    .build()
+            ).build()
+        return LettuceConnectionFactory(config, LettuceClientConfiguration.builder().clientOptions(client).build())
+    }
+
     @Bean
     fun reactiveStringRedisTemplate(
-        connectionFactory: ReactiveRedisConnectionFactory,
+        @Qualifier("reactiveRedisConnectionFactory") connectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, String> {
         val context = RedisSerializationContext
             .newSerializationContext<String, String>(StringRedisSerializer())
@@ -29,7 +53,7 @@ class RedisConfig {
 
     @Bean
     fun reactiveMapRedisTemplate(
-        connectionFactory: ReactiveRedisConnectionFactory,
+        @Qualifier("reactiveRedisConnectionFactory") connectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, Map<String, List<MongoStockRecord>>> {
         val objectMapper = ObjectMapper().findAndRegisterModules().registerKotlinModule()
 

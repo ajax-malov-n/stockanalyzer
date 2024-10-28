@@ -10,6 +10,8 @@ spring:
         minutes: 1
       key:
         prefix: stock-key-
+      timeout:
+        millis: 10
   kafka:
     bootstrap-servers: kafka-0.kafka-headless.kafka.svc.cluster.local:9092
 
