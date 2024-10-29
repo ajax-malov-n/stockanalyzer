@@ -44,7 +44,7 @@ class RedisStockRecordRepository(
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to).flatMap {
                     saveTopStockSymbolsWithStockRecords(quantity, it)
                 }
-            )
+            ).log()
     }
 
     override fun findAllStockSymbols(): Flux<String> {

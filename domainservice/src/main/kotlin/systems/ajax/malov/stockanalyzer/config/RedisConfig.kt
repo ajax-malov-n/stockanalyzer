@@ -36,12 +36,10 @@ class RedisConfig(
                     .build()
             ).build()
 
-        val clientConfig = LettuceClientConfiguration.builder()
-            .commandTimeout(Duration.ofSeconds(5))
-            .clientOptions(clientOptions)
-            .build()
-
-        return LettuceConnectionFactory(config, clientConfig)
+        return LettuceConnectionFactory(
+            config,
+            LettuceClientConfiguration.builder().clientOptions(clientOptions).build()
+        )
     }
 
     @Bean
