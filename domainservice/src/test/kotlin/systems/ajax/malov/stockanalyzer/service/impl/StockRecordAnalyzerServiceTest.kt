@@ -15,13 +15,13 @@ import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForBestStockSymbolsWithStockRecords
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
+import systems.ajax.malov.stockanalyzer.repository.ReadOnlyStockRecordRepository
 
 @ExtendWith(MockKExtension::class)
 class StockRecordAnalyzerServiceTest {
 
     @MockK
-    private lateinit var redisStockRecordRepository: CacheStockRecordRepository
+    private lateinit var redisStockRecordRepository: ReadOnlyStockRecordRepository
 
     @InjectMockKs
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl

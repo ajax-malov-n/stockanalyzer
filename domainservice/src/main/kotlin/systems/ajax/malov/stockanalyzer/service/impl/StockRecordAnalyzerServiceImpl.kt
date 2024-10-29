@@ -1,11 +1,12 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTime
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
+import systems.ajax.malov.stockanalyzer.repository.ReadOnlyStockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -13,7 +14,8 @@ import java.util.Date
 
 @Service
 class StockRecordAnalyzerServiceImpl(
-    private val stockRedisRecordRepository: CacheStockRecordRepository,
+    @Qualifier("redisStockRecordRepository")
+    private val stockRedisRecordRepository: ReadOnlyStockRecordRepository,
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime

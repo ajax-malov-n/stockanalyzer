@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import java.util.Date
 
-interface CacheStockRecordRepository {
+interface ReadOnlyStockRecordRepository {
     fun findTopStockSymbolsWithStockRecords(
         quantity: Int,
         from: Date,

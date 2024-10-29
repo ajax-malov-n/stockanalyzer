@@ -1,6 +1,6 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import io.lettuce.core.RedisCommandTimeoutException
+import io.lettuce.core.RedisException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import systems.ajax.malov.stockanalyzer.repository.CacheStockRecordRepository
+import systems.ajax.malov.stockanalyzer.repository.ReadOnlyStockRecordRepository
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import java.net.SocketException
 import java.time.Duration
@@ -30,7 +30,7 @@ class RedisStockRecordRepository(
     @Value("\${spring.data.redis.ttl.minutes}")
     private val redisTtlMinutes: Long,
     private val stockMongoRecordRepository: StockRecordRepository,
-) : CacheStockRecordRepository {
+) : ReadOnlyStockRecordRepository {
     override fun findTopStockSymbolsWithStockRecords(
         quantity: Int,
         from: Date,
@@ -38,14 +38,7 @@ class RedisStockRecordRepository(
     ): Mono<Map<String, List<MongoStockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
             .get(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix))
-            .onErrorResume(RedisConnectionFailureException::class.java) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
-            }.onErrorResume(RedisCommandTimeoutException::class.java) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
-            }
-            .onErrorResume(SocketException::class.java) {
+            .onErrorResume(::isRedisOrSocketException) {
                 log.error(it.message, it)
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
             }
@@ -59,16 +52,7 @@ class RedisStockRecordRepository(
     override fun findAllStockSymbols(): Flux<String> {
         return reactiveStringRedisTemplate.opsForList()
             .range(createAllStockSymbolsKey(stockRecordPrefix), 0, -1)
-            .log()
-            .onErrorResume(RedisConnectionFailureException::class.java) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findAllStockSymbols()
-            }
-            .onErrorResume(RedisCommandTimeoutException::class.java) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findAllStockSymbols()
-            }
-            .onErrorResume(SocketException::class.java) {
+            .onErrorResume(::isRedisOrSocketException) {
                 log.error(it.message, it)
                 stockMongoRecordRepository.findAllStockSymbols()
             }
@@ -102,6 +86,14 @@ class RedisStockRecordRepository(
         return reactiveStringRedisTemplate
             .execute<String>(RedisScript.of(script), listOf(createAllStockSymbolsKey(stockRecordPrefix)), stockSymbols)
             .thenMany(stockSymbols.toFlux())
+    }
+
+    private fun isRedisOrSocketException(error: Throwable): Boolean {
+        return listOf(
+            RedisConnectionFailureException::class.java,
+            RedisException::class.java,
+            SocketException::class.java
+        ).any { it.isInstance(error) }
     }
 
     companion object {
