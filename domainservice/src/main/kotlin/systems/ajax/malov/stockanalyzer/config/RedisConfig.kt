@@ -28,14 +28,20 @@ class RedisConfig(
     @Bean
     fun reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory {
         val config = RedisStandaloneConfiguration(host)
-        val client: ClientOptions = ClientOptions.builder()
+        val clientOptions: ClientOptions = ClientOptions.builder()
             .timeoutOptions(
                 TimeoutOptions.builder()
                     .timeoutCommands(true)
                     .fixedTimeout(Duration.ofMinutes(timeout))
                     .build()
             ).build()
-        return LettuceConnectionFactory(config, LettuceClientConfiguration.builder().clientOptions(client).build())
+
+        val clientConfig = LettuceClientConfiguration.builder()
+            .commandTimeout(Duration.ofSeconds(5))
+            .clientOptions(clientOptions)
+            .build()
+
+        return LettuceConnectionFactory(config, clientConfig)
     }
 
     @Bean

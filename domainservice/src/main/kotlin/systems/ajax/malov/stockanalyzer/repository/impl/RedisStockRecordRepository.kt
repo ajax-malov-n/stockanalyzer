@@ -2,7 +2,6 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import io.lettuce.core.RedisException
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.RedisConnectionFailureException
 import org.springframework.data.redis.core.ReactiveRedisTemplate
@@ -21,9 +20,7 @@ import java.util.Date
 
 @Repository
 class RedisStockRecordRepository(
-    @Qualifier("reactiveStringRedisTemplate")
     private val reactiveStringRedisTemplate: ReactiveRedisTemplate<String, String>,
-    @Qualifier("reactiveMapRedisTemplate")
     private val reactiveMapRedisTemplate: ReactiveRedisTemplate<String, Map<String, List<MongoStockRecord>>>,
     @Value("\${spring.data.redis.key.prefix}")
     private val stockRecordPrefix: String,
@@ -38,6 +35,7 @@ class RedisStockRecordRepository(
     ): Mono<Map<String, List<MongoStockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
             .get(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix))
+            .log()
             .onErrorResume(::isRedisOrSocketException) {
                 log.error(it.message, it)
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
