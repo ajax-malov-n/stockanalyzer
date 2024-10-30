@@ -57,7 +57,10 @@ class RedisConfig(
     fun reactiveMapRedisTemplate(
         @Qualifier("reactiveRedisConnectionFactory") connectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, Map<String, List<MongoStockRecord>>> {
-        val objectMapper = ObjectMapper().findAndRegisterModules().registerKotlinModule()
+        val objectMapper = ObjectMapper()
+        objectMapper
+            .registerKotlinModule()
+        objectMapper.findAndRegisterModules()
 
         val typeFactory: TypeFactory = objectMapper.typeFactory
         val keyType = typeFactory.constructType(String::class.java)

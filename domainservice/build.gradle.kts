@@ -19,7 +19,6 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation(libs.reactorKafka)
-    implementation(libs.kafkaProtobufSerializer)
 
     implementation(project(":internal-api"))
 
@@ -27,6 +26,8 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    implementation(libs.jacksonJsr310)
 
     testImplementation(libs.jNatsServerEmbedded)
     testImplementation("org.testcontainers:junit-jupiter")
