@@ -21,6 +21,9 @@ dependencies {
     implementation(libs.kafkaSchemaRegistry)
     implementation(libs.kafkaProtobufSerializer)
 
+//    Move version to toml
+    implementation("systems.ajax:nats-spring-boot-starter:4.1.0.186.MASTER-SNAPSHOT")
+
     implementation(project(":internal-api"))
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
