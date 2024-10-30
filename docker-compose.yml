@@ -7,13 +7,13 @@ services:
       context: ./domainservice/
     container_name: domain
     depends_on:
+      redis:
+        condition: service_healthy
       mongo:
         condition: service_healthy
       nats:
         condition: service_started
       kafka:
-        condition: service_started
-      schema-registry:
         condition: service_started
     environment:
       - MONGO_DB_NAME=${MONGO_DB}
@@ -106,6 +106,18 @@ services:
       - "4222:4222"
     healthcheck:
       test: [ "CMD", "nats", "ping" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    profiles: [ all, test ]
+
+  redis:
+    image: redis:7.4.1
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
       interval: 1s
       timeout: 1s
       retries: 5

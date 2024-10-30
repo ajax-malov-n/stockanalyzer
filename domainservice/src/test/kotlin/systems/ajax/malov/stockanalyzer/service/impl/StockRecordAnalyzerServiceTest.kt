@@ -9,17 +9,19 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.TEST_STOCK_SYMBOL
 import stockanalyzer.utils.StockFixture.notAggregatedResponseForBestStockSymbolsWithStockRecords
 import stockanalyzer.utils.StockFixture.savedStockRecord
+import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 
 @ExtendWith(MockKExtension::class)
-class MongoStockRecordAnalyzerServiceTest {
+class StockRecordAnalyzerServiceTest {
 
     @MockK
-    private lateinit var stockRecordRepository: StockRecordRepository
+    private lateinit var redisStockRecordRepository: StockRecordRepository
 
     @InjectMockKs
     private lateinit var stockAnalyzerService: StockRecordAnalyzerServiceImpl
@@ -30,13 +32,14 @@ class MongoStockRecordAnalyzerServiceTest {
         val savedStock = savedStockRecord()
         val retrievedStocks = linkedMapOf(Pair(TEST_STOCK_SYMBOL, listOf(savedStock)))
         val expected = notAggregatedResponseForBestStockSymbolsWithStockRecords()
+        val mono: Mono<Map<String, List<MongoStockRecord>>> = retrievedStocks.toMono()
         every {
-            stockRecordRepository.findTopStockSymbolsWithStockRecords(
+            redisStockRecordRepository.findTopStockSymbolsWithStockRecords(
                 eq(5),
                 any(),
                 any()
             )
-        } returns Mono.just(retrievedStocks)
+        } returns mono
 
         // WHEN
         val actual = stockAnalyzerService.getBestStockSymbolsWithStockRecords(5)
@@ -46,7 +49,7 @@ class MongoStockRecordAnalyzerServiceTest {
             .expectNext(expected)
             .verifyComplete()
         verify {
-            stockRecordRepository.findTopStockSymbolsWithStockRecords(eq(5), any(), any())
+            redisStockRecordRepository.findTopStockSymbolsWithStockRecords(eq(5), any(), any())
         }
     }
 
@@ -54,15 +57,17 @@ class MongoStockRecordAnalyzerServiceTest {
     fun `getAllManageableStocksSymbols should retrieve all stock symbols`() {
         // GIVEN
         val expected = listOf(TEST_STOCK_SYMBOL)
-        every { stockRecordRepository.findAllStockSymbols() } returns expected.toFlux()
+        val flux = expected.toFlux()
+        every { redisStockRecordRepository.findAllStockSymbols() } returns flux
 
         // WHEN
         val actual = stockAnalyzerService.getAllManageableStocksSymbols()
 
         // THEN
-        verify { stockRecordRepository.findAllStockSymbols() }
         actual.test()
             .expectNext(TEST_STOCK_SYMBOL)
             .verifyComplete()
+
+        verify { redisStockRecordRepository.findAllStockSymbols() }
     }
 }

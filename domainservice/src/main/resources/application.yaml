@@ -4,6 +4,14 @@ spring:
   data:
     mongodb:
       uri: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
+    redis:
+      host: "redis"
+      ttl:
+        minutes: 1
+      key:
+        prefix: stock-key-
+      timeout:
+        millis: 10
   kafka:
     bootstrap-servers: kafka-0.kafka-headless.kafka.svc.cluster.local:9092
 

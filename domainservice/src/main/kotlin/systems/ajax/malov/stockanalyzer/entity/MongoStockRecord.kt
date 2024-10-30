@@ -1,5 +1,7 @@
 package systems.ajax.malov.stockanalyzer.entity
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
@@ -14,6 +16,7 @@ import java.time.Instant
 @Document(collection = COLLECTION_NAME)
 data class MongoStockRecord(
     @Id
+    @JsonSerialize(using = ToStringSerializer::class)
     var id: ObjectId?,
     val symbol: String?,
     @Field(targetType = DECIMAL128)
