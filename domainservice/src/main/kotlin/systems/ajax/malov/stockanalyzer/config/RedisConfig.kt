@@ -2,7 +2,6 @@ package systems.ajax.malov.stockanalyzer.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.lettuce.core.ClientOptions
 import io.lettuce.core.TimeoutOptions
@@ -61,7 +60,7 @@ class RedisConfig(
         val objectMapper = ObjectMapper()
         objectMapper
             .registerKotlinModule()
-            .registerModule(JavaTimeModule())
+        objectMapper.findAndRegisterModules()
 
         val typeFactory: TypeFactory = objectMapper.typeFactory
         val keyType = typeFactory.constructType(String::class.java)

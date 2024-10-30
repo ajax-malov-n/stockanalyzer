@@ -19,7 +19,6 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation(libs.reactorKafka)
-    implementation(libs.kafkaProtobufSerializer)
 
     implementation(project(":internal-api"))
 
