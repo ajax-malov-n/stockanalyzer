@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.stockanalyzer.config.beanpostprocessor.LogExecutionTime
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import systems.ajax.malov.stockanalyzer.repository.ReadOnlyStockRecordRepository
+import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -15,7 +15,7 @@ import java.util.Date
 @Service
 class StockRecordAnalyzerServiceImpl(
     @Qualifier("redisStockRecordRepository")
-    private val stockRedisRecordRepository: ReadOnlyStockRecordRepository,
+    private val stockRedisRecordRepository: StockRecordRepository,
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime

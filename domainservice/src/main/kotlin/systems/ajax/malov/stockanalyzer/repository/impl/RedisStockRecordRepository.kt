@@ -2,6 +2,7 @@ package systems.ajax.malov.stockanalyzer.repository.impl
 
 import io.lettuce.core.RedisException
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.RedisConnectionFailureException
 import org.springframework.data.redis.core.ReactiveRedisTemplate
@@ -12,7 +13,6 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
-import systems.ajax.malov.stockanalyzer.repository.ReadOnlyStockRecordRepository
 import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
 import java.net.SocketException
 import java.time.Duration
@@ -26,8 +26,10 @@ class RedisStockRecordRepository(
     private val stockRecordPrefix: String,
     @Value("\${spring.data.redis.ttl.minutes}")
     private val redisTtlMinutes: Long,
+    @Qualifier("mongoStockRecordRepository")
     private val stockMongoRecordRepository: StockRecordRepository,
-) : ReadOnlyStockRecordRepository {
+) : StockRecordRepository by stockMongoRecordRepository {
+
     override fun findTopStockSymbolsWithStockRecords(
         quantity: Int,
         from: Date,
