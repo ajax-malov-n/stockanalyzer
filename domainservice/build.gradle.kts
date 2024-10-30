@@ -28,6 +28,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.5")
+
     testImplementation(libs.jNatsServerEmbedded)
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")

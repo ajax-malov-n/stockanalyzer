@@ -2,6 +2,7 @@ package systems.ajax.malov.stockanalyzer.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.lettuce.core.ClientOptions
 import io.lettuce.core.TimeoutOptions
@@ -57,7 +58,11 @@ class RedisConfig(
     fun reactiveMapRedisTemplate(
         @Qualifier("reactiveRedisConnectionFactory") connectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, Map<String, List<MongoStockRecord>>> {
-        val objectMapper = ObjectMapper().findAndRegisterModules().registerKotlinModule()
+        val objectMapper = ObjectMapper()
+        objectMapper.findAndRegisterModules()
+        objectMapper
+            .registerKotlinModule()
+            .registerModule(JavaTimeModule())
 
         val typeFactory: TypeFactory = objectMapper.typeFactory
         val keyType = typeFactory.constructType(String::class.java)
