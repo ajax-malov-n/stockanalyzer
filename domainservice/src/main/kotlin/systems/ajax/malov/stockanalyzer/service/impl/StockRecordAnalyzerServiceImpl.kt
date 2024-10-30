@@ -15,7 +15,7 @@ import java.util.Date
 @Service
 class StockRecordAnalyzerServiceImpl(
     @Qualifier("redisStockRecordRepository")
-    private val stockRedisRecordRepository: StockRecordRepository,
+    private val redisStockRecordRepository: StockRecordRepository,
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime
@@ -25,11 +25,11 @@ class StockRecordAnalyzerServiceImpl(
         val dateOfRequest = Instant.now()
         val from = Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS))
         val to = Date.from(dateOfRequest)
-        return stockRedisRecordRepository
+        return redisStockRecordRepository
             .findTopStockSymbolsWithStockRecords(quantity, from, to)
     }
 
     override fun getAllManageableStocksSymbols(): Flux<String> {
-        return stockRedisRecordRepository.findAllStockSymbols()
+        return redisStockRecordRepository.findAllStockSymbols()
     }
 }
