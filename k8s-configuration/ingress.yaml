@@ -1,7 +1,28 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: stockanalyzer-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+  name: grpc.stockanalyzer.com
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: grpc.stockanalyzer.com
+      http:
+        paths:
+          - path: /grpc
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-service
+                port:
+                  number: 9091
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stockanalyzer.com
 spec:
   ingressClassName: nginx
   rules:

@@ -1,8 +1,8 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
 import com.google.protobuf.ByteString
-import systems.ajax.malov.internalapi.commonmodel.stock.BigDecimalProto
-import systems.ajax.malov.internalapi.commonmodel.stock.BigIntegerProto
+import systems.ajax.malov.commonmodel.stock.BigDecimalProto
+import systems.ajax.malov.commonmodel.stock.BigIntegerProto
 import java.math.BigDecimal
 import java.math.BigInteger
 

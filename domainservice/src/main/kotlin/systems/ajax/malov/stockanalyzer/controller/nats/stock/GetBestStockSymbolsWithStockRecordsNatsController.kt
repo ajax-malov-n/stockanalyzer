@@ -4,6 +4,7 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
@@ -32,6 +33,12 @@ class GetBestStockSymbolsWithStockRecordsNatsController(
         }
         return stockRecordAnalyzerService.getBestStockSymbolsWithStockRecords(requestedStocks)
             .map { toGetBestStockSymbolsWithStockRecordsRequest(it) }
+            .onErrorResume { error ->
+                GetBestStockSymbolsWithStockRecordsResponse.newBuilder().apply {
+                    failureBuilder.message = error.message.orEmpty()
+                }
+                    .build().toMono()
+            }
     }
 
     companion object {

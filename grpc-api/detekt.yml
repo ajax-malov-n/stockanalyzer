@@ -1,0 +1,4 @@
+style:
+  VarCouldBeVal:
+    ignoreLateinitVar: true
+    includes: [ "**/test/**" ]
