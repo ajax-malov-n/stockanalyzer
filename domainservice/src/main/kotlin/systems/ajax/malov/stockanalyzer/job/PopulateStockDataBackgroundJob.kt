@@ -2,6 +2,7 @@ package systems.ajax.malov.stockanalyzer.job
 
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toMono
@@ -11,6 +12,7 @@ import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
 
 @Component
 class PopulateStockDataBackgroundJob(
+    @Qualifier("mongoStockRecordRepository")
     private val stockRecordRepository: StockRecordRepository,
     private val stockRecordClientApi: StockRecordClientApi,
     private val stockPriceKafkaProducer: StockPriceKafkaProducer,

@@ -4,6 +4,7 @@ import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.internalapi.NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
@@ -29,6 +30,11 @@ class GetAllManageableStocksNatsController(
                     successBuilder.addAllSymbols(it)
                 }
                     .build()
+            }.onErrorResume { error ->
+                GetAllManageableStockSymbolsResponse.newBuilder().apply {
+                    failureBuilder.message = error.message.orEmpty()
+                }
+                    .build().toMono()
             }
     }
 

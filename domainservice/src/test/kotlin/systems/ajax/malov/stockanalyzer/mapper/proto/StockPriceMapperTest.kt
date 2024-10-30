@@ -2,7 +2,7 @@ package systems.ajax.malov.stockanalyzer.mapper.proto
 
 import com.google.protobuf.Timestamp
 import stockanalyzer.utils.StockFixture.savedStockRecord
-import systems.ajax.malov.internalapi.output.pubsub.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertToBigDecimalProto
 import systems.ajax.malov.stockanalyzer.mapper.proto.StockPriceMapper.toStockPrice

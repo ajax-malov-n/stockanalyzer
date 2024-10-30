@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package systems.ajax.malov.grpcapi.reqres.stock;
+
+import "systems/ajax/malov/commonmodel/stock/big_decimal.proto";
+import "systems/ajax/malov/commonmodel/stock/short_stock_response.proto";
+
+option java_multiple_files = true;
+
+message GetBestStockSymbolsWithStockRecordsRequest {
+  optional int32 quantity = 1;
+}
+
+message GetBestStockSymbolsWithStockRecordsResponse {
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success{
+    repeated AggregatedStockRecordItemResponse stock_symbols = 1;
+  }
+
+  message Failure {
+    string message = 100;
+  }
+}
+
+message AggregatedStockRecordItemResponse{
+  string stock_symbol = 1;
+  repeated commonmodel.stock.ShortStockRecord data = 2;
+}
+

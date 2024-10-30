@@ -1,5 +1,6 @@
 package systems.ajax.malov.stockanalyzer.service.impl
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -13,7 +14,8 @@ import java.util.Date
 
 @Service
 class StockRecordAnalyzerServiceImpl(
-    private val stockRecordRepository: StockRecordRepository,
+    @Qualifier("redisStockRecordRepository")
+    private val redisStockRecordRepository: StockRecordRepository,
 ) : StockRecordAnalyzerService {
 
     @LogExecutionTime
@@ -21,15 +23,13 @@ class StockRecordAnalyzerServiceImpl(
         quantity: Int,
     ): Mono<Map<String, List<MongoStockRecord>>> {
         val dateOfRequest = Instant.now()
-        return stockRecordRepository
-            .findTopStockSymbolsWithStockRecords(
-                quantity,
-                Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS)),
-                Date.from(dateOfRequest)
-            )
+        val from = Date.from(dateOfRequest.minus(1, ChronoUnit.HOURS))
+        val to = Date.from(dateOfRequest)
+        return redisStockRecordRepository
+            .findTopStockSymbolsWithStockRecords(quantity, from, to)
     }
 
     override fun getAllManageableStocksSymbols(): Flux<String> {
-        return stockRecordRepository.findAllStockSymbols()
+        return redisStockRecordRepository.findAllStockSymbols()
     }
 }

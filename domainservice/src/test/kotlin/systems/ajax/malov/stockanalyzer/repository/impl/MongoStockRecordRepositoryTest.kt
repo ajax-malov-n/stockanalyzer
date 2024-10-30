@@ -1,8 +1,5 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import com.ninjasquad.springmockk.MockkBean
-import io.nats.client.Connection
-import io.nats.client.Dispatcher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -15,12 +12,8 @@ import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.stockanalyzer.config.NatsDispatcherConfig
-import systems.ajax.malov.stockanalyzer.kafka.configuration.consumer.KafkaConsumerConfiguration
-import systems.ajax.malov.stockanalyzer.kafka.configuration.producer.KafkaProducerConfiguration
-import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessor
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceNotificationProducer
+import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
+import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -28,19 +21,8 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockkBean(
-    relaxed = true,
-    classes = [
-        Connection::class,
-        Dispatcher::class,
-        StockPriceNotificationProcessor::class,
-        KafkaConsumerConfiguration::class,
-        KafkaProducerConfiguration::class,
-        StockPriceKafkaProducer::class,
-        NatsDispatcherConfig::class,
-        StockPriceNotificationProducer::class,
-    ]
-)
+@MockkNats
+@MockkKafka
 class MongoStockRecordRepositoryTest {
 
     @Autowired

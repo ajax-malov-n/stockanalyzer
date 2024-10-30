@@ -1,9 +1,10 @@
 syntax = "proto3";
 
-import "systems/ajax/malov/internalapi/commonmodel/stock/short_stock_response.proto";
-import "systems/ajax/malov/internalapi/commonmodel/stock/big_decimal.proto";
-
 package systems.ajax.malov.internalapi.input.reqreply.stock;
+
+import "systems/ajax/malov/commonmodel/stock/big_decimal.proto";
+import "systems/ajax/malov/commonmodel/stock/short_stock_response.proto";
+
 
 option java_multiple_files = true;
 
@@ -28,5 +29,5 @@ message GetBestStockSymbolsWithStockRecordsResponse {
 
 message AggregatedStockRecordItemResponse{
   string stock_symbol = 1;
-  repeated systems.ajax.malov.internalapi.commonmodel.stock.ShortStockRecordResponse data = 2;
+  repeated commonmodel.stock.ShortStockRecord data = 2;
 }

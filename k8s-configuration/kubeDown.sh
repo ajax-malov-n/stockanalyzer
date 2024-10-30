@@ -4,6 +4,7 @@ kubectl delete -f ingress.yaml
 kubectl delete -f domain.yaml
 kubectl delete -f gateway.yaml
 kubectl delete -f mongo.yaml
+kubectl delete -f redis.yaml
 kubectl delete -f nats.yaml
 kubectl delete -f mongo-configmap.yaml
 kubectl delete -f mongo-secret.yaml

@@ -11,6 +11,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
@@ -41,12 +42,12 @@ class StockRecordControllerTest {
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
         val expected = natsResponse.toAggregatedStockItemResponseDto()
 
         // WHEN
         val response: Mono<AggregatedStockRecordResponseDto> =
-            stockRecordsController.getFiveBestStockSymbolsWithStockRecords(requestDto)
+            stockRecordsController.getBestStockSymbolsWithStockRecords(requestDto)
 
         // THEN
         response.test()
@@ -74,12 +75,12 @@ class StockRecordControllerTest {
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
         val expected = natsResponse.toAggregatedStockItemResponseDto()
 
         // WHEN
         val response: Mono<AggregatedStockRecordResponseDto> =
-            stockRecordsController.getFiveBestStockSymbolsWithStockRecords(requestDto)
+            stockRecordsController.getBestStockSymbolsWithStockRecords(requestDto)
 
         // THEN
         response.test()
@@ -110,7 +111,7 @@ class StockRecordControllerTest {
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
             )
-        } returns Mono.just(natsResponse)
+        } returns natsResponse.toMono()
 
         // WHEN
         val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
@@ -119,6 +120,73 @@ class StockRecordControllerTest {
         response.test()
             .expectNext(expected)
             .verifyComplete()
+
+        verify {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        }
+    }
+
+    @Test
+    fun `should throw runtimeException with error message`() {
+        // GIVEN
+        val natsResponse = GetAllManageableStockSymbolsResponse.newBuilder()
+            .apply {
+                failureBuilder.message = "Error"
+            }.build()
+
+        every {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        } returns natsResponse.toMono()
+
+        // WHEN
+        val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
+
+        // THEN
+        response.test()
+            .expectErrorMatches {
+                it is RuntimeException && it.message == "Error"
+            }
+            .verify()
+
+        verify {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        }
+    }
+
+    @Test
+    fun `should throw runtimeException`() {
+        // GIVEN
+        val natsResponse = GetAllManageableStockSymbolsResponse.getDefaultInstance()
+
+        every {
+            natsClient.doRequest(
+                NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+                GetAllManageableStockSymbolsRequest.getDefaultInstance(),
+                GetAllManageableStockSymbolsResponse.parser()
+            )
+        } returns natsResponse.toMono()
+
+        // WHEN
+        val response: Mono<List<String>> = stockRecordsController.getAllManageableStockSymbols()
+
+        // THEN
+        response.test()
+            .expectErrorMatches {
+                it is RuntimeException && it.message == "Required message is empty"
+            }
+            .verify()
 
         verify {
             natsClient.doRequest(

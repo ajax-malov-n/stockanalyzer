@@ -1,5 +1,6 @@
 plugins {
     `spring-conventions`
+    `grpc-conventions`
 }
 
 dependencies {
@@ -18,19 +19,19 @@ dependencies {
 
     implementation("org.springframework.kafka:spring-kafka")
     implementation(libs.reactorKafka)
-    implementation(libs.kafkaSchemaRegistry)
-    implementation(libs.kafkaProtobufSerializer)
 
 //    Move version to toml
     implementation("systems.ajax:nats-spring-boot-starter:4.1.0.186.MASTER-SNAPSHOT")
 
     implementation(project(":internal-api"))
 
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    testImplementation("org.springframework.kafka:spring-kafka-test")
-    testImplementation(libs.mockito.kotlin)
+    implementation(libs.jacksonJsr310)
+
     testImplementation(libs.jNatsServerEmbedded)
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")

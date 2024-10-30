@@ -2,6 +2,14 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:secret@localhost:27017/stocks?authSource=admin
+    redis:
+      host: "localhost"
+      ttl:
+        minutes: 1
+      key:
+        prefix: stock-key-
+      timeout:
+        millis: 10
   kafka:
     bootstrap-servers: http://localhost:9092
 
