@@ -5,7 +5,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.commonmodel.stock.StockPrice
-import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.const.AppConst.QUANTITY_VALID_RANGE
 import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsRequestMapper.toInternal
 import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
@@ -18,13 +17,16 @@ import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecor
 import systems.ajax.malov.grpcapi.reqres.stock.GetStockPriceRequest
 import systems.ajax.malov.grpcapi.service.ReactorStockServiceGrpc
 import systems.ajax.malov.internalapi.NatsSubject
+import systems.ajax.nats.handler.api.NatsHandlerManager
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse as InternalGetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest as InternalGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse as InternalGetBestStockSymbolsWithStockRecordsResponse
 
 @GrpcService
 class StockGrpcService(
-    private val natsClient: NatsClient,
+    private val publisher: NatsMessagePublisher,
+    private val manager: NatsHandlerManager,
 ) : ReactorStockServiceGrpc.StockServiceImplBase() {
     override fun getAllManageableStocksSymbols(
         request: Mono<GetAllManageableStockSymbolsRequest>,
@@ -32,7 +34,7 @@ class StockGrpcService(
         return request
             .map { it.toInternal() }
             .flatMap {
-                natsClient.doRequest(
+                publisher.request(
                     NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                     it,
                     InternalGetAllManageableStockSymbolsResponse.parser()
@@ -52,9 +54,9 @@ class StockGrpcService(
 
     override fun getCurrentStockPrice(request: Mono<GetStockPriceRequest>): Flux<StockPrice> {
         return request.flatMapMany {
-            natsClient.subscribeByStockSymbolName(
-                it.symbolName,
-            )
+            manager.subscribe(NatsSubject.StockRequest.getStockPriceSubject(it.symbolName)) { message ->
+                StockPrice.parseFrom(message.data)
+            }
         }
     }
 
@@ -69,7 +71,7 @@ class StockGrpcService(
         } else {
             request
         }
-        return natsClient.doRequest(
+        return publisher.request(
             NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
             validRequest,
             InternalGetBestStockSymbolsWithStockRecordsResponse.parser()

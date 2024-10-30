@@ -1,6 +1,9 @@
 package systems.ajax.malov.stockanalyzer.kafka.consumer
 
-import io.nats.client.Dispatcher
+import java.time.Duration
+import java.util.concurrent.TimeUnit
+import kotlin.test.Test
+import kotlin.test.assertNotNull
 import org.awaitility.Awaitility.await
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -8,17 +11,13 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.publisher.Sinks
 import reactor.core.scheduler.Schedulers
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessorTest
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
-import java.time.Duration
-import java.util.concurrent.TimeUnit
-import kotlin.test.Test
-import kotlin.test.assertNotNull
+import systems.ajax.nats.handler.api.NatsHandlerManager
 
 @SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
@@ -29,7 +28,7 @@ class StockPriceNatsConsumerTest {
     private lateinit var stockPriceNatsConsumer: StockPriceNatsConsumer
 
     @Autowired
-    private lateinit var dispatcher: Dispatcher
+    private lateinit var manger: NatsHandlerManager
 
     @Autowired
     private lateinit var stockPrideProducer: StockPriceKafkaProducer
@@ -64,14 +63,8 @@ class StockPriceNatsConsumerTest {
     }
 
     fun subscribe(stockSymbolName: String): Flux<StockPrice> {
-        val sink = Sinks.many().unicast().onBackpressureBuffer<StockPrice>()
-        val subscription =
-            dispatcher.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName)) { message ->
-                sink.tryEmitNext(StockPrice.parseFrom(message.data))
-            }
-        return sink.asFlux()
-            .doFinally {
-                dispatcher.unsubscribe(subscription)
-            }
+        return manger.subscribe(NatsSubject.StockRequest.getStockPriceSubject(stockSymbolName)) { message ->
+            StockPrice.parseFrom(message.data)
+        }
     }
 }

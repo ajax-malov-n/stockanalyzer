@@ -1,6 +1,5 @@
 package systems.ajax.malov.stockanalyzer.kafka.consumer
 
-import io.nats.client.Connection
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -9,11 +8,12 @@ import reactor.kafka.receiver.KafkaReceiver
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 
 @Component
 class StockPriceNatsConsumer(
     private val kafkaStockPriceNatsReceiver: KafkaReceiver<String, ByteArray>,
-    private val nastConnection: Connection,
+    private val publisher: NatsMessagePublisher,
 ) {
     @PostConstruct
     fun subscribeToEvents() {
@@ -29,9 +29,9 @@ class StockPriceNatsConsumer(
     }
 
     private fun handle(stockPrice: StockPrice): Mono<Unit> {
-        return nastConnection.publish(
+        return publisher.publish(
             NatsSubject.StockRequest.getStockPriceSubject(stockPrice.stockSymbolName),
-            stockPrice.toByteArray()
+            stockPrice
         ).toMono()
     }
 }

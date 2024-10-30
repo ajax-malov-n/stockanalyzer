@@ -2,7 +2,6 @@ package systems.ajax.malov.stockanalyzer.controller.nats.stock
 
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
-import io.nats.client.Connection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -16,6 +15,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -27,9 +27,8 @@ import kotlin.test.assertTrue
 @MockkKafka
 @ActiveProfiles("test")
 class NatsControllersTest {
-
     @Autowired
-    private lateinit var natsConnection: Connection
+    private lateinit var publisher: NatsMessagePublisher
 
     @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
@@ -41,27 +40,21 @@ class NatsControllersTest {
             StockFixture.unsavedStockRecord()
                 .copy(symbol = "AJAXSYS", dateOfRetrieval = testDate.plus(Duration.ofDays(10)))
         )
-        mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .blockLast()
-        val request = GetAllManageableStockSymbolsRequest
-            .getDefaultInstance()
-        val symbols = mongoStockRecordRepository.findAllStockSymbols()
-            .collectList()
-            .block()
+        mongoStockRecordRepository.insertAll(listOfUnsavedStocks).blockLast()
+        val request = GetAllManageableStockSymbolsRequest.getDefaultInstance()
+        val symbols = mongoStockRecordRepository.findAllStockSymbols().collectList().block()
         val expectedResponse = GetAllManageableStockSymbolsResponse.newBuilder().apply {
             successBuilder.addAllSymbols(symbols)
         }.build()
 
         // WHEN
         val actual = doRequest(
-            NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
-            request,
-            GetAllManageableStockSymbolsResponse.parser()
+            NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS, request, GetAllManageableStockSymbolsResponse.parser()
         )
 
         // THEN
         assertTrue(
-            actual.success.symbolsList.containsAll(expectedResponse.success.symbolsList),
+            actual!!.success.symbolsList.containsAll(expectedResponse.success.symbolsList),
             "Must contain new stock with name AJAXSYS"
         )
     }
@@ -72,19 +65,14 @@ class NatsControllersTest {
         val bestStock1 = StockFixture.firstPlaceStockRecord()
         val bestStock2 = StockFixture.alsoFirstPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2)
-        mongoStockRecordRepository.insertAll(listOfUnsavedStocks)
-            .blockLast()
+        mongoStockRecordRepository.insertAll(listOfUnsavedStocks).blockLast()
         val from = Date.from(testDate().minus(1, ChronoUnit.HOURS))
         val to = Date.from(testDate())
 
-        val expectedResponse =
-            mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to)
-                .map {
-                    toGetBestStockSymbolsWithStockRecordsRequest(it)
-                }
-                .block()
-        val request = GetBestStockSymbolsWithStockRecordsRequest
-            .getDefaultInstance()
+        val expectedResponse = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to).map {
+            toGetBestStockSymbolsWithStockRecordsRequest(it)
+        }.block()
+        val request = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
 
         // WHEN
         val actual = doRequest(
@@ -101,12 +89,9 @@ class NatsControllersTest {
         subject: String,
         payload: RequestT,
         parser: Parser<ResponseT>,
-    ): ResponseT {
-        val response = natsConnection.requestWithTimeout(
-            subject,
-            payload.toByteArray(),
-            Duration.ofSeconds(10L)
-        )
-        return parser.parseFrom(response.get().data)
+    ): ResponseT? {
+        return publisher.request(
+            subject, payload, parser
+        ).block()
     }
 }

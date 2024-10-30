@@ -6,8 +6,6 @@ plugins {
 dependencies {
     implementation(libs.finnhub.kotlin.client)
 
-    implementation(libs.jNats)
-
     implementation(libs.mongock.springboot.v3)
     implementation(libs.mongock.mongodb.springdata.v4.driver)
 
@@ -20,8 +18,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation(libs.reactorKafka)
 
-//    Move version to toml
-    implementation("systems.ajax:nats-spring-boot-starter:4.1.0.186.MASTER-SNAPSHOT")
+    implementation(libs.nats)
 
     implementation(project(":internal-api"))
 
@@ -32,7 +29,6 @@ dependencies {
 
     implementation(libs.jacksonJsr310)
 
-    testImplementation(libs.jNatsServerEmbedded)
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")

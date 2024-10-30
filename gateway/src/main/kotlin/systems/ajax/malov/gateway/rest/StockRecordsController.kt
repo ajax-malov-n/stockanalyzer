@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
@@ -15,16 +14,17 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse.ResponseCase
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 
 @RestController
 @RequestMapping("/api/v1/stock-records")
-class StockRecordsController(private val natsClient: NatsClient) {
+class StockRecordsController(private val publisher: NatsMessagePublisher) {
 
     @GetMapping("/best")
     fun getBestStockSymbolsWithStockRecords(
         @Valid requestDto: GetBestStockSymbolsWithStockRecordsRequestDto,
     ): Mono<AggregatedStockRecordResponseDto> =
-        natsClient.doRequest(
+        publisher.request(
             NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
             GetBestStockSymbolsWithStockRecordsRequest.newBuilder()
                 .apply {
@@ -38,7 +38,7 @@ class StockRecordsController(private val natsClient: NatsClient) {
 
     @GetMapping("/symbols")
     fun getAllManageableStockSymbols(): Mono<List<String>> =
-        natsClient.doRequest(
+        publisher.request(
             NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
             GetAllManageableStockSymbolsRequest.getDefaultInstance(),
             GetAllManageableStockSymbolsResponse.parser()
