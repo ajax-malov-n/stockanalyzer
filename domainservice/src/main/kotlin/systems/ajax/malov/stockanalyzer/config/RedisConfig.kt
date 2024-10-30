@@ -59,7 +59,6 @@ class RedisConfig(
         @Qualifier("reactiveRedisConnectionFactory") connectionFactory: ReactiveRedisConnectionFactory,
     ): ReactiveRedisTemplate<String, Map<String, List<MongoStockRecord>>> {
         val objectMapper = ObjectMapper()
-        objectMapper.findAndRegisterModules()
         objectMapper
             .registerKotlinModule()
             .registerModule(JavaTimeModule())
