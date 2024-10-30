@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 import reactor.core.scheduler.Schedulers
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.stockanalyzer.kafka.processor.StockPriceNotificationProcessorTest
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer

@@ -7,7 +7,7 @@ import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.proto.StockPriceMapper.toStockPrice

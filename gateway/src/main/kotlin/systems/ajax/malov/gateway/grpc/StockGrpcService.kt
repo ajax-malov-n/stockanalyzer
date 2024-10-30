@@ -4,7 +4,7 @@ import net.devh.boot.grpc.server.service.GrpcService
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.const.AppConst.QUANTITY_VALID_RANGE
 import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsRequestMapper.toInternal
@@ -52,7 +52,7 @@ class StockGrpcService(
 
     override fun getCurrentStockPrice(request: Mono<GetStockPriceRequest>): Flux<StockPrice> {
         return request.flatMapMany {
-            natsClient.subscribe(
+            natsClient.subscribeByStockSymbolName(
                 it.symbolName,
             )
         }

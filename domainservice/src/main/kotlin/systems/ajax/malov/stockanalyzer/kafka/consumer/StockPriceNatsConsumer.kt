@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kotlin.core.publisher.toMono
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.NatsSubject
 
 @Component

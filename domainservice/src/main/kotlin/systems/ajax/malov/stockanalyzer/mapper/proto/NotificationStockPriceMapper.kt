@@ -1,7 +1,7 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
 import org.bson.types.ObjectId
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 
 object NotificationStockPriceMapper {

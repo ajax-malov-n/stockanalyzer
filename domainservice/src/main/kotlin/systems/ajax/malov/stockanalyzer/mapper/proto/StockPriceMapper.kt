@@ -1,6 +1,6 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
 import systems.ajax.malov.stockanalyzer.mapper.proto.BigDecimalProtoMapper.convertToBigDecimalProto
 import systems.ajax.malov.stockanalyzer.mapper.proto.TimestampProtoMapper.toTimestampProto

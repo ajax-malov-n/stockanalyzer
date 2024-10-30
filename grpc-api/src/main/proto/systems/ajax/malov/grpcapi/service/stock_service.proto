@@ -5,7 +5,7 @@ package systems.ajax.malov.grpcapi.service;
 import "systems/ajax/malov/grpcapi/reqres/stock/get_all_manageable_stocks_symbols.proto";
 import "systems/ajax/malov/grpcapi/reqres/stock/get_best_stock_symbols_with_records.proto";
 import "systems/ajax/malov/grpcapi/reqres/stock/get_stock_price.proto";
-import "systems/ajax/malov/commonproto/stock/stock_price.proto";
+import "systems/ajax/malov/commonmodel/stock/stock_price.proto";
 
 service StockService {
   rpc getAllManageableStocksSymbols(grpcapi.reqres.stock.GetAllManageableStockSymbolsRequest)
@@ -15,5 +15,5 @@ service StockService {
       returns (grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsResponse);
 
   rpc getCurrentStockPrice(grpcapi.reqres.stock.GetStockPriceRequest)
-      returns (stream commonproto.stock.StockPrice);
+      returns (stream commonmodel.stock.StockPrice);
 }

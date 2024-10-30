@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
 import systems.ajax.malov.gateway.mapper.GetBestStockSymbolsWithStockRecordsResponseMapper.toGrpc
@@ -150,7 +150,7 @@ class StockGrpcServiceTest {
         }.build()
 
         every {
-            natsClient.subscribe(
+            natsClient.subscribeByStockSymbolName(
                 stockPrice.stockSymbolName
             )
         } returns expected
@@ -165,7 +165,7 @@ class StockGrpcServiceTest {
             .verifyComplete()
 
         verify {
-            natsClient.subscribe(
+            natsClient.subscribeByStockSymbolName(
                 stockPrice.stockSymbolName
             )
         }

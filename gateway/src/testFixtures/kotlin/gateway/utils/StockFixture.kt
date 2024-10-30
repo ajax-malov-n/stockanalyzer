@@ -2,10 +2,10 @@ package gateway.utils
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.Timestamp
-import systems.ajax.malov.commonproto.stock.BigDecimalProto
-import systems.ajax.malov.commonproto.stock.BigIntegerProto
-import systems.ajax.malov.commonproto.stock.ShortStockRecord
-import systems.ajax.malov.commonproto.stock.StockPrice
+import systems.ajax.malov.commonmodel.stock.BigDecimalProto
+import systems.ajax.malov.commonmodel.stock.BigIntegerProto
+import systems.ajax.malov.commonmodel.stock.ShortStockRecord
+import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.gateway.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse

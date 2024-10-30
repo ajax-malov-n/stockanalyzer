@@ -1,9 +1,9 @@
 package systems.ajax.malov.gateway.mapper
 
 import com.google.protobuf.ByteString
-import systems.ajax.malov.commonproto.stock.BigDecimalProto
-import systems.ajax.malov.commonproto.stock.BigIntegerProto
-import systems.ajax.malov.commonproto.stock.ShortStockRecord
+import systems.ajax.malov.commonmodel.stock.BigDecimalProto
+import systems.ajax.malov.commonmodel.stock.BigIntegerProto
+import systems.ajax.malov.commonmodel.stock.ShortStockRecord
 import systems.ajax.malov.gateway.dto.ShortStockRecordResponseDto
 import java.math.BigDecimal
 import java.math.BigInteger

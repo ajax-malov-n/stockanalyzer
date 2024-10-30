@@ -1,6 +1,6 @@
 package systems.ajax.malov.stockanalyzer.mapper.proto
 
-import systems.ajax.malov.commonproto.stock.ShortStockRecord
+import systems.ajax.malov.commonmodel.stock.ShortStockRecord
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.entity.MongoStockRecord
