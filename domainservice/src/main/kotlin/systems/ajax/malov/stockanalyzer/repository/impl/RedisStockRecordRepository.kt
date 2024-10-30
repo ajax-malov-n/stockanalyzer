@@ -35,7 +35,6 @@ class RedisStockRecordRepository(
     ): Mono<Map<String, List<MongoStockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
             .get(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix))
-            .log()
             .onErrorResume(::isRedisOrSocketException) {
                 log.error(it.message, it)
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
@@ -44,7 +43,7 @@ class RedisStockRecordRepository(
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to).flatMap {
                     saveTopStockSymbolsWithStockRecords(quantity, it)
                 }
-            ).log()
+            )
     }
 
     override fun findAllStockSymbols(): Flux<String> {
