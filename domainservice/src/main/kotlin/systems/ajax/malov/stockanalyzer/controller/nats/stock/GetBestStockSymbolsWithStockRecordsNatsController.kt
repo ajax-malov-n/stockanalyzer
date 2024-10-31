@@ -25,7 +25,6 @@ class GetBestStockSymbolsWithStockRecordsNatsController(
         GetBestStockSymbolsWithStockRecordsRequest.parser()
     override val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-
     override fun doOnUnexpectedError(
         inMsg: GetBestStockSymbolsWithStockRecordsRequest?,
         e: Exception,
@@ -36,7 +35,8 @@ class GetBestStockSymbolsWithStockRecordsNatsController(
             .build().toMono()
     }
 
-    override fun doHandle(inMsg: GetBestStockSymbolsWithStockRecordsRequest): Mono<GetBestStockSymbolsWithStockRecordsResponse> {
+    override fun doHandle(inMsg: GetBestStockSymbolsWithStockRecordsRequest):
+        Mono<GetBestStockSymbolsWithStockRecordsResponse> {
         val requestedStocks = if (inMsg.hasQuantity()) {
             inMsg.quantity
         } else {

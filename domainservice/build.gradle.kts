@@ -15,8 +15,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-    implementation("org.springframework.kafka:spring-kafka")
-    implementation(libs.reactorKafka)
+    implementation(libs.kafka)
 
     implementation(libs.nats)
 
@@ -29,6 +28,8 @@ dependencies {
 
     implementation(libs.jacksonJsr310)
 
+    testImplementation(libs.natsTest)
+    testImplementation(libs.kafkaTest)
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")

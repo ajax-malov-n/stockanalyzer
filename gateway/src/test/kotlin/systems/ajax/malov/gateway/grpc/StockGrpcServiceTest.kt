@@ -161,7 +161,6 @@ class StockGrpcServiceTest {
             )
         } returns expected
 
-
         // WHEN
         val response: Flux<StockPrice> =
             stockGrpcService.getCurrentStockPrice(request)
@@ -172,9 +171,7 @@ class StockGrpcServiceTest {
             .verifyComplete()
 
         verify {
-            manager.subscribe(
-                subject, any<(Message) -> StockPrice>()
-            )
+            manager.subscribe(subject, any<(Message) -> StockPrice>())
         }
     }
 }
