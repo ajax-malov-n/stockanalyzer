@@ -5,6 +5,8 @@ import com.google.protobuf.Parser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import reactor.core.publisher.Mono
+import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture
 import stockanalyzer.utils.StockFixture.testDate
 import systems.ajax.malov.internalapi.NatsSubject
@@ -20,7 +22,6 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @SpringBootTest
@@ -49,14 +50,20 @@ class NatsControllersTest {
 
         // WHEN
         val actual = doRequest(
-            NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS, request, GetAllManageableStockSymbolsResponse.parser()
+            NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
+            request,
+            GetAllManageableStockSymbolsResponse.parser()
         )
 
         // THEN
-        assertTrue(
-            actual!!.success.symbolsList.containsAll(expectedResponse.success.symbolsList),
-            "Must contain new stock with name AJAXSYS"
-        )
+        actual.test()
+            .assertNext {
+                assertTrue(
+                    it.success.symbolsList.containsAll(expectedResponse.success.symbolsList),
+                    "Must contain new stock with name AJAXSYS"
+                )
+            }
+            .verifyComplete()
     }
 
     @Test
@@ -71,7 +78,7 @@ class NatsControllersTest {
 
         val expectedResponse = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(5, from, to).map {
             toGetBestStockSymbolsWithStockRecordsRequest(it)
-        }.block()
+        }.block()!!
         val request = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
 
         // WHEN
@@ -82,16 +89,46 @@ class NatsControllersTest {
         )
 
         // THEN
-        assertEquals(expectedResponse, actual)
+        actual.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `getBestStocksToBuy should return success response with custom quantity`() {
+        // GIVEN
+        val bestStock1 = StockFixture.firstPlaceStockRecord()
+        val listOfUnsavedStocks = listOf(bestStock1)
+        mongoStockRecordRepository.insertAll(listOfUnsavedStocks).blockLast()
+        val from = Date.from(testDate().minus(1, ChronoUnit.HOURS))
+        val to = Date.from(testDate())
+
+        val expectedResponse = mongoStockRecordRepository.findTopStockSymbolsWithStockRecords(1, from, to).map {
+            toGetBestStockSymbolsWithStockRecordsRequest(it)
+        }.block()!!
+        val request = GetBestStockSymbolsWithStockRecordsRequest
+            .newBuilder().apply {
+                quantity = 1
+            }.build()
+
+        // WHEN
+        val actual = doRequest(
+            NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
+            request,
+            GetBestStockSymbolsWithStockRecordsResponse.parser()
+        )
+
+        // THEN
+        actual.test()
+            .expectNext(expectedResponse)
+            .verifyComplete()
     }
 
     private fun <RequestT : GeneratedMessageV3, ResponseT : GeneratedMessageV3> doRequest(
         subject: String,
         payload: RequestT,
         parser: Parser<ResponseT>,
-    ): ResponseT? {
-        return publisher.request(
-            subject, payload, parser
-        ).block()
+    ): Mono<ResponseT> {
+        return publisher.request(subject, payload, parser)
     }
 }
