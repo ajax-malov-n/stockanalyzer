@@ -12,7 +12,6 @@ import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -20,7 +19,6 @@ import kotlin.test.assertNotNull
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockkKafka
 class MongoStockRecordRepositoryTest {
 
     @Autowired
