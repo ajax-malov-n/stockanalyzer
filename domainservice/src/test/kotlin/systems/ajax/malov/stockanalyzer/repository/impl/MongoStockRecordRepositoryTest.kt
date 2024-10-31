@@ -4,22 +4,19 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.utils.StockFixture.testDate
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.assertNotNull
 
-@SpringBootTest
-@ActiveProfiles("test")
-class MongoStockRecordRepositoryTest {
+class MongoStockRecordRepositoryTest : IntegrationTestBase() {
 
     @Autowired
     private lateinit var mongoStockRecordRepository: MongoStockRecordRepository

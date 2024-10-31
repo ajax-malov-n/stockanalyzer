@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -22,7 +21,6 @@ import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.KafkaAdmin
-import org.springframework.test.context.ActiveProfiles
 import reactor.core.scheduler.Schedulers
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
@@ -31,6 +29,7 @@ import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -38,12 +37,10 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
-@SpringBootTest
 @Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
-@ActiveProfiles("test")
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE)
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE)
-class StockPriceNotificationProcessorTest {
+class StockPriceNotificationProcessorTest : IntegrationTestBase() {
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate
 

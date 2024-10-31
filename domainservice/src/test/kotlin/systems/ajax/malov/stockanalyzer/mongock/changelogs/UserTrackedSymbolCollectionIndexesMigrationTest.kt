@@ -2,16 +2,14 @@ package systems.ajax.malov.stockanalyzer.mongock.changelogs
 
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.test.context.ActiveProfiles
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import kotlin.test.Test
 import kotlin.test.assertNull
 
-@SpringBootTest
-@ActiveProfiles("test")
-class UserTrackedSymbolCollectionIndexesMigrationTest {
+
+class UserTrackedSymbolCollectionIndexesMigrationTest : IntegrationTestBase() {
 
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate

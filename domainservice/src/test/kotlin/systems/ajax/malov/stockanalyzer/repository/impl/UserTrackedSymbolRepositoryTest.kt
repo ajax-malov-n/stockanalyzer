@@ -5,26 +5,23 @@ import io.mockk.Called
 import io.mockk.verify
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.exists
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
-import org.springframework.test.context.ActiveProfiles
 import reactor.kotlin.test.test
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.repository.UserTrackedSymbolRepository
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-@SpringBootTest
-@ActiveProfiles("test")
-class UserTrackedSymbolRepositoryTest {
+class UserTrackedSymbolRepositoryTest : IntegrationTestBase() {
 
     @Autowired
     private lateinit var userTrackedSymbolRepository: UserTrackedSymbolRepository

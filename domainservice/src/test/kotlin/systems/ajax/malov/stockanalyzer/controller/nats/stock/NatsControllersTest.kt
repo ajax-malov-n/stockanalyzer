@@ -3,8 +3,6 @@ package systems.ajax.malov.stockanalyzer.controller.nats.stock
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import stockanalyzer.utils.StockFixture
@@ -16,6 +14,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -23,9 +22,7 @@ import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-@SpringBootTest
-@ActiveProfiles("test")
-class NatsControllersTest {
+class NatsControllersTest : IntegrationTestBase() {
     @Autowired
     private lateinit var publisher: NatsMessagePublisher
 

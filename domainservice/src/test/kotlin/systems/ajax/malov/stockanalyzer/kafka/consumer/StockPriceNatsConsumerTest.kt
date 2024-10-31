@@ -4,24 +4,21 @@ import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import reactor.core.scheduler.Schedulers
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import systems.ajax.nats.mock.junit5.NatsMockExtension
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-@SpringBootTest
-@ActiveProfiles("test")
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE)
-class StockPriceNatsConsumerTest {
+class StockPriceNatsConsumerTest : IntegrationTestBase() {
     @Autowired
     private lateinit var stockPrideProducer: StockPriceKafkaProducer
 
