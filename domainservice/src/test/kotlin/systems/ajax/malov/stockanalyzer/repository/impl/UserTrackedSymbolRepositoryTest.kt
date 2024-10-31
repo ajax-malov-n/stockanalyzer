@@ -18,7 +18,6 @@ import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.repository.UserTrackedSymbolRepository
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +25,6 @@ import kotlin.test.assertFalse
 
 @SpringBootTest
 @ActiveProfiles("test")
-@MockkNats
 @MockkKafka
 class UserTrackedSymbolRepositoryTest {
 

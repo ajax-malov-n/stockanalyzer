@@ -7,13 +7,11 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.ActiveProfiles
 import systems.ajax.malov.stockanalyzer.entity.MongoUser
 import systems.ajax.malov.stockanalyzer.util.annotations.MockkKafka
-import systems.ajax.malov.stockanalyzer.util.annotations.MockkNats
 import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @SpringBootTest
-@MockkNats
 @MockkKafka
 @ActiveProfiles("test")
 class UserCollectionIndexesMigrationTest {
