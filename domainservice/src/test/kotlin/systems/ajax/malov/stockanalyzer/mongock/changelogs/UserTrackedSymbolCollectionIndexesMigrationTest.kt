@@ -8,7 +8,6 @@ import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import kotlin.test.Test
 import kotlin.test.assertNull
 
-
 class UserTrackedSymbolCollectionIndexesMigrationTest : IntegrationTestBase() {
 
     @Autowired

@@ -43,21 +43,21 @@ object StockFixture {
         )
     }
 
-    fun firstPlaceStockRecord() = savedStockRecord().copy(
+    fun firstPlaceStockRecord() = unsavedStockRecord().copy(
         symbol = "AAPL",
         change = BigDecimal("2.0"),
         percentChange = BigDecimal("0.3"),
         dateOfRetrieval = Instant.now()
     )
 
-    fun alsoFirstPlaceStockRecord() = savedStockRecord().copy(
+    fun alsoFirstPlaceStockRecord() = unsavedStockRecord().copy(
         symbol = "AAPL",
         change = BigDecimal("2.5"),
         percentChange = BigDecimal("0.3"),
         dateOfRetrieval = Instant.now()
     )
 
-    fun secondPlaceStockRecord() = savedStockRecord().copy(
+    fun secondPlaceStockRecord() = unsavedStockRecord().copy(
         symbol = "SSSK",
         change = BigDecimal("1.0"),
         percentChange = BigDecimal("0.2"),

@@ -83,6 +83,8 @@ class NatsControllersTest : IntegrationTestBase() {
             GetBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
+        println("Actual: " + actual.block().success.stockSymbolsList.map { it.stockSymbol })
+        println("Actual: " + expectedResponse.success.stockSymbolsList.map { it.stockSymbol })
         // THEN
         actual.test()
             .expectNext(expectedResponse)

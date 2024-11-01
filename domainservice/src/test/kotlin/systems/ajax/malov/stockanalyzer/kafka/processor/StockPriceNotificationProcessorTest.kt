@@ -1,26 +1,16 @@
 package systems.ajax.malov.stockanalyzer.kafka.processor
 
-import org.apache.kafka.clients.admin.Admin
-import org.apache.kafka.clients.admin.KafkaAdminClient
-import org.apache.kafka.common.serialization.ByteArrayDeserializer
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Fields
 import org.springframework.data.mongodb.core.exists
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
-import org.springframework.kafka.core.ConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.core.KafkaAdmin
 import reactor.core.scheduler.Schedulers
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
@@ -37,7 +27,6 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
-@Import(StockPriceNotificationProcessorTest.MyKafkaTestConfiguration::class)
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE)
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE)
 class StockPriceNotificationProcessorTest : IntegrationTestBase() {
@@ -88,20 +77,6 @@ class StockPriceNotificationProcessorTest : IntegrationTestBase() {
                 "User tracked symbol must be not found after deletion"
             )
         }
-    }
-
-    class MyKafkaTestConfiguration {
-        @Bean
-        fun adminClient(kafkaAdmin: KafkaAdmin): Admin =
-            KafkaAdminClient.create(kafkaAdmin.configurationProperties)
-
-        @Bean
-        fun consumerFactory(kafkaProperties: KafkaProperties): ConsumerFactory<String, ByteArray> =
-            DefaultKafkaConsumerFactory(
-                kafkaProperties.buildConsumerProperties(null),
-                StringDeserializer(),
-                ByteArrayDeserializer()
-            )
     }
 
     companion object {

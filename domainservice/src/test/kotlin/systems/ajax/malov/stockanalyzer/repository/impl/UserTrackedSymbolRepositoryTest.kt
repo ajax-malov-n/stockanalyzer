@@ -26,7 +26,7 @@ class UserTrackedSymbolRepositoryTest : IntegrationTestBase() {
     @Autowired
     private lateinit var userTrackedSymbolRepository: UserTrackedSymbolRepository
 
-    @SpykBean // dont use mockito
+    @SpykBean
     private lateinit var mongoTemplate: MongoTemplate
 
     @Test
@@ -47,6 +47,8 @@ class UserTrackedSymbolRepositoryTest : IntegrationTestBase() {
                 assertEquals(saved.id, it.id)
             }
             .verifyComplete()
+
+        mongoTemplate.remove(saved, MongoUserTrackedSymbol.COLLECTION_NAME)
     }
 
     @Test
