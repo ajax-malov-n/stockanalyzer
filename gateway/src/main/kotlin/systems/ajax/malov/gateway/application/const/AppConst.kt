@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.const
+package systems.ajax.malov.gateway.application.const
 
 object AppConst {
     @SuppressWarnings("MagicNumber")

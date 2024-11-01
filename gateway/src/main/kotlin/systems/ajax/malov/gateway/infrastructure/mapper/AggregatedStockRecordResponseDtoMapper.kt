@@ -1,7 +1,7 @@
-package systems.ajax.malov.gateway.mapper
+package systems.ajax.malov.gateway.infrastructure.mapper
 
-import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
-import systems.ajax.malov.gateway.mapper.AggregatedStockRecordItemResponseDtoMapper.toAggregatedStockRecordItemResponse
+import systems.ajax.malov.gateway.infrastructure.dto.AggregatedStockRecordResponseDto
+import systems.ajax.malov.gateway.infrastructure.mapper.AggregatedStockRecordItemResponseDtoMapper.toAggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse.ResponseCase
 

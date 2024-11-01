@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.dto
+package systems.ajax.malov.gateway.infrastructure.dto
 
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min

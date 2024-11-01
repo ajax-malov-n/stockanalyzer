@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.mapper
+package systems.ajax.malov.gateway.infrastructure.mapper
 
 import systems.ajax.malov.grpcapi.reqres.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse.ResponseCase

@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.mapper
+package systems.ajax.malov.gateway.infrastructure.mapper
 
 import systems.ajax.malov.grpcapi.reqres.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsResponse
