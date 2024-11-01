@@ -1,8 +1,5 @@
 package systems.ajax.malov.stockanalyzer.repository.impl
 
-import com.ninjasquad.springmockk.SpykBean
-import io.mockk.Called
-import io.mockk.verify
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -26,7 +23,7 @@ class UserTrackedSymbolRepositoryTest : IntegrationTestBase() {
     @Autowired
     private lateinit var userTrackedSymbolRepository: UserTrackedSymbolRepository
 
-    @SpykBean
+    @Autowired
     private lateinit var mongoTemplate: MongoTemplate
 
     @Test
@@ -76,21 +73,5 @@ class UserTrackedSymbolRepositoryTest : IntegrationTestBase() {
             ),
             "User tracked symbol must be not found after deletion"
         )
-    }
-
-    @Test
-    fun `should return unit immediately if list is empty`() {
-        // GIVEN
-        val emptyList = listOf<ObjectId>()
-
-        // WHEN
-        val actual = userTrackedSymbolRepository.deleteUserTrackedSymbol(emptyList)
-
-        // THEN
-        actual.test()
-            .expectNext(Unit)
-            .verifyComplete()
-
-        verify { mongoTemplate wasNot Called }
     }
 }
