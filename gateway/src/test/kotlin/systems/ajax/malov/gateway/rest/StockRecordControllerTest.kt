@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.gateway.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.internalapi.NatsSubject
@@ -21,11 +20,12 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 
 @ExtendWith(MockKExtension::class)
 class StockRecordControllerTest {
     @MockK
-    private lateinit var natsClient: NatsClient
+    private lateinit var publisher: NatsMessagePublisher
 
     @InjectMockKs
     private lateinit var stockRecordsController: StockRecordsController
@@ -37,7 +37,7 @@ class StockRecordControllerTest {
         val requestDto = createGetBestStockSymbolsWithStockRecordsRequestDto(5)
         val requestProto = GetBestStockSymbolsWithStockRecordsRequest.newBuilder().setQuantity(5).build()
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -54,7 +54,7 @@ class StockRecordControllerTest {
             .expectNext(expected)
             .verifyComplete()
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -70,7 +70,7 @@ class StockRecordControllerTest {
             .copy(quantity = null)
         val requestProto = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -87,7 +87,7 @@ class StockRecordControllerTest {
             .expectNext(expected)
             .verifyComplete()
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestProto,
                 GetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -106,7 +106,7 @@ class StockRecordControllerTest {
             .build()
 
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -122,7 +122,7 @@ class StockRecordControllerTest {
             .verifyComplete()
 
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -139,7 +139,7 @@ class StockRecordControllerTest {
             }.build()
 
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -157,7 +157,7 @@ class StockRecordControllerTest {
             .verify()
 
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -171,7 +171,7 @@ class StockRecordControllerTest {
         val natsResponse = GetAllManageableStockSymbolsResponse.getDefaultInstance()
 
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()
@@ -189,7 +189,7 @@ class StockRecordControllerTest {
             .verify()
 
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 GetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 GetAllManageableStockSymbolsResponse.parser()

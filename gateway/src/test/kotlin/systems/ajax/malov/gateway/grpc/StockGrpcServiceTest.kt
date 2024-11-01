@@ -8,6 +8,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import io.nats.client.Message
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Flux
@@ -16,7 +18,6 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import systems.ajax.malov.commonmodel.stock.StockPrice
-import systems.ajax.malov.gateway.client.NatsClient
 import systems.ajax.malov.gateway.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
 import systems.ajax.malov.gateway.mapper.GetBestStockSymbolsWithStockRecordsResponseMapper.toGrpc
 import systems.ajax.malov.grpcapi.reqres.stock.GetAllManageableStockSymbolsRequest
@@ -25,7 +26,8 @@ import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecor
 import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.grpcapi.reqres.stock.GetStockPriceRequest
 import systems.ajax.malov.internalapi.NatsSubject
-import kotlin.test.assertEquals
+import systems.ajax.nats.handler.api.NatsHandlerManager
+import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest as InternalGetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse as InternalGetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest as InternalGetBestStockSymbolsWithStockRecordsRequest
@@ -34,7 +36,10 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 @ExtendWith(MockKExtension::class)
 class StockGrpcServiceTest {
     @MockK
-    private lateinit var natsClient: NatsClient
+    private lateinit var publisher: NatsMessagePublisher
+
+    @MockK
+    private lateinit var manager: NatsHandlerManager
 
     @InjectMockKs
     private lateinit var stockGrpcService: StockGrpcService
@@ -50,7 +55,7 @@ class StockGrpcServiceTest {
             quantity = 5
         }.build()
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -66,7 +71,7 @@ class StockGrpcServiceTest {
             .expectNext(expected.toGrpc())
             .verifyComplete()
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -81,7 +86,7 @@ class StockGrpcServiceTest {
         val requestNats = InternalGetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         val requestGrpc = GetBestStockSymbolsWithStockRecordsRequest.getDefaultInstance()
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -97,7 +102,7 @@ class StockGrpcServiceTest {
             .expectNext(expected.toGrpc())
             .verifyComplete()
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_N_BEST_STOCK_SYMBOLS,
                 requestNats,
                 InternalGetBestStockSymbolsWithStockRecordsResponse.parser()
@@ -115,7 +120,7 @@ class StockGrpcServiceTest {
             .build()
 
         every {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 InternalGetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 InternalGetAllManageableStockSymbolsResponse.parser()
@@ -132,7 +137,7 @@ class StockGrpcServiceTest {
             .verifyComplete()
 
         verify {
-            natsClient.doRequest(
+            publisher.request(
                 NatsSubject.StockRequest.GET_ALL_MAN_SYMBOLS,
                 InternalGetAllManageableStockSymbolsRequest.getDefaultInstance(),
                 InternalGetAllManageableStockSymbolsResponse.parser()
@@ -149,9 +154,10 @@ class StockGrpcServiceTest {
             symbolName = stockPrice.stockSymbolName
         }.build()
 
+        val subject = NatsSubject.StockRequest.getStockPriceSubject(request.symbolName)
         every {
-            natsClient.subscribeByStockSymbolName(
-                stockPrice.stockSymbolName
+            manager.subscribe(
+                subject, any<(Message) -> StockPrice>()
             )
         } returns expected
 
@@ -165,9 +171,7 @@ class StockGrpcServiceTest {
             .verifyComplete()
 
         verify {
-            natsClient.subscribeByStockSymbolName(
-                stockPrice.stockSymbolName
-            )
+            manager.subscribe(subject, any<(Message) -> StockPrice>())
         }
     }
 }

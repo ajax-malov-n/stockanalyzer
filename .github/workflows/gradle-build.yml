@@ -7,6 +7,12 @@ on:
     branches:
       - '**'
 
+env:
+  gradle_cmd: ./gradlew --parallel --build-cache
+    -PAWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+    -PAWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    -Prepository=${{ secrets.PRIVATEMAVENREPO }}
+
 jobs:
   build:
 
@@ -36,14 +42,13 @@ jobs:
       - name: Run Docker Compose
         run: docker compose --profile test up -d
 
-
       - name: Build with Gradle
-        run: ./gradlew build -x deltaCoverage --parallel
+        run: ${gradle_cmd} build -x deltaCoverage
 
       - name: Run Delta Coverage check
         if: ${{ github.event_name == 'pull_request' && ( success() || failure() ) }}
         continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'suppress-delta-coverage') }}
-        run: ./gradlew deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
+        run: ${gradle_cmd} deltaCoverage -PdiffBase="refs/remotes/origin/$GITHUB_BASE_REF"
 
       - name: Append Delta Coverage Summary
         if: ${{ github.event_name == 'pull_request' && !cancelled() }}

@@ -6,8 +6,6 @@ plugins {
 dependencies {
     implementation(libs.finnhub.kotlin.client)
 
-    implementation(libs.jNats)
-
     implementation(libs.mongock.springboot.v3)
     implementation(libs.mongock.mongodb.springdata.v4.driver)
 
@@ -17,8 +15,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-    implementation("org.springframework.kafka:spring-kafka")
-    implementation(libs.reactorKafka)
+    implementation(libs.kafka)
+
+    implementation(libs.nats)
 
     implementation(project(":internal-api"))
 
@@ -29,7 +28,8 @@ dependencies {
 
     implementation(libs.jacksonJsr310)
 
-    testImplementation(libs.jNatsServerEmbedded)
+    testImplementation(libs.natsTest)
+    testImplementation(libs.kafkaTest)
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")

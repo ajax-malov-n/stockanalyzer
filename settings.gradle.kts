@@ -4,3 +4,8 @@ include("gateway")
 include("domainservice")
 include("common-proto")
 include("grpc-api")
+
+
+buildCache {
+    local.isEnabled = true
+}

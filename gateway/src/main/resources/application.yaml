@@ -3,7 +3,9 @@ spring:
     name: gwstockanalyzer
 
 nats:
-  url: "nats://nats:4222"
+  spring:
+    io.nats.client:
+      servers: "nats://nats:4222"
 
 grpc:
   server:
