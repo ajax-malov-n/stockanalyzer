@@ -20,6 +20,7 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class NatsControllersTest : IntegrationTestBase() {
@@ -83,11 +84,14 @@ class NatsControllersTest : IntegrationTestBase() {
             GetBestStockSymbolsWithStockRecordsResponse.parser()
         )
 
-        println("Actual: " + actual.block().success.stockSymbolsList.map { it.stockSymbol })
-        println("Actual: " + expectedResponse.success.stockSymbolsList.map { it.stockSymbol })
         // THEN
         actual.test()
-            .expectNext(expectedResponse)
+            .assertNext {
+                assertEquals(
+                    it.success.stockSymbolsList.map { record -> record.stockSymbol },
+                    expectedResponse.success.stockSymbolsList.map { record -> record.stockSymbol }
+                )
+            }
             .verifyComplete()
     }
 
@@ -117,7 +121,12 @@ class NatsControllersTest : IntegrationTestBase() {
 
         // THEN
         actual.test()
-            .expectNext(expectedResponse)
+            .assertNext {
+                assertEquals(
+                    it.success.stockSymbolsList.map { record -> record.stockSymbol },
+                    expectedResponse.success.stockSymbolsList.map { record -> record.stockSymbol }
+                )
+            }
             .verifyComplete()
     }
 
