@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.infrastructure.dto
+package systems.ajax.malov.gateway.infrastructure.rest.dto
 
 import java.math.BigDecimal
 

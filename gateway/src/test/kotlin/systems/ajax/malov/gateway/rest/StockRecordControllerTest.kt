@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
-import systems.ajax.malov.gateway.application.port.output.StockMessageHandlerOutPort
-import systems.ajax.malov.gateway.infrastructure.dto.AggregatedStockRecordResponseDto
+import systems.ajax.malov.gateway.application.port.output.StockMessageOutPort
 import systems.ajax.malov.gateway.infrastructure.mapper.AggregatedStockRecordResponseDtoMapper.toAggregatedStockItemResponseDto
 import systems.ajax.malov.gateway.infrastructure.rest.StockRecordsController
+import systems.ajax.malov.gateway.infrastructure.rest.dto.AggregatedStockRecordResponseDto
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
@@ -24,7 +24,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 @ExtendWith(MockKExtension::class)
 class StockRecordControllerTest {
     @MockK
-    private lateinit var messageHandlerOutPort: StockMessageHandlerOutPort
+    private lateinit var messageHandlerOutPort: StockMessageOutPort
 
     @InjectMockKs
     private lateinit var stockRecordsController: StockRecordsController

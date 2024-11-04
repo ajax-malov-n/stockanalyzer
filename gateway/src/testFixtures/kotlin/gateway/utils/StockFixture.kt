@@ -6,7 +6,7 @@ import systems.ajax.malov.commonmodel.stock.BigDecimalProto
 import systems.ajax.malov.commonmodel.stock.BigIntegerProto
 import systems.ajax.malov.commonmodel.stock.ShortStockRecord
 import systems.ajax.malov.commonmodel.stock.StockPrice
-import systems.ajax.malov.gateway.infrastructure.dto.GetBestStockSymbolsWithStockRecordsRequestDto
+import systems.ajax.malov.gateway.infrastructure.rest.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.internalapi.input.reqreply.stock.AggregatedStockRecordItemResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import java.nio.ByteBuffer

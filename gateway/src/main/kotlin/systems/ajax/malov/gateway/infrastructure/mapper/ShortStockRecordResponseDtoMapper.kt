@@ -4,7 +4,7 @@ import com.google.protobuf.ByteString
 import systems.ajax.malov.commonmodel.stock.BigDecimalProto
 import systems.ajax.malov.commonmodel.stock.BigIntegerProto
 import systems.ajax.malov.commonmodel.stock.ShortStockRecord
-import systems.ajax.malov.gateway.infrastructure.dto.ShortStockRecordResponseDto
+import systems.ajax.malov.gateway.infrastructure.rest.dto.ShortStockRecordResponseDto
 import java.math.BigDecimal
 import java.math.BigInteger
 

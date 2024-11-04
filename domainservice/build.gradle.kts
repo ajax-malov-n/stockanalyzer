@@ -30,9 +30,6 @@ dependencies {
 
     testImplementation(libs.natsTest)
     testImplementation(libs.kafkaTest)
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:mongodb")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
 }
 
 tasks.named("check") {

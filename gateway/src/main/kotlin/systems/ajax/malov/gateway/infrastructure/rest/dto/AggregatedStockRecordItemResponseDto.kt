@@ -1,4 +1,4 @@
-package systems.ajax.malov.gateway.infrastructure.dto
+package systems.ajax.malov.gateway.infrastructure.rest.dto
 
 data class AggregatedStockRecordItemResponseDto(
     val stockSymbol: String,

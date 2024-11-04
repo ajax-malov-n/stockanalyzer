@@ -1,6 +1,6 @@
 package systems.ajax.malov.gateway.infrastructure.mapper
 
-import systems.ajax.malov.gateway.infrastructure.dto.GetBestStockSymbolsWithStockRecordsRequestDto
+import systems.ajax.malov.gateway.infrastructure.rest.dto.GetBestStockSymbolsWithStockRecordsRequestDto
 import systems.ajax.malov.grpcapi.reqres.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest as InternalGetBestStockSymbolsWithStockRecordsRequest
 

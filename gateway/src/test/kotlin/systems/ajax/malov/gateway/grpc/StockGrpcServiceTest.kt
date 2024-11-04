@@ -17,7 +17,7 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import reactor.kotlin.test.test
 import systems.ajax.malov.commonmodel.stock.StockPrice
-import systems.ajax.malov.gateway.application.port.output.StockMessageHandlerOutPort
+import systems.ajax.malov.gateway.application.port.output.StockMessageOutPort
 import systems.ajax.malov.gateway.infrastructure.grpc.StockGrpcService
 import systems.ajax.malov.gateway.infrastructure.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
 import systems.ajax.malov.gateway.infrastructure.mapper.GetBestStockSymbolsWithStockRecordsResponseMapper.toGrpc
@@ -33,7 +33,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 @ExtendWith(MockKExtension::class)
 class StockGrpcServiceTest {
     @MockK
-    private lateinit var messageHandlerOutPort: StockMessageHandlerOutPort
+    private lateinit var messageHandlerOutPort: StockMessageOutPort
 
     @InjectMockKs
     private lateinit var stockGrpcService: StockGrpcService

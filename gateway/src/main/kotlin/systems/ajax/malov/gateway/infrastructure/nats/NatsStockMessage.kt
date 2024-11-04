@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import systems.ajax.malov.commonmodel.stock.StockPrice
-import systems.ajax.malov.gateway.application.port.output.StockMessageHandlerOutPort
+import systems.ajax.malov.gateway.application.port.output.StockMessageOutPort
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
@@ -14,10 +14,10 @@ import systems.ajax.nats.handler.api.NatsHandlerManager
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 
 @Service
-class NatsStockMessageHandler(
+class NatsStockMessage(
     private val publisher: NatsMessagePublisher,
     private val manager: NatsHandlerManager,
-) : StockMessageHandlerOutPort {
+) : StockMessageOutPort {
     override fun getAllManageableStocksSymbols(request: GetAllManageableStockSymbolsRequest):
         Mono<GetAllManageableStockSymbolsResponse> {
         return publisher.request(

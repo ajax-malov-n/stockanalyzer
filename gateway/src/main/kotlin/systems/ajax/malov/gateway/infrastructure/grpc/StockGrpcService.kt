@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.gateway.application.const.AppConst.QUANTITY_VALID_RANGE
-import systems.ajax.malov.gateway.application.port.output.StockMessageHandlerOutPort
+import systems.ajax.malov.gateway.application.port.output.StockMessageOutPort
 import systems.ajax.malov.gateway.infrastructure.mapper.GetAllManageableStockSymbolsRequestMapper.toInternal
 import systems.ajax.malov.gateway.infrastructure.mapper.GetAllManageableStockSymbolsResponseMapper.toGrpc
 import systems.ajax.malov.gateway.infrastructure.mapper.GetBestStockSymbolsWithStockRecordsRequestMapper.toInternal
@@ -21,7 +21,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 
 @GrpcService
 class StockGrpcService(
-    private val messageHandlerOutPort: StockMessageHandlerOutPort,
+    private val messageHandlerOutPort: StockMessageOutPort,
 ) : ReactorStockServiceGrpc.StockServiceImplBase() {
     override fun getAllManageableStocksSymbols(
         request: Mono<GetAllManageableStockSymbolsRequest>,

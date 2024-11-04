@@ -8,7 +8,7 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 
-interface StockMessageHandlerOutPort {
+interface StockMessageOutPort {
     fun getAllManageableStocksSymbols(
         request: GetAllManageableStockSymbolsRequest,
     ): Mono<GetAllManageableStockSymbolsResponse>
