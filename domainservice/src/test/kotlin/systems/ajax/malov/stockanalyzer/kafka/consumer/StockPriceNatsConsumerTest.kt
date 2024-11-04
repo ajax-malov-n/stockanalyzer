@@ -9,8 +9,8 @@ import stockanalyzer.utils.StockFixture.unsavedStockRecord
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
+import systems.ajax.malov.stockrecord.infrastructure.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.nats.mock.junit5.NatsMockExtension
 import java.time.Duration
 import java.util.concurrent.TimeUnit

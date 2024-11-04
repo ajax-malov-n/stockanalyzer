@@ -17,9 +17,9 @@ import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.kafka.mock.KafkaMockExtension
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
-import systems.ajax.malov.stockanalyzer.entity.MongoUserTrackedSymbol
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
 import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
+import systems.ajax.malov.stockrecord.infrastructure.kafka.producer.StockPriceKafkaProducer
+import systems.ajax.malov.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit

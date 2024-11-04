@@ -6,9 +6,6 @@ plugins {
 dependencies {
     implementation(libs.finnhub.kotlin.client)
 
-    implementation(libs.mongock.springboot.v3)
-    implementation(libs.mongock.mongodb.springdata.v4.driver)
-
     implementation(libs.shedlock.spring)
     implementation(libs.shedlock.provider.mongo)
 
@@ -20,6 +17,9 @@ dependencies {
     implementation(libs.nats)
 
     implementation(project(":internal-api"))
+    implementation(project(":domainservice:migration"))
+    implementation(project(":domainservice:stock-record"))
+    implementation(project(":domainservice:user-tracked-symbol"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 

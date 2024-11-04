@@ -12,9 +12,9 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStock
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.stockanalyzer.mapper.proto.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.stockanalyzer.repository.impl.MongoStockRecordRepository
 import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
+import systems.ajax.malov.stockrecord.infrastructure.mongo.impl.MongoStockRecordRepository
+import systems.ajax.malov.stockrecord.infrastructure.nats.mapper.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
 import java.time.Duration
 import java.time.temporal.ChronoUnit

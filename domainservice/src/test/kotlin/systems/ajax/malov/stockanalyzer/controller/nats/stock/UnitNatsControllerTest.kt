@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
-import systems.ajax.malov.stockanalyzer.service.StockRecordAnalyzerService
+import systems.ajax.malov.stockrecord.application.port.input.StockRecordAnalyzerServiceInPort
 import kotlin.test.Test
 
 @ExtendWith(MockKExtension::class)
@@ -19,7 +19,7 @@ class UnitNatsControllerTest {
 
     @MockK
     @SuppressWarnings("UnusedPrivateProperty")
-    private lateinit var stockService: StockRecordAnalyzerService
+    private lateinit var stockService: StockRecordAnalyzerServiceInPort
 
     @Test
     fun `doOnUnexpectedError should return response with error message`() {

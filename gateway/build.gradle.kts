@@ -17,7 +17,5 @@ dependencies {
     implementation(libs.grpcSpringStarter)
     implementation(libs.grpcServerSpringStarter)
 
-    testImplementation("com.tngtech.archunit:archunit:1.3.0")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }

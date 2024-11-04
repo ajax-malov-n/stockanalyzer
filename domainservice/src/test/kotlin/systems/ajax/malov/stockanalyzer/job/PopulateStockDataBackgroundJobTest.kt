@@ -10,18 +10,17 @@ import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import stockanalyzer.utils.StockFixture.savedStockRecord
 import stockanalyzer.utils.StockFixture.unsavedStockRecord
-import systems.ajax.malov.stockanalyzer.kafka.producer.StockPriceKafkaProducer
-import systems.ajax.malov.stockanalyzer.repository.StockRecordRepository
-import systems.ajax.malov.stockanalyzer.service.StockRecordClientApi
+import systems.ajax.malov.stockrecord.application.port.input.StockRecordClientApiInPort
+import systems.ajax.malov.stockrecord.infrastructure.kafka.producer.StockPriceKafkaProducer
 
 @ExtendWith(MockKExtension::class)
 class PopulateStockDataBackgroundJobTest {
 
     @MockK
-    private lateinit var stockRecordClientApi: StockRecordClientApi
+    private lateinit var stockRecordClientApiInPort: StockRecordClientApiInPort
 
     @MockK
-    private lateinit var stockRecordRepository: StockRecordRepository
+    private lateinit var `stockRecordRepositoryOutPort.kt`: `StockRecordRepositoryOutPort.kt`
 
     @MockK
     private lateinit var stockPriceKafkaProducer: StockPriceKafkaProducer
@@ -34,10 +33,10 @@ class PopulateStockDataBackgroundJobTest {
         // GIVEN
         val retrievedStockRecords = listOf(unsavedStockRecord())
         every {
-            stockRecordClientApi.getAllStockRecords()
+            stockRecordClientApiInPort.getAllStockRecords()
         } returns retrievedStockRecords.toFlux()
         every {
-            stockRecordRepository.insertAll(retrievedStockRecords)
+            `stockRecordRepositoryOutPort.kt`.insertAll(retrievedStockRecords)
         } returns listOf(savedStockRecord()).toFlux()
         every {
             stockPriceKafkaProducer.sendStockPrice(retrievedStockRecords)
@@ -48,10 +47,10 @@ class PopulateStockDataBackgroundJobTest {
 
         // THEN
         every {
-            stockRecordClientApi.getAllStockRecords()
+            stockRecordClientApiInPort.getAllStockRecords()
         }
         every {
-            stockRecordRepository.insertAll(retrievedStockRecords)
+            `stockRecordRepositoryOutPort.kt`.insertAll(retrievedStockRecords)
         }
         every {
             stockPriceKafkaProducer.sendStockPrice(retrievedStockRecords)
