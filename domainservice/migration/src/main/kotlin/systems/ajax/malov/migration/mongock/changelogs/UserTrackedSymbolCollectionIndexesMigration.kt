@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.index.Index
 import org.springframework.data.mongodb.core.indexOps
-import systems.ajax.malov.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
 
 @ChangeUnit(id = "CreateUserTrackedSymbolCollectionIndexesChangelog", order = "003", author = "malov.n@ajax.com")
 class UserTrackedSymbolCollectionIndexesMigration(private val mongoTemplate: MongoTemplate) {

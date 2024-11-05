@@ -12,8 +12,7 @@ plugins {
 dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    //Move to libs(
-    testImplementation("com.tngtech.archunit:archunit:1.3.0")
+    testImplementation(libDeps.archunit)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

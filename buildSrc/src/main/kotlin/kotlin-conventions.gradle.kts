@@ -28,7 +28,7 @@ java {
 
 detekt {
     buildUponDefaultConfig = true
-    config.from(file("detekt.yml"))
+    config.from(file("${rootDir}/detekt.yml"))
 }
 
 tasks.withType<Detekt> {

@@ -1,7 +1,7 @@
 package stockanalyzer.utils
 
 import org.bson.types.ObjectId
-import systems.ajax.malov.stockrecord.infrastructure.mongo.entity.MongoStockRecord
+import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.entity.MongoStockRecord
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant

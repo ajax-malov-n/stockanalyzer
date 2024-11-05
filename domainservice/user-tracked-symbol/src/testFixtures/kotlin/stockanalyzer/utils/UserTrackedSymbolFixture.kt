@@ -1,7 +1,7 @@
 package stockanalyzer.utils
 
 import org.bson.types.ObjectId
-import systems.ajax.malov.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
 import java.math.BigDecimal
 
 object UserTrackedSymbolFixture {

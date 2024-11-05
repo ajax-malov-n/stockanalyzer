@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.mongodb.core.CollectionOptions
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.timeseries.Granularity
-import systems.ajax.malov.stockrecord.infrastructure.mongo.entity.MongoStockRecord
+import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.entity.MongoStockRecord
 
 @ChangeUnit(id = "CreateTimeSeriesStockCollectionChangelog", order = "001", author = "malov.n@ajax.com")
 class TimeSeriesStockCollectionMigration(private val mongoTemplate: MongoTemplate) {
