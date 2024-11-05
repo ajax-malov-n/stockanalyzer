@@ -3,8 +3,6 @@ import systems.ajax.malov.stockanalyzer.libDeps
 
 plugins {
     kotlin("jvm")
-    jacoco
-    `java-test-fixtures`
     id("io.gitlab.arturbosch.detekt")
 }
 
@@ -37,15 +35,5 @@ tasks.withType<Detekt> {
         xml.required.set(true)
         sarif.required.set(true)
         md.required.set(true)
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-configurations {
-    named("testFixturesImplementation") {
-        extendsFrom(configurations.implementation.get())
     }
 }

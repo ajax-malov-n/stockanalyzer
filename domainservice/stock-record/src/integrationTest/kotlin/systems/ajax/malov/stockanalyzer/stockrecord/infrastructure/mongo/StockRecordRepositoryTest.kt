@@ -1,17 +1,17 @@
-package systems.ajax.malov.stockanalyzer.it.mongo.stockrecord
+package systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.kotlin.test.test
-import stockanalyzer.utils.StockFixture.alsoFirstPlaceStockRecord
-import stockanalyzer.utils.StockFixture.domainStockRecord
-import stockanalyzer.utils.StockFixture.firstPlaceStockRecord
-import stockanalyzer.utils.StockFixture.secondPlaceStockRecord
-import stockanalyzer.utils.StockFixture.testDate
-import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.impl.MongoStockRecordRepository
-import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
+import stockanalyzer.stockrecord.utils.StockFixture.alsoFirstPlaceStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.domainStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.firstPlaceStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.secondPlaceStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.testDate
+import systems.ajax.malov.stockanalyzer.stockrecord.application.port.out.StockRecordRepositoryOutPort
+import util.IntegrationTestBase
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -20,7 +20,7 @@ import kotlin.test.assertNotNull
 class StockRecordRepositoryTest : IntegrationTestBase() {
 
     @Autowired
-    private lateinit var mongoStockRecordRepository: MongoStockRecordRepository
+    private lateinit var mongoStockRecordRepository: StockRecordRepositoryOutPort
 
     @Test
     fun `insertAll fun should insert all stocks records and retrieve inserted stock records ids`() {

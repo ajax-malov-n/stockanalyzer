@@ -1,4 +1,4 @@
-package systems.ajax.malov.migration.mongock.changelogs
+package systems.ajax.malov.stockanalyzer.migration.mongock.changelogs
 
 import io.mongock.api.annotations.ChangeUnit
 import io.mongock.api.annotations.Execution

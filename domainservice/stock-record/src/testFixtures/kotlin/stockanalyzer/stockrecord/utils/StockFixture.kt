@@ -41,4 +41,25 @@ object StockFixture {
 
     fun notAggregatedResponseForBestStockSymbolsWithStockRecords() =
         linkedMapOf(TEST_STOCK_SYMBOL to listOf(domainStockRecord()))
+
+    fun firstPlaceStockRecord() = domainStockRecord().copy(
+        symbol = "AAPL",
+        change = BigDecimal("2.0"),
+        percentChange = BigDecimal("0.3"),
+        dateOfRetrieval = Instant.now()
+    )
+
+    fun alsoFirstPlaceStockRecord() = domainStockRecord().copy(
+        symbol = "AAPL",
+        change = BigDecimal("2.5"),
+        percentChange = BigDecimal("0.3"),
+        dateOfRetrieval = Instant.now()
+    )
+
+    fun secondPlaceStockRecord() = domainStockRecord().copy(
+        symbol = "SSSK",
+        change = BigDecimal("1.0"),
+        percentChange = BigDecimal("0.2"),
+        dateOfRetrieval = Instant.now()
+    )
 }

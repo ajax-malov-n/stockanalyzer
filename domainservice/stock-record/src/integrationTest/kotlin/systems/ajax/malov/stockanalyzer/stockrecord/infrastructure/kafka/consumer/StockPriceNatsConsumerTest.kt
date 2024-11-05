@@ -1,17 +1,17 @@
-package systems.ajax.malov.stockanalyzer.it.kafka.stockrecord.consumer
+package systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.kafka.consumer
 
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.scheduler.Schedulers
-import stockanalyzer.utils.StockFixture.domainStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.domainStockRecord
 import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.NatsSubject
-import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.kafka.producer.StockPriceKafkaProducer
-import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
+import systems.ajax.malov.stockanalyzer.stockrecord.application.port.out.StockPriceProducerOutPort
 import systems.ajax.nats.mock.junit5.NatsMockExtension
+import util.IntegrationTestBase
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -20,7 +20,7 @@ import kotlin.test.assertNotNull
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE)
 class StockPriceNatsConsumerTest : IntegrationTestBase() {
     @Autowired
-    private lateinit var stockPrideProducer: StockPriceKafkaProducer
+    private lateinit var stockPrideProducer: StockPriceProducerOutPort
 
     @Test
     fun `should consumer stock price message`() {

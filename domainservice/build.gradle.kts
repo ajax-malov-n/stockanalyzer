@@ -1,6 +1,7 @@
 plugins {
     `spring-conventions`
     `grpc-conventions`
+    `testing-conventions`
 }
 
 dependencies {

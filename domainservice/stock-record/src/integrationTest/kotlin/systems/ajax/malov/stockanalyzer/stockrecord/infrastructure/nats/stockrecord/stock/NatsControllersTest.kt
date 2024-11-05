@@ -1,13 +1,14 @@
-package systems.ajax.malov.stockanalyzer.it.nats.stockrecord.stock
+package systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.nats.stockrecord.stock
 
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.publisher.Mono
 import reactor.kotlin.test.test
-import stockanalyzer.utils.StockFixture
-import stockanalyzer.utils.StockFixture.domainStockRecord
-import stockanalyzer.utils.StockFixture.testDate
+import stockanalyzer.stockrecord.utils.StockFixture.alsoFirstPlaceStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.domainStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.firstPlaceStockRecord
+import stockanalyzer.stockrecord.utils.StockFixture.testDate
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsRequest
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetAllManageableStockSymbolsResponse
@@ -15,8 +16,8 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.impl.MongoStockRecordRepository
 import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.nats.mapper.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
-import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
+import util.IntegrationTestBase
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -66,8 +67,8 @@ class NatsControllersTest : IntegrationTestBase() {
     @Test
     fun `getBestStocksToBuy should return success response`() {
         // GIVEN
-        val bestStock1 = StockFixture.firstPlaceStockRecord()
-        val bestStock2 = StockFixture.alsoFirstPlaceStockRecord()
+        val bestStock1 = firstPlaceStockRecord()
+        val bestStock2 = alsoFirstPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1, bestStock2)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks).blockLast()
         val from = Date.from(testDate().minus(1, ChronoUnit.HOURS))
@@ -99,7 +100,7 @@ class NatsControllersTest : IntegrationTestBase() {
     @Test
     fun `getBestStocksToBuy should return success response with custom quantity`() {
         // GIVEN
-        val bestStock1 = StockFixture.firstPlaceStockRecord()
+        val bestStock1 = firstPlaceStockRecord()
         val listOfUnsavedStocks = listOf(bestStock1)
         mongoStockRecordRepository.insertAll(listOfUnsavedStocks).blockLast()
         val from = Date.from(testDate().minus(1, ChronoUnit.HOURS))

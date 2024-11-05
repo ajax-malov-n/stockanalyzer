@@ -1,5 +1,8 @@
-import gradle.kotlin.dsl.accessors._9f7f456724d17774e707e28dbf6a22c7.implementation
 import systems.ajax.malov.stockanalyzer.libDeps
+
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     implementation(libDeps.reactorCore)

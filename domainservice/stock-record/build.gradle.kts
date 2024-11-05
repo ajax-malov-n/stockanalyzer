@@ -1,6 +1,7 @@
 plugins {
     `spring-conventions`
     `grpc-conventions`
+    `testing-conventions`
 }
 
 dependencies {
@@ -17,6 +18,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     implementation(libs.jacksonJsr310)
+
+    integrationTestImplementation(project(":domainservice:core"))
+    integrationTestImplementation(testFixtures(project(":domainservice:stock-record")))
+    integrationTestImplementation(libs.natsTest)
+    integrationTestImplementation(libs.kafkaTest)
+    integrationTestImplementation(project(":internal-api"))
 }
 
 tasks.named("check") {

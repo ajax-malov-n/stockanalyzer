@@ -3,7 +3,7 @@ package systems.ajax.malov.stockanalyzer.it.mongock.changelogs
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
-import systems.ajax.malov.migration.mongock.changelogs.UserTrackedSymbolCollectionIndexesMigration
+import systems.ajax.malov.stockanalyzer.migration.mongock.changelogs.UserTrackedSymbolCollectionIndexesMigration
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import kotlin.test.Test
