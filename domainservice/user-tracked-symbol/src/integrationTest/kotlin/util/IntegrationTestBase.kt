@@ -20,7 +20,6 @@ import org.springframework.test.context.ContextConfiguration
 import systems.ajax.kafka.autoconfiguration.handler.KafkaHandlerAutoConfiguration
 import systems.ajax.kafka.autoconfiguration.publisher.KafkaPublisherAutoConfiguration
 import systems.ajax.malov.stockanalyzer.core.infrastructure.config.MongoConfig
-import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.kafka.producer.StockPriceNotificationProducer
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.usertrackedsymbol.UserTrackedSymbolRepositoryTest
 
 @SpringBootTest
@@ -35,8 +34,7 @@ import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.u
         UserTrackedSymbolRepositoryTest::class,
         KafkaAutoConfiguration::class,
         KafkaHandlerAutoConfiguration::class,
-        KafkaPublisherAutoConfiguration::class,
-        StockPriceNotificationProducer::class
+        KafkaPublisherAutoConfiguration::class
     ]
 )
 @ComponentScan(

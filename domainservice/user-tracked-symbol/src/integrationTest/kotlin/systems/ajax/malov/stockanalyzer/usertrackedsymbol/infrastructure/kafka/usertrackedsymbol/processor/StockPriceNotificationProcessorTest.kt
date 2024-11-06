@@ -2,6 +2,7 @@ package systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.kafka.
 
 import org.awaitility.Awaitility.await
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +26,6 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.NOTIFICATION_STOCK_PRICE)
 @ResourceLock(KafkaTopic.KafkaStockPriceEvents.STOCK_PRICE)

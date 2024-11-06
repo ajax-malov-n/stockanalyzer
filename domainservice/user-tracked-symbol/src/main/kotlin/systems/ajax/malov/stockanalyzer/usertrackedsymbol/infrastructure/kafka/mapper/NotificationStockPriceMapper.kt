@@ -12,7 +12,7 @@ object NotificationStockPriceMapper {
                 userId = userId
                 price = convertToBigDecimalProto(stockPrice.price)
                 timestamp = stockPrice.dateOfRetrieval.toTimestampProto()
-                userId = stockPrice.stockSymbolName
+                stockSymbolName = stockPrice.stockSymbolName
             }.build()
     }
 }
