@@ -3,14 +3,15 @@ package systems.ajax.malov.stockanalyzer.core.infrastructure.config.beanpostproc
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Proxy
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
@@ -71,9 +72,12 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // THEN
         val logEvent = logAppender.events.firstOrNull()
-        assertThat(logEvent).isNotNull
-        assertThat(logEvent?.level.toString()).isEqualTo(System.Logger.Level.INFO.toString())
-        assertThat(logEvent.toString()).contains("Execution time of annotatedMethod is")
+        assertNotNull(logEvent)
+        assertEquals(logEvent?.level.toString(), System.Logger.Level.INFO.toString())
+        assertTrue(
+            logEvent.toString().contains("Execution time of annotatedMethod is"),
+            "Must contain logged message"
+        )
     }
 
     @Test
@@ -89,7 +93,7 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // THEN
         val logEvent = logAppender.events.firstOrNull()
-        assertThat(logEvent).isNull()
+        assertNull(logEvent)
     }
 
     private class TestLogAppender : AppenderBase<ILoggingEvent>() {

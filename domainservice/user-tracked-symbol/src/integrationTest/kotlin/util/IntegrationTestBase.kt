@@ -20,8 +20,8 @@ import org.springframework.test.context.ContextConfiguration
 import systems.ajax.kafka.autoconfiguration.handler.KafkaHandlerAutoConfiguration
 import systems.ajax.kafka.autoconfiguration.publisher.KafkaPublisherAutoConfiguration
 import systems.ajax.malov.stockanalyzer.core.infrastructure.config.MongoConfig
-import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.impl.MongoStockRecordRepository
-import systems.ajax.nats.configuration.NatsAutoConfiguration
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.kafka.producer.StockPriceNotificationProducer
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.usertrackedsymbol.UserTrackedSymbolRepositoryTest
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -32,16 +32,19 @@ import systems.ajax.nats.configuration.NatsAutoConfiguration
         MongoConfig::class,
         MongoReactiveAutoConfiguration::class,
         MongoReactiveDataAutoConfiguration::class,
-        MongoStockRecordRepository::class,
+        UserTrackedSymbolRepositoryTest::class,
         KafkaAutoConfiguration::class,
-        KafkaPublisherAutoConfiguration::class,
         KafkaHandlerAutoConfiguration::class,
-        NatsAutoConfiguration::class,
+        KafkaPublisherAutoConfiguration::class,
+        StockPriceNotificationProducer::class
     ]
 )
 @ComponentScan(
-    basePackages = ["systems.ajax.malov.stockanalyzer.stockrecord",
-        "systems.ajax.malov.stockanalyzer.core"]
+    basePackages = [
+        "systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.kafka.producer",
+        "systems.ajax.malov.stockanalyzer.usertrackedsymbol",
+        "systems.ajax.malov.stockanalyzer.core"
+    ]
 )
 abstract class IntegrationTestBase {
     class MyKafkaTestConfiguration {

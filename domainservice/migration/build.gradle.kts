@@ -1,5 +1,6 @@
 plugins {
-    `spring-conventions`
+    `subproject-spring-conventions`
+    `testing-conventions`
 }
 
 dependencies {
@@ -9,17 +10,12 @@ dependencies {
     implementation(project(":domainservice:core"))
     implementation(project(":domainservice:stock-record"))
     implementation(project(":domainservice:user-tracked-symbol"))
+
+    integrationTestImplementation(project(":domainservice:core"))
+    integrationTestImplementation(project(":domainservice:user-tracked-symbol"))
 }
 
 tasks.named("check") {
     dependsOn("detektMain")
     dependsOn("detektTest")
-}
-
-tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
-    enabled = false
-}
-
-tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
-    enabled = false
 }

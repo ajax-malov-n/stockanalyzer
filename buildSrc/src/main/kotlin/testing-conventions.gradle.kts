@@ -28,6 +28,10 @@ testing {
     }
 }
 
+tasks.named("test") {
+    dependsOn("integrationTest")
+}
+
 dependencies {
     testImplementation(libDeps.archunit)
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

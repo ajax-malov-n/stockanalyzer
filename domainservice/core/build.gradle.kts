@@ -1,5 +1,6 @@
 plugins {
-    `spring-conventions`
+    `subproject-spring-conventions`
+    `testing-conventions`
 }
 
 dependencies {
@@ -16,12 +17,4 @@ dependencies {
 tasks.named("check") {
     dependsOn("detektMain")
     dependsOn("detektTest")
-}
-
-tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
-    enabled = false
-}
-
-tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
-    enabled = false
 }

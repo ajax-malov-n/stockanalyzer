@@ -32,7 +32,7 @@ class RedisConfig(
             .timeoutOptions(
                 TimeoutOptions.builder()
                     .timeoutCommands(true)
-                    .fixedTimeout(Duration.ofMinutes(timeout))
+                    .fixedTimeout(Duration.ofMillis(timeout))
                     .build()
             ).build()
 
