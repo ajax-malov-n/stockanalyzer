@@ -10,8 +10,8 @@ import systems.ajax.malov.commonmodel.stock.StockPrice
 import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.NatsSubject
 import systems.ajax.malov.stockanalyzer.stockrecord.application.port.out.StockPriceProducerOutPort
+import systems.ajax.malov.stockanalyzer.stockrecord.util.IntegrationTestBase
 import systems.ajax.nats.mock.junit5.NatsMockExtension
-import util.IntegrationTestBase
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test

@@ -20,7 +20,7 @@ import systems.ajax.malov.internalapi.KafkaTopic
 import systems.ajax.malov.internalapi.output.pubsub.stock.NotificationStockPrice
 import systems.ajax.malov.stockanalyzer.stockrecord.application.port.out.StockPriceProducerOutPort
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
-import util.IntegrationTestBase
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.util.IntegrationTestBase
 import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.TimeUnit

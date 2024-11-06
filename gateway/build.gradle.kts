@@ -4,7 +4,6 @@ plugins {
     `testing-conventions`
 }
 
-// basic-subproj-convention
 dependencies {
     implementation(project(":grpc-api"))
     implementation(project(":internal-api"))

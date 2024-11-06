@@ -1,4 +1,4 @@
-package arch
+package systems.ajax.malov.stockanalyzer.stockrecord.arch
 
 import com.tngtech.archunit.core.domain.JavaClasses
 import com.tngtech.archunit.core.importer.ClassFileImporter

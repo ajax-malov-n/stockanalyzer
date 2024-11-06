@@ -16,8 +16,8 @@ import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWi
 import systems.ajax.malov.internalapi.input.reqreply.stock.GetBestStockSymbolsWithStockRecordsResponse
 import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.mongo.impl.MongoStockRecordRepository
 import systems.ajax.malov.stockanalyzer.stockrecord.infrastructure.nats.mapper.GetBestStockSymbolsWithStockRecordsRequestMapper.toGetBestStockSymbolsWithStockRecordsRequest
+import systems.ajax.malov.stockanalyzer.stockrecord.util.IntegrationTestBase
 import systems.ajax.nats.publisher.api.NatsMessagePublisher
-import util.IntegrationTestBase
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date

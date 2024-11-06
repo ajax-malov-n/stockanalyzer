@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
-import util.IntegrationTestBase
+import systems.ajax.malov.stockanalyzer.util.IntegrationTestBase
 import kotlin.test.Test
 import kotlin.test.assertNull
 

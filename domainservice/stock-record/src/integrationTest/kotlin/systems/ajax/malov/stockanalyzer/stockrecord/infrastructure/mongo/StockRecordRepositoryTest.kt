@@ -11,7 +11,7 @@ import stockanalyzer.stockrecord.utils.StockFixture.firstPlaceStockRecord
 import stockanalyzer.stockrecord.utils.StockFixture.secondPlaceStockRecord
 import stockanalyzer.stockrecord.utils.StockFixture.testDate
 import systems.ajax.malov.stockanalyzer.stockrecord.application.port.out.StockRecordRepositoryOutPort
-import util.IntegrationTestBase
+import systems.ajax.malov.stockanalyzer.stockrecord.util.IntegrationTestBase
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date

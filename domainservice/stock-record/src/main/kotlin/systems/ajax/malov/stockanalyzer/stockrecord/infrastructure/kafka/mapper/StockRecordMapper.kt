@@ -7,12 +7,10 @@ import systems.ajax.malov.stockanalyzer.stockrecord.domain.StockRecord
 
 object StockRecordMapper {
     fun StockRecord.toStockPrice(): StockPrice {
-        return StockPrice.newBuilder()
-            .setPrice(convertToBigDecimalProto(currentPrice))
-            .setStockSymbolName(symbol)
-            .apply {
-                dateOfRetrieval?.toTimestampProto()?.let { setTimestamp(it) }
-            }
-            .build()
+        return StockPrice.newBuilder().apply {
+            price = convertToBigDecimalProto(currentPrice)
+            stockSymbolName = symbol
+            dateOfRetrieval?.toTimestampProto()?.let { setTimestamp(it) }
+        }.build()
     }
 }

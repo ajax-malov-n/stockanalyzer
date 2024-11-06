@@ -1,5 +1,6 @@
 package systems.ajax.malov.stockanalyzer.core.infrastructure.config
 
+import org.bson.types.Decimal128
 import org.springframework.boot.autoconfigure.domain.EntityScanner
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
@@ -27,13 +28,13 @@ class MongoConfig {
     @SuppressWarnings("ObjectLiteralToLambda")
     fun mongoCustomConversions(): MongoCustomConversions {
         val converters = listOf<Converter<*, *>>(
-            object : Converter<BigDecimal, org.bson.types.Decimal128> {
-                override fun convert(source: BigDecimal): org.bson.types.Decimal128 {
-                    return org.bson.types.Decimal128(source)
+            object : Converter<BigDecimal, Decimal128> {
+                override fun convert(source: BigDecimal): Decimal128 {
+                    return Decimal128(source)
                 }
             },
-            object : Converter<org.bson.types.Decimal128, BigDecimal> {
-                override fun convert(source: org.bson.types.Decimal128): BigDecimal {
+            object : Converter<Decimal128, BigDecimal> {
+                override fun convert(source: Decimal128): BigDecimal {
                     return source.bigDecimalValue()
                 }
             }

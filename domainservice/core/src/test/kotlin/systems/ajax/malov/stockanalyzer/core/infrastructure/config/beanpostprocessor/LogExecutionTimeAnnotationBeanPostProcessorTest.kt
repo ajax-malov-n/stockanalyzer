@@ -40,7 +40,7 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
         val proxy = beanPostProcessor.postProcessAfterInitialization(bean, beanName)
 
         // THEN
-        assertNotNull(proxy)
+        assertNotNull(proxy, "Must be a proxy")
         assertTrue(Proxy.isProxyClass(proxy?.javaClass), "Expected true because bean must be proxied")
     }
 
@@ -55,7 +55,7 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
         val proxy = beanPostProcessor.postProcessAfterInitialization(bean, beanName)
 
         // THEN
-        assertNotNull(proxy)
+        assertNotNull(proxy, "Must be a proxy")
         assertFalse(Proxy.isProxyClass(proxy?.javaClass), "Expected false because bean must not be proxied")
     }
 
@@ -72,7 +72,7 @@ class LogExecutionTimeAnnotationBeanPostProcessorTest {
 
         // THEN
         val logEvent = logAppender.events.firstOrNull()
-        assertNotNull(logEvent)
+        assertNotNull(logEvent, "Must be an event")
         assertEquals(logEvent?.level.toString(), System.Logger.Level.INFO.toString())
         assertTrue(
             logEvent.toString().contains("Execution time of annotatedMethod is"),

@@ -13,7 +13,7 @@ import stockanalyzer.utils.UserTrackedSymbolFixture.mongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.application.port.output.UserTrackedSymbolRepositoryOutPort
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.entity.MongoUserTrackedSymbol
 import systems.ajax.malov.stockanalyzer.usertrackedsymbol.infrastructure.mongo.mapper.UserTrackedSymbolMapper.toDomain
-import util.IntegrationTestBase
+import systems.ajax.malov.stockanalyzer.usertrackedsymbol.util.IntegrationTestBase
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals

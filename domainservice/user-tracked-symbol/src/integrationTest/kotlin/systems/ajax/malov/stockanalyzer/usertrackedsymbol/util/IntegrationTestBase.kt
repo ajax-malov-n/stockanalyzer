@@ -1,4 +1,4 @@
-package util
+package systems.ajax.malov.stockanalyzer.usertrackedsymbol.util
 
 import org.apache.kafka.clients.admin.Admin
 import org.apache.kafka.clients.admin.KafkaAdminClient
