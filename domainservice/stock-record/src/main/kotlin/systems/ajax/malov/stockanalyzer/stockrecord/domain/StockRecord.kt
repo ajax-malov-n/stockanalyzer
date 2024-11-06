@@ -4,7 +4,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 data class StockRecord(
-    var id: String?,
+    val id: String?,
     val symbol: String?,
     val openPrice: BigDecimal?,
     val highPrice: BigDecimal?,

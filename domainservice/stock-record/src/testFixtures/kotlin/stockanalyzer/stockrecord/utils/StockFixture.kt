@@ -44,7 +44,7 @@ object StockFixture {
 
     fun firstPlaceStockRecord() = domainStockRecord().copy(
         symbol = "AAPL",
-        change = BigDecimal("2.0"),
+        change = BigDecimal.TWO,
         percentChange = BigDecimal("0.3"),
         dateOfRetrieval = Instant.now()
     )
