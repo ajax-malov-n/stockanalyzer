@@ -8,19 +8,6 @@ import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class OnionArchitectureTest {
-
-    companion object {
-        private lateinit var importedClasses: JavaClasses
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            importedClasses = ClassFileImporter()
-                .withImportOption(ImportOption.DoNotIncludeTests())
-                .importPackages("systems.ajax.malov.stockrecord")
-        }
-    }
-
     @Test
     fun onion_architecture_is_respected() {
         val rule = onionArchitecture()
@@ -33,5 +20,17 @@ class OnionArchitectureTest {
             .adapter("mongo", "..infrastructure.mongo..")
             .adapter("finnhub", "..infrastructure.finnhub..")
         rule.check(importedClasses)
+    }
+
+    companion object {
+        private lateinit var importedClasses: JavaClasses
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            importedClasses = ClassFileImporter()
+                .withImportOption(ImportOption.DoNotIncludeTests())
+                .importPackages("systems.ajax.malov.stockrecord")
+        }
     }
 }

@@ -1,4 +1,4 @@
-package arch
+package systems.ajax.malov.gateway.arch
 
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage
 import com.tngtech.archunit.core.domain.JavaClasses
@@ -9,6 +9,17 @@ import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class OnionArchitectureTest {
+    @Test
+    fun onion_architecture_is_respected() {
+        val rule = onionArchitecture()
+            .withOptionalLayers(true)
+            .applicationServices("..application..")
+            .adapter("nats", "..infrastructure.nats..")
+            .adapter("grpc", "..infrastructure.grpc..")
+            .adapter("rest", "..infrastructure.rest..")
+            .ignoreDependency(resideInAPackage("..infrastructure.mapper.."), resideInAPackage("..infrastructure.."))
+        rule.check(importedClasses)
+    }
 
     companion object {
         private lateinit var importedClasses: JavaClasses
@@ -20,17 +31,5 @@ class OnionArchitectureTest {
                 .withImportOption(ImportOption.DoNotIncludeTests())
                 .importPackages("systems.ajax.malov.gateway")
         }
-    }
-
-    @Test
-    fun onion_architecture_is_respected() {
-        val rule = onionArchitecture()
-            .withOptionalLayers(true)
-            .applicationServices("..application..")
-            .adapter("nats", "..infrastructure.nats..")
-            .adapter("grpc", "..infrastructure.grpc..")
-            .adapter("rest", "..infrastructure.rest..")
-            .ignoreDependency(resideInAPackage("..infrastructure.mapper.."), resideInAPackage("..infrastructure.."))
-        rule.check(importedClasses)
     }
 }

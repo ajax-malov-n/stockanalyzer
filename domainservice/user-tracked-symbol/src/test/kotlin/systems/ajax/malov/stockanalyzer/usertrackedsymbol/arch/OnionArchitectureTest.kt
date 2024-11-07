@@ -8,6 +8,16 @@ import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 
 class OnionArchitectureTest {
+    @Test
+    fun onion_architecture_is_respected() {
+        val rule = onionArchitecture()
+            .withOptionalLayers(true)
+            .domainModels("..domain..")
+            .applicationServices("..application..")
+            .adapter("kafka", "..infrastructure.kafka..")
+            .adapter("mongo", "..infrastructure.mongo..")
+        rule.check(importedClasses)
+    }
 
     companion object {
         private lateinit var importedClasses: JavaClasses
@@ -19,16 +29,5 @@ class OnionArchitectureTest {
                 .withImportOption(ImportOption.DoNotIncludeTests())
                 .importPackages("systems.ajax.malov.usertrackedsymbol")
         }
-    }
-
-    @Test
-    fun onion_architecture_is_respected() {
-        val rule = onionArchitecture()
-            .withOptionalLayers(true)
-            .domainModels("..domain..")
-            .applicationServices("..application..")
-            .adapter("kafka", "..infrastructure.kafka..")
-            .adapter("mongo", "..infrastructure.mongo..")
-        rule.check(importedClasses)
     }
 }
