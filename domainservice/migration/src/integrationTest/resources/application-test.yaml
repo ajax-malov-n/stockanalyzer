@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/stocks?authSource=admin
+
+logging.level.org.springframework.test.context.cache: debug
