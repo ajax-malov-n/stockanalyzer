@@ -37,31 +37,29 @@ class RedisStockRecordRepository(
     ): Mono<Map<String, List<StockRecord>>> {
         return reactiveMapRedisTemplate.opsForValue()
             .get(createTopStockSymbolsWithStockRecordsKey(quantity, stockRecordPrefix))
-            .onErrorResume(::isRedisOrSocketException) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
-            }
             .switchIfEmpty(
                 stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to).flatMap {
                     saveTopStockSymbolsWithStockRecords(quantity, it)
                 }
-            )
+            ).onErrorResume(::isRedisOrSocketException) {
+                log.error(it.message, it)
+                stockMongoRecordRepository.findTopStockSymbolsWithStockRecords(quantity, from, to)
+            }
     }
 
     override fun findAllStockSymbols(): Flux<String> {
         return reactiveStringRedisTemplate.opsForList()
             .range(createAllStockSymbolsKey(stockRecordPrefix), 0, -1)
-            .onErrorResume(::isRedisOrSocketException) {
-                log.error(it.message, it)
-                stockMongoRecordRepository.findAllStockSymbols()
-            }
             .switchIfEmpty(
                 stockMongoRecordRepository.findAllStockSymbols()
                     .collectList()
                     .flatMapMany {
                         saveAllStockSymbols(it)
                     }
-            )
+            ).onErrorResume(::isRedisOrSocketException) {
+                log.error(it.message, it)
+                stockMongoRecordRepository.findAllStockSymbols()
+            }
     }
 
     private fun saveTopStockSymbolsWithStockRecords(
